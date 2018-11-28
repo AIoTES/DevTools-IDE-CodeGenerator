@@ -34,10 +34,7 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  *  <li>existent local ontology</li>
  *  <li>velocity macros with errors</li>
  *  <li>working templates plus working ontologies</li>
- *  
  * </ul>
- * 
- * 
  * @author Buhid Eduardo
  *
  */
