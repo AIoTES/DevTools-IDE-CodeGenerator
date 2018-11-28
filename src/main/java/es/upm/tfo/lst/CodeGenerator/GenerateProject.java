@@ -48,7 +48,7 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
  *  <li>{@link Set}<{@link Variables}> under key variables: to access to all variables given in XML file  </li>
  *  <li>{@link OWLOntology} under key ontology: to accecs to the current processing ontology</li>
  *  <li>{@link OWLClass } under key class: to acces to current processing class</li>
- *  <li>{@link Set}<{@link OWLNamedIndividual} under key instancess: to acces to all of instances to processing class></li>
+ *  <li>{@link Set}<{@link OWLNamedIndividual} under key instances: to acces to all of instances to processing class></li>
  *  <li>{@link Set}<{@link NodeSet}<{@link OWLNamedIndividual}>> under tag propertieValues: the Set contains a NodeSet of OWLNAmedIndividual for each instance of actual processing class </li>
  *  </ul>
  *  
@@ -188,8 +188,7 @@ public class GenerateProject {
 		String name="";
 		
 		this.baseContext.put("ontology", ontology);
-		
-		
+	
 		
 		if(!ontologyModelArray.isEmpty()) {
 			for (MacroModel ontologyModel : ontologyModelArray) {
@@ -353,7 +352,7 @@ public class GenerateProject {
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
 		String name;
 		Set< NodeSet<OWLNamedIndividual> > aux = new HashSet<>();
-		System.out.println("356 GENERATEPROJECT aux.size "+aux.size());
+		
 		Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
 		for (OWLNamedIndividual ind : instances) {
 			for (OWLObjectProperty owlObjectProperty : op) {
@@ -377,7 +376,7 @@ public class GenerateProject {
 					this.context.put("class",c);
 					this.context.put("classesInstances",macroModel);
 					this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
-					this.context.put("propertieValues", aux);
+					this.context.put("propertyValues", aux);
 					
 					if(!macroModel.getOutput().equals("")){
 						this.fr = new FileWriter(this.outputFolder+name,true);

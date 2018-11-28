@@ -6,3 +6,4 @@ using a internal template variable to get name of ontology: $ontologyName
 ontology class count: $ontology.getClassesInSignature().size()
 variables given in XML using velocity macro to iterate over collection of variables
 #vars ($variables)
+

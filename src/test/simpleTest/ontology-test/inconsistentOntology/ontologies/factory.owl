@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#"
+     xml:base="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#ID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#ID">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#date_stat_build -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#date_stat_build">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#model -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#model">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#name">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Car -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Car">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Product"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#House -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#House">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Product"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Product -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Product">
+        <owl:disjointWith rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Electric -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Electric">
+        <rdf:type rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Car"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Intelligent -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Intelligent">
+        <rdf:type rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#Car"/>
+        <rdfs:comment>the most intelligent car</rdfs:comment>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#SmartHouse -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#SmartHouse">
+        <rdf:type rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#House"/>
+        <rdfs:comment>smart house using IoT</rdfs:comment>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#VacationHouse -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#VacationHouse">
+        <rdf:type rdf:resource="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41#House"/>
+        <rdfs:comment>house to travel only in summer</rdfs:comment>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+

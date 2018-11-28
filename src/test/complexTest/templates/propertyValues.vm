@@ -1,2 +1,2 @@
 variables size $variables.size()
-props size $propertieVales.size()
+props size $propertyValues.size()

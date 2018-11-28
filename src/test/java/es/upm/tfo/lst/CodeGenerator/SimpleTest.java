@@ -30,6 +30,7 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  *  <li>correct variables</li>
  *  <li>ontology with missing imports</li>
  *  <li>ontology with broken file imports</li>
+ *  <li>ontology with inconsistent imports</li>
  *  <li>inexistent online ontology</li>
  *  <li>existent online ontology</li>
  *  <li>existent local ontology</li>
@@ -175,6 +176,31 @@ public class SimpleTest {
 	}
 	
 	//----------------------otology tests-------------------------
+	/**
+	 * Method to test when try to load a missing ontology file
+	 * 
+	 */
+	@Test
+	public void ontologyInconsistemtImports() {
+		 System.out.println("\n------------------------------inconsistent ontology--------------------------------------\n");
+		 
+		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
+		this.model = this.parser.getXmlCoordinatorDataModel();
+		this.genPro = new GenerateProject(this.model);
+		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/inconsistentOntology/ontologies/universidad.owl");
+		this.genPro.addOntology(this.ontology,true);
+		
+		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
+		this.genPro.setVariable( new Variables("cardinality", "false","/exampleFolder4"));//optional
+		this.genPro.setVariable( new Variables("templateCount", "false","/exampleFolder5"));//optional
+		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
+		
+		this.genPro.setOutputFolder(this.basePath+"ontology-test/inconsistentOntology/target/");
+		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
+		
+		assertFalse(genPro.process());
+
+	}
 
 	/**
 	 * Method to test when try to load a missing ontology file
@@ -245,7 +271,7 @@ public class SimpleTest {
 	}
 	
 	/**
-	 * Test with existent and workingontology
+	 * Test with existent and working ontology
 	 */
 	@Test
 	public void existentLocalOntology() {
@@ -266,7 +292,7 @@ public class SimpleTest {
 	 */
 	@Test
 	public void templateWithErrors(){
-		System.out.println("\n------------------------------templates with errors ###--------------------------------------\n");
+		System.out.println("\n------------------------------templates with errors --------------------------------------\n");
 				
 		this.parser.generateXMLCoordinator(this.basePath+"templates-test/templatesWithErrors/xml/test.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
@@ -287,7 +313,7 @@ public class SimpleTest {
 	}
 	
 	/**
-	 * Method to test working ontologies, working templates.
+	 * Method to test working ontologies and working templates.
 	 * Directory from  applied templates: src/test/simpleTest/templates-test/workingTemplates/
 	 * Output directory to view the resul of apply the templates: src/test/simpleTest/completeText/target
 	 */
