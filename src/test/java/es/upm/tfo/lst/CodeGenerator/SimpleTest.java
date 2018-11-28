@@ -301,9 +301,12 @@ public class SimpleTest {
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/workingOntology/universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
-		assertNotNull(this.ontology);
-		
-		
+		try {
+			File f = new File(this.basePath+"completeTest/target/");
+			if(!f.exists()) f.mkdirs();
+		}catch(Exception a){
+			System.out.println(a);
+		}
 		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
 		
 		this.genPro.setVariable( new Variables("cardinality", "false","/exampleFolder4"));//optional
