@@ -307,7 +307,6 @@ public class GenerateProject {
 		if(!instancesModelArray.isEmpty()) {
 			for (MacroModel macroModel : instancesModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
-					
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
 					//instances = reasoner.getInstances(c, true).getFlattened();
 					this.context= new VelocityContext(this.baseContext);
