@@ -1,0 +1,5 @@
+#macro(ontology $ontologyArray)
+#foreach( $ont in $ontologyArray )
+ontology-name: $ont.getOntologyID().getOntologyIRI().get().getShortForm()
+#end
+#end

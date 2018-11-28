@@ -52,7 +52,7 @@ public class ComplexTest {
 		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder(this.basePath+"target/");
-		this.genPro.setLocalBaseLoaderPath("src/test/simpleTest/templates-test/workingTemplates/");
+		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates/");
 		
 		assertTrue(genPro.process());
 	}

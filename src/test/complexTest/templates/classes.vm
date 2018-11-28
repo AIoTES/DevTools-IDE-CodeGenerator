@@ -1,0 +1,3 @@
+ontology short name: $ontology.getOntologyID().getOntologyIRI().get().getShortForm()
+class simple name: $class.getIRI().getShortForm()
+classs complete name: $class

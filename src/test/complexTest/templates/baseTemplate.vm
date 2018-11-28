@@ -1,0 +1,8 @@
+#macro(ontology $ontology)
+    ONTOLOGY NAME $ontology.getOntologyID().getOntologyIRI().get().getShortForm() 
+#end
+#macro(vars $varsArray)
+#foreach( $v in $varsArray )
+     SYSTEM VARIBLES: nombre->$v.getName() default->$v.getDefaultValue()->required $v.getRequired()
+#end
+#end

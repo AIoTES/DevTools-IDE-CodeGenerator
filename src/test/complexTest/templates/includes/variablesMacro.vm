@@ -1,0 +1,5 @@
+#macro(vars $varsArray)
+#foreach( $v in $varsArray )
+name: $v.getName()| default-value: $v.getDefaultValue() | required: $v.getRequired()
+#end
+#end

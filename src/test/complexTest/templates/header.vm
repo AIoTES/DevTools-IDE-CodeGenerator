@@ -1,0 +1,3 @@
+this text come from imported template
+variables from XML: $variables.size()
+-----------------------------------

@@ -43,7 +43,7 @@
 			<macro>
 				<template>classes.vm</template>
 				<for>class</for>
-				<output>${ontology.getOntologyID().getOntologyIRI().get().getShortForm()}/examples</output>
+				<output>classes/${class.getIRI().getShortForm()}.txt</output>
 			</macro>
 			<macro>
 				<template>classes2.vm</template>

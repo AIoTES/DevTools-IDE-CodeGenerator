@@ -1,0 +1,12 @@
+#parse ("./includes/ontologyMacro.vm")
+#parse ("./includes/variablesMacro.vm")
+main ontology
+$ontology
+main ontology count of axioms
+$ontology.getAxiomCount()
+all ontologies
+#ontology($ontologyCompleteList)
+variables
+#vars ($variables)
+-----------------------
+		

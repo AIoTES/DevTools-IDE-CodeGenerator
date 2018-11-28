@@ -189,6 +189,8 @@ public class GenerateProject {
 		
 		this.baseContext.put("ontology", ontology);
 		
+		
+		
 		if(!ontologyModelArray.isEmpty()) {
 			for (MacroModel ontologyModel : ontologyModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+ontologyModel.getTemplateName())) {
@@ -351,6 +353,7 @@ public class GenerateProject {
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
 		String name;
 		Set< NodeSet<OWLNamedIndividual> > aux = new HashSet<>();
+		System.out.println("356 GENERATEPROJECT aux.size "+aux.size());
 		Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
 		for (OWLNamedIndividual ind : instances) {
 			for (OWLObjectProperty owlObjectProperty : op) {
@@ -358,7 +361,6 @@ public class GenerateProject {
 				
 			}	
 		}
-		
 		
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
@@ -377,8 +379,8 @@ public class GenerateProject {
 					this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
 					this.context.put("propertieValues", aux);
 					
-					if(macroModel.getOutput().equals("")){
-						this.fr = new FileWriter(outputFolder.getPath()+name,true);
+					if(!macroModel.getOutput().equals("")){
+						this.fr = new FileWriter(this.outputFolder+name,true);
 					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
 						template.merge(context, fr);
 						fr.close();		
@@ -388,11 +390,11 @@ public class GenerateProject {
 					}else {
 						flag=false;
 					}
-			}
+			  }
 			}else{
 				log.warn("output for class is empty and the program will not generate any output file to class");
 				flag=false;
-				state = false;
+				
 			}
 		
 		
