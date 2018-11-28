@@ -1,0 +1,6 @@
+second template to class to showing the user can process more of one template for the same ontology component
+#parse ("header.vm")
+ontology short name: $ontology.getOntologyID().getOntologyIRI().get().getShortForm()
+class simple name: $class.getIRI().getShortForm()
+classs complete name: $class
+class anotation count: $class.getAnnotationPropertiesInSignature().size()

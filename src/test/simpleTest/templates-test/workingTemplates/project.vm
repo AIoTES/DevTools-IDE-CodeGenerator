@@ -1,0 +1,15 @@
+#macro(ontology $ontologyArray)
+#foreach( $ont in $ontologyArray )
+ontology-name: $ont.getOntologyID().getOntologyIRI().get().getShortForm()
+#end
+#end
+#macro(vars $varsArray)
+#foreach( $v in $varsArray )
+name: $v.getName() | default-value: $v.getDefaultValue() | required: $v.getRequired()
+#end
+#end
+ontologies
+#ontology($ontologyCompleteList)
+variables
+#vars ($variables)
+		

@@ -1,0 +1,11 @@
+#macro(vars $varsArray)
+#foreach( $v in $varsArray )
+name: $v.getName()| default-value: $v.getDefaultValue() | required: $v.getRequired()
+#end
+#end
+#set ($ontologyName=$ontology.getOntologyID().getOntologyIRI().get().getShortForm())
+ontology name: $ontology.getOntologyID().getOntologyIRI().get().getShortForm()
+using a internal template variable to get name of ontology: $ontologyName
+ontology class count: $ontology.getClassesInSignature().size()
+variables given in XML using velocity macro to iterate over collection of variables
+#vars ($variables)

@@ -1,0 +1,1 @@
+ontology name $ontology.getOntologyID().getOntologyIRI().get().getShortForm() $newline
