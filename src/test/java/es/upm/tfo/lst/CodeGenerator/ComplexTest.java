@@ -11,7 +11,16 @@ import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variables;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
-
+/**
+ * 
+ * This class test working templates, working xml and working ontologies.
+ * In this case the program uses a more complex templates, and shows 
+ * one if variant to use xml (user can put velocity language to process dinamically the output
+ * file name and directory )  
+ * 
+ * @author Buhid Eduardo
+ *
+ */
 public class ComplexTest {
 	private  XmlParser parser;
 	private TemplateDataModel model;

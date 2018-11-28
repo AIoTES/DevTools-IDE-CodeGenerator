@@ -27,6 +27,11 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  *  <li>variables missing</li>
  *  <li>inexistent variables</li>
  *  <li>correct variables</li>
+ *  <li>ontology with missing imports</li>
+ *  <li>ontology with broken file imports</li>
+ *  <li>inexistent online ontology</li>
+ *  <li>existent online ontology</li>
+ *  <li>existent local ontology</li>
  *  <li>velocity macros with errors</li>
  *  <li>working templates plus working ontologies</li>
  *  
@@ -258,7 +263,9 @@ public class SimpleTest {
 	}
 	
 	//----------------------templates tests-------------------------
-	
+	/**
+	 * Test templates with code errors located in src/test/simpleTest/templates-test/templatesWithErrors/templates/
+	 */
 	@Test
 	public void templateWithErrors(){
 		System.out.println("\n------------------------------templates with errors ###--------------------------------------\n");
@@ -282,7 +289,9 @@ public class SimpleTest {
 	}
 	
 	/**
-	 * Method to test working ontologies, working templates and working
+	 * Method to test working ontologies, working templates.
+	 * Directory from  applied templates: src/test/simpleTest/templates-test/workingTemplates/
+	 * Output directory to view the resul of apply the templates: src/test/simpleTest/completeText/target
 	 */
 	@Test
 	public void completeTest() {
