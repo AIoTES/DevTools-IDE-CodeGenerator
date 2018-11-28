@@ -189,7 +189,7 @@ public class SimpleTest {
 	/**
 	 * Test ontology importing a bad .owl file (edited with notepad and deleted some lines of text)
 	 */
-	/*
+	
 	@Test
 	public void ontologyFileBrokenImports() {
 		 System.out.println("\n------------------------------ontology file broken imports--------------------------------------\n");
@@ -205,7 +205,7 @@ public class SimpleTest {
 		assertNull(this.ontology);
 		
 	}
-	*/
+	
 	/**
 	 * Method to test ontology loaded from invalid URL  
 	 */

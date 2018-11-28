@@ -71,7 +71,6 @@ public class OntologyLoader {
 						for (String string : aux) {
 							k+=string+"/";
 						} 
-						
 						//this.ontologyManager.getIRIMappers().add(new AutoIRIMapper(new File("src/test/resources/ontologies/"), true));
 						this.ontologyManager.getIRIMappers().add(new AutoIRIMapper(new File(k), true));
 						try {

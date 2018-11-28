@@ -33,8 +33,6 @@ public class ComplexTest {
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology/universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
-		assertNotNull(this.ontology);
-		
 		
 		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
 		
@@ -43,7 +41,7 @@ public class ComplexTest {
 		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder(this.basePath+"target/");
-		this.genPro.setLocalBaseLoaderPath("src/test/simpleTest/templates-test/workingTemplates/");
+		this.genPro.setLocalBaseLoaderPath("src/test/simpleTest/templates-test/workingTemplates");
 		
 		assertTrue(genPro.process());
 	}
