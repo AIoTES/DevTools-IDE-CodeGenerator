@@ -24,6 +24,12 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  * 	<li>xml schema whos definition is incorect</li>
  *  <li>xml placed in wrong path </li>
  *  <li>xml referenced correctly and with correct schema</li>
+ *  <li>variables missing</li>
+ *  <li>inexistent variables</li>
+ *  <li>correct variables</li>
+ *  <li>velocity macros with errors</li>
+ *  <li>working templates plus working ontologies</li>
+ *  
  * </ul>
  * 
  * 
