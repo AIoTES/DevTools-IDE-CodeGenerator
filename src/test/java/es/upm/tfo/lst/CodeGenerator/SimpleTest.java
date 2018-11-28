@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -311,7 +312,12 @@ public class SimpleTest {
 		
 		this.genPro.setOutputFolder(this.basePath+"completeTest/target/");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
-		
+		try {
+			File f = new File(this.basePath+"completeTest/target/");
+			if(!f.exists()) f.mkdirs();
+		}catch(Exception a){
+			System.out.println(a);
+		}
 		assertTrue(genPro.process());
 	}
 	
