@@ -180,8 +180,7 @@ public class SimpleTest {
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
 		
-		this.ontology = this.ontologyLoader.loadOntology(this.basePath+
-				"ontology-test/ontologyFileMissingImports/ontologies/universidad.owl");
+		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/ontologyFileMissingImports/ontologies/universidad.owl");
 		
 		assertNull(this.ontology);
 
@@ -198,10 +197,7 @@ public class SimpleTest {
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
-		
-		this.ontology = this.ontologyLoader.loadOntology(this.basePath+
-				"ontology-test/ontBrokenImports/ontologies/universidad.owl");
-		
+		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/ontBrokenImports/ontologies/universidad.owl");
 		assertNull(this.ontology);
 		
 	}
@@ -264,8 +260,7 @@ public class SimpleTest {
 		this.parser.generateXMLCoordinator(this.basePath+"templates-test/templatesWithErrors/xml/test.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
-		this.ontology = this.ontologyLoader.loadOntology(this.basePath+
-				"ontology-test/workingOntology/universidad.owl");
+		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/workingOntology/universidad.owl");
 		this.genPro.addOntology(this.ontology,false);
 		genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
 		genPro.setVariable( new Variables("cardinality", "false","/exampleFolder"));//optional

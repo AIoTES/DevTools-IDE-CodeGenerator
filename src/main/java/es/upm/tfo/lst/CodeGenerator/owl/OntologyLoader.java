@@ -86,7 +86,8 @@ public class OntologyLoader {
 				}
 			return null;
  		}catch (Exception e) {
-			log.fatal("error",e);
+			//log.fatal("error",e);
+ 			log.fatal("error importing ontologies "+e.getClass());
 		}
  		return null;
 	} 
