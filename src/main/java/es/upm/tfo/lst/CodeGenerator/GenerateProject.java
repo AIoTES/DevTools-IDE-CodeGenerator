@@ -148,7 +148,7 @@ public class GenerateProject {
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 						this.reasoner = this.reasonerFactory.createReasoner(ontology);
-						//System.out.println(this.reasoner);
+					
 						this.baseContext.put("reasoner", this.reasoner);
 						if (! this.processOntology(ontology)) {
 							flag = false;
@@ -217,7 +217,7 @@ public class GenerateProject {
 							flag = false;
 						}
 					}
-					//this.processClass(ontology);
+					
 					flag=true;
 				}else {
 					log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
@@ -343,7 +343,7 @@ public class GenerateProject {
 	 * @throws Exception.
 	 */
 	/*
-	 * este metodo cuanta mas clases tenga la ontologia mas grande se hace el Set principal  
+	 * este metodo cuenta mas clases tenga la ontologia mas grande se hace el Set principal  
 	 * */
 	private boolean processObjectProperties(OWLClass c,Set<OWLNamedIndividual> instances,OWLOntology ontology  ) throws Exception{
 		boolean flag = true,state = true;
@@ -358,7 +358,7 @@ public class GenerateProject {
 				
 			}	
 		}
-		//-------
+		
 		
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
