@@ -28,6 +28,8 @@ public class ComplexTest {
 	} 
 	@Test
 	public void test1() {
+		 System.out.println("\n------------------------------complex test--------------------------------------\n");
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml/complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
@@ -41,7 +43,7 @@ public class ComplexTest {
 		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder(this.basePath+"target/");
-		this.genPro.setLocalBaseLoaderPath("src/test/simpleTest/templates-test/workingTemplates");
+		this.genPro.setLocalBaseLoaderPath("src/test/simpleTest/templates-test/workingTemplates/");
 		
 		assertTrue(genPro.process());
 	}
