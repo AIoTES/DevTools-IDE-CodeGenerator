@@ -301,7 +301,7 @@ public class GenerateProject {
 		String name;
 		boolean flag=true,state=true;
 		Set<OWLNamedIndividual> instances = new HashSet<>();
-		
+		//ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace("\\.","");
 		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacro();
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
 		if(!instancesModelArray.isEmpty()) {

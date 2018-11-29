@@ -2,6 +2,6 @@
 #set($varName = $class.getIRI().getShortForm())
 second template to class to showing the user can process more of one template for the same ontology component
 ontology short name: $ontology.getOntologyID().getOntologyIRI().get().getShortForm()
-class simple name: $varname
+class simple name: $varName
 classs complete name: $class
 class anotation count: $class.getAnnotationPropertiesInSignature().size()

@@ -43,12 +43,12 @@
 			<macro>
 				<template>classes.vm</template>
 				<for>class</for>
-				<output>classes/${class.getIRI().getShortForm()}.txt</output>
+				<output>classes/${class.getIRI().getShortForm()}</output>
 			</macro>
 			<macro>
 				<template>classes2.vm</template>
 				<for>class</for>
-				<output>classes2/${ontology.getOntologyID().getOntologyIRI().get().getShortForm()}</output>
+				<output>classes2/${ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace(".","")}</output>
 				 
 			</macro>
 			
