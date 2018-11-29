@@ -43,14 +43,14 @@
 			<macro>
 				<template>classes.vm</template>
 				<for>class</for>
-				<!-- <output>${ontology.getOntologyID().getOntologyIRI().get().getShortForm()}/examples</output> -->
+				
 				<output>clasesOutput</output>
 			</macro>
 			<macro>
 				<template>classes.vm</template>
 				<for>class</for>
 				<output>clasesSecondOutput</output>
-				<!-- 	<output>${ontology.getOntologyID().getOntologyIRI().get().getShortForm()}/examples</output>-->
+				
 				 
 			</macro>
 			

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Template
+		xmlns="http://www.example.org/prueba2" 
+		xmlns:x="http://www.w3.org/2001/XMLSchema-instance" 
+		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
+		<template-name>template1</template-name>
+		<template-version>1</template-version>
+		<template-description>error</template-description>
+		<template-author>
+			<author-name>eduardo</author-name>
+			<author-email>buhid</author-email>	
+			<author-phone>123523</author-phone>
+		</template-author>
+		<variables>
+			<variable>
+				<name>outputBaseDir</name>
+				<default>""</default>
+				<required>true</required>	
+			</variable>
+		
+			<variable>
+				<name>cardinality</name>
+				<default>0</default>
+				<required>false</required>
+			
+			</variable>
+			
+			<variable>
+				<name>templateCount</name>
+				<default>0</default>
+				<required>false</required>	
+			</variable>
+		
+			
+			<variable>
+				<name>ontologyCount</name>
+				<default>0</default>
+				<required>false</required>	
+			</variable>
+
+		</variables>
+		<macros>
+			<macro>
+				<template>classes.vm</template>
+				<for>class</for>
+				<output>clasesOutput</output>
+			</macro>
+		
+		</macros>
+</Template>
+

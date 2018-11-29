@@ -47,7 +47,7 @@ public class SimpleTest {
 	private OntologyLoader ontologyLoader=null;
 	private OWLOntology ontology;
 	//----constants
-	private final String basePath="src/test/simpleTest/";
+	private final String basePath="src/test/resources/simple-test/";
 	private final String existentOnlineOnt="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String inexistentOnlineOnt="https://www.protege.stanford.edu/ontologies/pizza/pizza.owl";
 	
@@ -195,7 +195,7 @@ public class SimpleTest {
 		this.genPro.setVariable( new Variables("templateCount", "false","/exampleFolder5"));//optional
 		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
 		
-		this.genPro.setOutputFolder(this.basePath+"ontology-test/inconsistentOntology/target/");
+		this.genPro.setOutputFolder("src/tearget/simple-test/ontology-test");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
 		
 		assertFalse(genPro.process());
@@ -294,7 +294,13 @@ public class SimpleTest {
 	public void templateWithErrors(){
 		System.out.println("\n------------------------------templates with errors --------------------------------------\n");
 				
-		this.parser.generateXMLCoordinator(this.basePath+"templates-test/templatesWithErrors/xml/test.xml");
+		try {
+			File f = new File("target/simple-test/templates-Test");
+			if(!f.exists()) f.mkdirs();
+		}catch(Exception a) {
+			
+		}
+		this.parser.generateXMLCoordinator(this.basePath+"templates-test/templatesWithErrors/xml/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/workingOntology/universidad.owl");
@@ -306,7 +312,7 @@ public class SimpleTest {
 
 		
 		genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/templatesWithErrors/templates/");
-		genPro.setOutputFolder(this.basePath+"templatesTest/templatesWithErrors/target");
+		genPro.setOutputFolder("target/simple-test/templates-Test");
 		
 		assertFalse(genPro.process());
 		
@@ -321,6 +327,12 @@ public class SimpleTest {
 	public void completeTest() {
 		System.out.println("\n------------------------------completeTest----------------------------------\n");
 		
+		try {
+			File f = new File("target/simplte-test/complete-test");
+			if(!f.exists()) f.mkdirs();
+		}catch(Exception a){
+			System.out.println(a);
+		}
 		
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
@@ -341,12 +353,7 @@ public class SimpleTest {
 		
 		this.genPro.setOutputFolder(this.basePath+"completeTest/target/");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
-		try {
-			File f = new File(this.basePath+"completeTest/target/");
-			if(!f.exists()) f.mkdirs();
-		}catch(Exception a){
-			System.out.println(a);
-		}
+		
 		assertTrue(genPro.process());
 	}
 	
