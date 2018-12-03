@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -51,13 +54,13 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
  *  <li>{@link Set}<{@link OWLNamedIndividual} under key instances: to acces to all of instances to processing class></li>
  *  <li>{@link Set}<{@link NodeSet}<{@link OWLNamedIndividual}>> under tag propertieValues: the Set contains a NodeSet of OWLNAmedIndividual for each instance of actual processing class </li>
  *  </ul>
- *  
+ *
  * @author Buhid Eduardo
  *
  */
 public class GenerateProject {
-	
-	
+
+
 	private TemplateDataModel mainModel=null;
 	private VelocityContext context,baseContext;
 	private VelocityEngine vel_eng;
@@ -65,39 +68,41 @@ public class GenerateProject {
 	private Template template;
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner;
-	private Set<Variable> variables;
+	private Map<String, String> variables;
 	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
 	private URL urlBasePath=null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
 
-	private final static Logger log = Logger.getLogger(GenerateProject.class); 
-	
+	private final static Logger log = Logger.getLogger(GenerateProject.class);
+
 	/**
-	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro 
-	 * 
+	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro
+	 *
 	 * @param p {@link Project} object who give the list of ontologies to be process.
 	 * @param model {@link TemplateDataModel} object builded from XML given file.
 	 */
 
 	public GenerateProject(TemplateDataModel model) {
-		
-		
+
+
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
 		this.props = new Properties();
-		this.variables= new HashSet<>();
-		
+		this.variables= new HashMap<String,String>();
+		// add all default variables in the model.
+
+
 	}
 
 	/**
-	 * Initialize the process to generate code 
+	 * Initialize the process to generate code
 	 * before use this method, check if main ontology is loaded correctly and you have  all macros to process each element of the ontology, otherwise
 	 * the program will not continue and send an error notification
-	 * 
-	 * @return boolean value.True if the process is sucessfull.False if any problem occur. 
+	 *
+	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 */
-	public boolean process() {
+	public boolean process() throws Exception{
 		boolean flag=false;
 		if(this.control()) {
 			try {
@@ -105,21 +110,22 @@ public class GenerateProject {
 				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				flag =  this.processProject();
 			}catch(Exception a){
-				flag=false;	
+				flag=false;
 				log.fatal("error",a);
+				throw a;
 			}
 		}else {
 			flag = false;
 		}
-		
-		
-		
+
+
+
 		return flag;
 	}
-	
+
 	/**
-	 * Mehod to process the project itself. 
-	 * @return @return boolean value.True if the process is sucessfull.False if any problem occur. 
+	 * Mehod to process the project itself.
+	 * @return @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception
 	 */
 	private boolean processProject()throws Exception {
@@ -129,7 +135,7 @@ public class GenerateProject {
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+projectModel.getTemplateName())) {
-					
+
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
@@ -144,11 +150,11 @@ public class GenerateProject {
 					}else {
 						log.warn("output for project is empty and the program will not generate any output file to project");
 					}
-					
+
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 						this.reasoner = this.reasonerFactory.createReasoner(ontology);
-					
+
 						this.baseContext.put("reasoner", this.reasoner);
 						if (! this.processOntology(ontology)) {
 							flag = false;
@@ -171,9 +177,9 @@ public class GenerateProject {
 					flag = false;
 				};
 			}
-			
+
 		}
-	
+
 		return flag;
 	}
 	/**
@@ -186,10 +192,10 @@ public class GenerateProject {
 		boolean flag=true,state=true;
 		List<MacroModel> ontologyModelArray = this.mainModel.getOntologyMacro();
 		String name="";
-		
+
 		this.baseContext.put("ontology", ontology);
-	
-		
+
+
 		if(!ontologyModelArray.isEmpty()) {
 			for (MacroModel ontologyModel : ontologyModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+ontologyModel.getTemplateName())) {
@@ -201,28 +207,28 @@ public class GenerateProject {
 						outputFolder.getParentFile().mkdirs();
 					//merge base context to actual context
 					this.context= new VelocityContext(this.baseContext);
-					
+
 					//this.context.put("ontology",ontology);
 					if(!name.equals("")) {
 						template = vel_eng.getTemplate(ontologyModel.getTemplateName());
 						this.fr = new FileWriter(this.outputFolder+name,true);
 						template.merge(context,fr);
-						fr.close();	
+						fr.close();
 					}else {
 						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
 					}
-					
+
 					//iterate over classes into actual ontology  and process each one
 					for(OWLClass c : ontology.getClassesInSignature()) {
 						if (!this.processClass(c,ontology)){
 							flag = false;
 						}
 					}
-					
+
 					flag=true;
 				}else {
 					log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
-					flag=false;	
+					flag=false;
 				}
 			}
 		}else{
@@ -231,7 +237,7 @@ public class GenerateProject {
 				if (!this.processClass(c,ontology)){
 					flag = false;
 				}
-			
+
 			}
 		}
 		return flag && state;
@@ -250,7 +256,7 @@ public class GenerateProject {
 		List<MacroModel> classModelArray = this.mainModel.getClassMacro();
 		if(!classModelArray.isEmpty()) {
 			for (MacroModel macroModel : classModelArray) {
-				c.getAnnotationPropertiesInSignature();	
+				c.getAnnotationPropertiesInSignature();
 				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
 					this.context.put("ontology",ontology);
 					this.context.put("class",c);
@@ -262,11 +268,11 @@ public class GenerateProject {
 						template = vel_eng.getTemplate(macroModel.getTemplateName());
 						this.fr = new FileWriter(this.outputFolder+directoryName,true);
 						template.merge(context, fr);
-						fr.close();	
+						fr.close();
 					}else {
 						log.warn("output for class is empty and the program will not generate any output file to class");
 					}
-						
+
 					for(OWLClass cls : ontology.getClassesInSignature() ) {
 						if(! this.processInstances(cls,ontology) ) {
 							flag=false;
@@ -284,12 +290,12 @@ public class GenerateProject {
 					flag=false;
 				}
 			}
-			
+
 		}
-		
+
 		return flag;
 	}
-		
+
 	/**
 	 * Needs OWLReasoner to process data
 	 * @param clase {@link OWLClass} to process
@@ -317,7 +323,7 @@ public class GenerateProject {
 					File outputFolder = new File(this.outputFolder+name);
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
-					
+
 					this.fr = new FileWriter(this.outputFolder+name,true);
 					template.merge(context, fr);
 					fr.close();
@@ -330,7 +336,7 @@ public class GenerateProject {
 		}else{
 			log.warn("output for instances is empty and the program will not generate any output file to instances");
 			state = this.processObjectProperties(c,instances,ontology);
-			
+
 		}
 		return flag && state;
 	}
@@ -338,12 +344,12 @@ public class GenerateProject {
 	 * Method to get Object Properties of  class instances.
 	 * @param c {@link OWLClass}: Class to be processed.
 	 * @param instances {@link Set}<{@link OWLNamedIndividual}>: Individuals of given class.
-	 * @param ontology {@link OWLOntology}: Ontology to process. 
+	 * @param ontology {@link OWLOntology}: Ontology to process.
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception.
 	 */
 	/*
-	 * este metodo cuenta mas clases tenga la ontologia mas grande se hace el Set principal  
+	 * este metodo cuenta mas clases tenga la ontologia mas grande se hace el Set principal
 	 * */
 	private boolean processObjectProperties(OWLClass c,Set<OWLNamedIndividual> instances,OWLOntology ontology  ) throws Exception{
 		boolean flag = true,state = true;
@@ -351,40 +357,40 @@ public class GenerateProject {
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
 		String name;
 		Set< NodeSet<OWLNamedIndividual> > aux = new HashSet<>();
-		
+
 		Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
 		for (OWLNamedIndividual ind : instances) {
 			for (OWLObjectProperty owlObjectProperty : op) {
 				aux.add(this.reasoner.getObjectPropertyValues(ind, owlObjectProperty));
-				
-			}	
+
+			}
 		}
-		
+
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
-				
+
 				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
-					
+
 					this.context= new VelocityContext(this.baseContext);
 					name = this.processName(macroModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+name);
-					
+
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
-					
+
 					this.context.put("class",c);
 					this.context.put("classesInstances",macroModel);
 					this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
 					this.context.put("propertyValues", aux);
-					
+
 					if(!macroModel.getOutput().equals("")){
 						this.fr = new FileWriter(this.outputFolder+name,true);
 					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
 						template.merge(context, fr);
-						fr.close();		
+						fr.close();
 					}
-				 	
-					
+
+
 					}else {
 						flag=false;
 					}
@@ -392,19 +398,19 @@ public class GenerateProject {
 			}else{
 				log.warn("output for class is empty and the program will not generate any output file to class");
 				flag=false;
-				
+
 			}
-		
-		
-		
+
+
+
 		return flag;
 	}
-	
-	
+
+
 	/**
 	 * Control of velocity macro existance.
-	 * @param path to file 
-	 * @return True if the file exists, False if isn't exist 
+	 * @param path to file
+	 * @return True if the file exists, False if isn't exist
 	 */
 	private boolean fileControl(String path)  {
 		return (new File(path).exists());
@@ -417,7 +423,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void initVelocity() throws Exception{
-		
+
 		vel_eng = new VelocityEngine();
 	    props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 		//props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.LogChute");
@@ -428,7 +434,7 @@ public class GenerateProject {
 	    this.baseContext.put("variables", this.variables);
 	    //vel_eng.addProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 	   	vel_eng.init(props);
-	   	
+
 	}
 	/**
 	 * Set path to load velocity templates from specific jar file.
@@ -445,10 +451,10 @@ public class GenerateProject {
 	public void setUrlBasePath(URL urlBasePath) {
 		this.urlBasePath = urlBasePath;
 		 props.put("url.resource.loader.root", this.urlBasePath);
-		
+
 	}
 	/**
-	 * Set path to load velocity macros from local filesystem. 
+	 * Set path to load velocity macros from local filesystem.
 	 * @param localBaseLoaderPath {@link String } path to load velocity templates from local file system.
 	 */
 	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
@@ -463,7 +469,7 @@ public class GenerateProject {
 	public void setOutputFolder(String outputFolder) {
 		this.outputFolder=outputFolder;
 	}
-	
+
 	/**
 	 * control if sources loader path is set
 	 * @return
@@ -484,8 +490,9 @@ public class GenerateProject {
 	 *  <li>Control required variables count </li>
 	 * </ul>
 	 * @return boolean value indicating result of control
+	 * @throws MissingRequiredVariableValueException
 	 */
-	private boolean control() {
+	private boolean control() throws MissingRequiredVariableValueException {
 		boolean flag=false;
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
@@ -493,12 +500,19 @@ public class GenerateProject {
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
-						Set<Variable> aux =this.variables.stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet());
-						
-						if(  this.mainModel.getRequiredVariables().size() == aux.size()  ){
+						Set<String> requierdVars = mainModel.getArrayVars().stream().filter(h->h.getRequired().equals("true")).map(l->l.getName()).collect(Collectors.toSet());
+
+
+						if(  variables.keySet().containsAll(requierdVars)  ){
 							flag=true;
 						}else {
-							log.fatal("seems some required variables isn't set.");
+							requierdVars.removeAll(variables.keySet());
+							String msg = "Required variables are not set:";
+							for (String var : requierdVars) {
+								msg += var + ", ";
+							}
+							log.fatal(msg);
+							throw new MissingRequiredVariableValueException(msg);
 						}
 					}
 				}else {
@@ -511,14 +525,14 @@ public class GenerateProject {
 			log.fatal("main ontology couldnt be added");
 		}
 		return flag;
-	} 
-	
+	}
+
 	/**
 	 * Process the velocity code given in xml file. The purpose of this method is process velocity code and
-	 * return string value of result of the process. 
-	 * 
+	 * return string value of result of the process.
+	 *
 	 * @param toProcess String to parse to velocity to process
-	 * @param VelocityContext   containig needed references 
+	 * @param VelocityContext   containig needed references
 	 * @return {@link String } value, result of the process
 	 */
 	private String processName(String toProcess,VelocityContext context) {
@@ -533,12 +547,12 @@ public class GenerateProject {
 			SimpleNode sn = rs.parse(sr,"s");
 			rep = new StringResourceRepositoryImpl();
 			StringResourceLoader.setRepository(StringResourceLoader.REPOSITORY_NAME_DEFAULT, rep);
-			
+
 
 			te.setRuntimeServices(rs);
 		    te.setData(sn);
 		    te.initDocument();
-		
+
 			te.merge(context, fw);
 			t=fw.toString();
 			fw.close();
@@ -555,14 +569,25 @@ public class GenerateProject {
 	 */
 	public void setVariable(Variable variable) {
 		if(variable !=null) {
-			Set<Variable> aux =this.mainModel.getArrayVars().stream().filter(q->q.getName().equals(variable.getName())).collect(Collectors.toSet());
+			Set<Variable> aux = this.mainModel.getArrayVars().stream().filter(q->q.getName().equals(variable.getName())).collect(Collectors.toSet());
 			if(aux.size()==1) {
 				this.variables.add(variable);
 			}
 		}
-		
 	}
-	
+
+	public boolean setVariable(String varName, String varValue) {
+		if (varName == null) {
+			return false;
+		}
+		if (varValue == null) {
+			variables.remove(varName);
+			return true;
+		}
+		variables.put(varName, varValue);
+		return true;
+	}
+
 	/**
 	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
 	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
@@ -571,11 +596,11 @@ public class GenerateProject {
 		return this.variables;
 	}
 
-	
+
 	/**
 	 * Load recursivesly (if is allowed) given ontology. If given ontology is null, {@link #getOntologies()}
 	 * returns a empty Set of {@link OWLOntology}
-	 * 
+	 *
 	 * @param ont {@link OWLOntology} to be load
 	 * @param recursive {@link Boolean} value indicating recursive load
 	 */
@@ -589,23 +614,23 @@ public class GenerateProject {
 			boolean consistency = OntologyLoader.checkConsistency(ont);
 			System.out.println("GENERATE PROJECT 590 "+OntologyLoader.checkConsistency(ont));
 			aux=ont.getImportsClosure();
-			
+
 			ontologies2BProcesed.add(ont);
 			if(aux.size()==1)
 				recursive=false;
-			
+
 			if(recursive) {
 				if(consistency) {
 					int y=1;
 						for(;y<=aux.size();y++) {
 							addOntology(aux.iterator().next(), recursive);
-						}	
+						}
 					}
 				}
 		}
-		*/		
+		*/
 	}
 
-	
-	
+
+
 }
