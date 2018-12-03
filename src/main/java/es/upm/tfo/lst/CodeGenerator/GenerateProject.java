@@ -506,7 +506,7 @@ public class GenerateProject {
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
-						Set<String> requierdVars = mainModel.getArrayVars().stream().filter(h->h.getRequired().equals("true")).map(l->l.getName()).collect(Collectors.toSet());
+						Set<String> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
 
 
 						if(  variables.keySet().containsAll(requierdVars)  ){
@@ -570,18 +570,10 @@ public class GenerateProject {
 	}
 
 	/**
-	 * Method to add variable into project.
-	 * @param variable
+	 * Method to add variable into project. Replaces any existing value.
+	 * @param varName the name of the {@link Variable} (as in {@link Variable#getName()})
+	 * @param varValue the run value of the variable, if null, removes variable.
 	 */
-	public void setVariable(Variable variable) {
-		if(variable !=null) {
-			Set<Variable> aux = this.mainModel.getArrayVars().stream().filter(q->q.getName().equals(variable.getName())).collect(Collectors.toSet());
-			if(aux.size()==1) {
-				this.variables.add(variable);
-			}
-		}
-	}
-
 	public boolean setVariable(String varName, String varValue) {
 		if (varName == null) {
 			return false;
@@ -599,7 +591,7 @@ public class GenerateProject {
 	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
 	 */
 	public Set<Variable> getVariablesArray(){
-		return this.variables;
+		return this.mainModel.getArrayVars();
 	}
 
 
@@ -637,6 +629,8 @@ public class GenerateProject {
 		*/
 	}
 
-
+	public String getOutputDir() {
+		return outputFolder;
+	}
 
 }

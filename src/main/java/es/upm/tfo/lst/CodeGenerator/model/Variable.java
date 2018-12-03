@@ -1,43 +1,44 @@
 package es.upm.tfo.lst.CodeGenerator.model;
 /**
  * Class who represent a <variable> item in given XML file
- * 
- * @author Buhid Eduardo 
+ *
+ * @author Buhid Eduardo
  * @version 1
- * 
+ *
  */
 public class Variable {
-	private String name,defaultValue,required;
-	
+	private String name,defaultValue;
+	private boolean required;
+
 	/**
-	 * 
+	 *
 	 * @param {@link String }name name of variable
 	 * @param {@link String } required: True if variable is required, false if variable is optional
 	 * @param {@link String } defaultValue: Conent of variable
 	 */
-	public Variable(String name, String required, String defaultValue) {	
+	public Variable(String name, boolean required, String defaultValue) {
 		this.name = name;
 		this.required = required;
 		this.defaultValue = defaultValue;
 	}
 
 	/**
-	 * 			
-	 * @return {@link String} name of variable 
+	 *
+	 * @return {@link String} name of variable
 	 */
 	public String getName() {
 		return name;
 	}
 	/**
-	 * 
+	 *
 	 * @return {@link String} if variable is required or not
 	 */
-	public String getRequired() {
+	public boolean isRequired() {
 		return this.required;
 	}
 	/**
-	 * 
-	 * @return {@link String} of default value of 
+	 *
+	 * @return {@link String} of default value of
 	 */
 	public String getDefaultValue() {
 		return this.defaultValue;
@@ -60,6 +61,6 @@ public class Variable {
 	}
 
 
-	
-		
+
+
 }

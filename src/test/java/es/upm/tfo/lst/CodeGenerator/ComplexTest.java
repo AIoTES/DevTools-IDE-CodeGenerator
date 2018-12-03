@@ -13,12 +13,12 @@ import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 /**
- * 
+ *
  * This class test working templates, working xml and working ontologies.
- * In this case the program uses a more complex templates, and shows 
+ * In this case the program uses a more complex templates, and shows
  * one if variant to use xml (user can put velocity language to process dinamically the output
- * file name and directory )  
- * 
+ * file name and directory )
+ *
  * @author Buhid Eduardo
  *
  */
@@ -35,8 +35,8 @@ public class ComplexTest {
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
 		parser = new XmlParser();
-		ontologyLoader = new OntologyLoader();	
-	} 
+		ontologyLoader = new OntologyLoader();
+	}
 	@Test
 	public void test1() {
 		 System.out.println("\n------------------------------complex test--------------------------------------\n");
@@ -47,23 +47,23 @@ public class ComplexTest {
 		 }catch (Exception e) {
 			 e.printStackTrace();
 		}
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml/complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontologies/universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
-		
-		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
-		
-		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
-		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
-		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
-		
+
+		this.genPro.setVariable("outputBaseDir","/exampleFolder1");//required
+
+		this.genPro.setVariable( "cardinality", "/exampleFolder4");//optional
+		this.genPro.setVariable( "templateCount", "/exampleFolder5");//optional
+		this.genPro.setVariable( "ontologyCount", "/exampleFolder6");//optional
+
 		this.genPro.setOutputFolder(this.baseOutputPath);
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates/");
-		
+
 		assertTrue(genPro.process());
 	}
-	
+
 }

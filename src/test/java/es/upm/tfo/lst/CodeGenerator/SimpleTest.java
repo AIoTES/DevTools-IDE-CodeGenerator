@@ -50,19 +50,19 @@ public class SimpleTest {
 	private final String basePath="src/test/resources/simple-test/";
 	private final String existentOnlineOnt="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String inexistentOnlineOnt="https://www.protege.stanford.edu/ontologies/pizza/pizza.owl";
-	
-	
+
+
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
 		parser = new XmlParser();
-		ontologyLoader = new OntologyLoader();	
+		ontologyLoader = new OntologyLoader();
 	}
 	//----------------------XML tests-------------------------
 	/**
 	 * Test with xml file with a wrong schema definition
 	 */
-	
+
 	@Test
 	public void testBadSchema() {
 		System.out.println("\n------------------------------bad schema XML --------------------------------------\n");
@@ -70,9 +70,9 @@ public class SimpleTest {
 		this.model=parser.getXmlCoordinatorDataModel();
 		assertNull(this.model);
 	}
-	
+
 	/**
-	 * Test with XML placed in wrong directory 
+	 * Test with XML placed in wrong directory
 	 */
 	@Test
 	public void testInexistentXML() {
@@ -81,9 +81,9 @@ public class SimpleTest {
 		this.model=parser.getXmlCoordinatorDataModel();
 		assertNull(this.model);
 	}
-	
+
 	/**
-	 * Test with xml with correct schema 
+	 * Test with xml with correct schema
 	 */
 	@Test
 	public void testWorkingXML() {
@@ -92,10 +92,10 @@ public class SimpleTest {
 		this.model=parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 	}
-	
-	
+
+
 	//----------------------variables tests-------------------------
-	
+
 	/**
 	 * Method to test when user miss some required variables. The relevant variables to this method is only required
 	 */
@@ -105,22 +105,22 @@ public class SimpleTest {
 		parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model=parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
-	
+
 		//adding variables
 		//genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
 		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
-		this.model.getRequiredVariables().size(); 
-		Set<Variable> aux =this.genPro.getVariablesArray().stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet()); 
+		this.model.getRequiredVariables().size();
+		Set<Variable> aux =this.genPro.getVariablesArray().stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet());
 		//System.out.println();
 		assertFalse(this.model.getRequiredVariables().size()==aux.size()  );
 	}
 	/**
-	 * 
+	 *
 	 * Method to test when user try to add variables undefined in xml file.
 	 * If the variable isn't exist in xml file, the tool don't add it
-	 * 
+	 *
 	 */
 	@Test
 	public void testInexistentVariables() {
@@ -128,7 +128,7 @@ public class SimpleTest {
 		parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model=parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
-	
+
 		//adding variables
 		//genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
 		genPro.setVariable( new Variable("INEXISTENT","true" ,"/exampleFolder"));//inexistent
@@ -136,14 +136,14 @@ public class SimpleTest {
 		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
-		//this.model.getRequiredVariables().stream().forEach(b->System.out.println(b.getName())); 
+		//this.model.getRequiredVariables().stream().forEach(b->System.out.println(b.getName()));
 		Set<Variable> aux =this.genPro.
 										getVariablesArray().
 										stream().
 										filter(h->h.getRequired().equals("true")).
-										collect(Collectors.toSet()); 
+										collect(Collectors.toSet());
 		assertFalse(this.model.getRequiredVariables().size()==aux.size()  );
-		
+
 	}
 
 	/**
@@ -156,8 +156,8 @@ public class SimpleTest {
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model=parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
-	
-	
+
+
 		//adding variables
 		genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder"));//required
 		genPro.setVariable( new Variable("INEXISTENT","true" ,"/exampleFolder"));//inexistent
@@ -165,101 +165,101 @@ public class SimpleTest {
 		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
-		 
+
 		Set<Variable> aux =this.genPro.
 										getVariablesArray().
 										stream().
 										filter(h->h.getRequired().equals("true")).
-										collect(Collectors.toSet()); 
+										collect(Collectors.toSet());
 		assertTrue(this.model.getRequiredVariables().size()==aux.size()  );
-		
+
 	}
-	
+
 	//----------------------otology tests-------------------------
 	/**
 	 * Method to test when try to load a missing ontology file
-	 * 
+	 *
 	 */
 	@Test
 	public void ontologyInconsistemtImports() {
 		 System.out.println("\n------------------------------inconsistent ontology--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/inconsistentOntology/ontologies/universidad.owl");
 		this.genPro.addOntology(this.ontology,true);
-		
+
 		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
 		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
 		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
 		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
-		
+
 		this.genPro.setOutputFolder("src/tearget/simple-test/ontology-test");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
-		
+
 		assertFalse(genPro.process());
 
 	}
 
 	/**
 	 * Method to test when try to load a missing ontology file
-	 * 
+	 *
 	 */
 	@Test
 	public void ontologyFileMissingImports() {
 		 System.out.println("\n------------------------------ontology missing imports--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
-		
+
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/ontologyFileMissingImports/ontologies/universidad.owl");
-		
+
 		assertNull(this.ontology);
 
 	}
 	/**
 	 * Test ontology importing a bad .owl file (edited with notepad and deleted some lines of text)
 	 */
-	
+
 	@Test
 	public void ontologyFileBrokenImports() {
 		 System.out.println("\n------------------------------ontology file broken imports--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/ontBrokenImports/ontologies/universidad.owl");
 		assertNull(this.ontology);
-		
+
 	}
-	
+
 	/**
-	 * Method to test ontology loaded from invalid URL  
+	 * Method to test ontology loaded from invalid URL
 	 */
 	@Test
-	
+
 	public void InexistentOnlineOntology() {
 		 System.out.println("\n------------------------------ontology online inexistent--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.inexistentOnlineOnt);
 		assertNull(this.ontology);
-		
+
 	}
 	/**
-	 * Method to test ontology loaded from valid URL  
+	 * Method to test ontology loaded from valid URL
 	 */
 	@Test
 	public void existentOnlinetOntology() {
 		System.out.println("\n------------------------------ontology online existent--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
@@ -267,25 +267,25 @@ public class SimpleTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.existentOnlineOnt);
 		assertNotNull(this.ontology);
 		//assertNull(this.ontology);
-		
+
 	}
-	
+
 	/**
 	 * Test with existent and working ontology
 	 */
 	@Test
 	public void existentLocalOntology() {
 		 System.out.println("\n------------------------------ontology local existent--------------------------------------\n");
-		 
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/workingOntology/universidad.owl");
-		
+
 		assertNotNull(this.ontology);
-		
+
 	}
-	
+
 	//----------------------templates tests-------------------------
 	/**
 	 * Test templates with code errors located in src/test/simpleTest/templates-test/templatesWithErrors/templates/
@@ -293,12 +293,12 @@ public class SimpleTest {
 	@Test
 	public void templateWithErrors(){
 		System.out.println("\n------------------------------templates with errors --------------------------------------\n");
-				
+
 		try {
 			File f = new File("target/simple-test/templates-Test");
 			if(!f.exists()) f.mkdirs();
 		}catch(Exception a) {
-			
+
 		}
 		this.parser.generateXMLCoordinator(this.basePath+"templates-test/templatesWithErrors/xml/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
@@ -310,14 +310,14 @@ public class SimpleTest {
 		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
 		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
 
-		
+
 		genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/templatesWithErrors/templates/");
 		genPro.setOutputFolder("target/simple-test/templates-Test");
-		
+
 		assertFalse(genPro.process());
-		
+
 	}
-	
+
 	/**
 	 * Method to test working ontologies and working templates.
 	 * Directory from  applied templates: src/test/simpleTest/templates-test/workingTemplates/
@@ -326,14 +326,14 @@ public class SimpleTest {
 	@Test
 	public void completeTest() {
 		System.out.println("\n------------------------------completeTest----------------------------------\n");
-		
+
 		try {
 			File f = new File("target/simplte-test/complete-test");
 			if(!f.exists()) f.mkdirs();
 		}catch(Exception a){
 			System.out.println(a);
 		}
-		
+
 		this.parser.generateXMLCoordinator(this.basePath+"xml-test/workingXML/workingXML.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
@@ -345,18 +345,18 @@ public class SimpleTest {
 		}catch(Exception a){
 			System.out.println(a);
 		}
-		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
-		
-		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
-		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
-		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
-		
+		this.genPro.setVariable( "outputBaseDir","/exampleFolder1");//required
+
+		this.genPro.setVariable( new Variable("cardinality", false,"/exampleFolder4"));//optional
+		this.genPro.setVariable( new Variable("templateCount", false,"/exampleFolder5"));//optional
+		this.genPro.setVariable( new Variable("ontologyCount", false,"/exampleFolder6"));//optional
+
 		this.genPro.setOutputFolder(this.basePath+"completeTest/target/");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
-		
+
 		assertTrue(genPro.process());
 	}
-	
-	
-	
+
+
+
 }
