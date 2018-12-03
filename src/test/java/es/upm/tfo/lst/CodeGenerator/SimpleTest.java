@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.model.Variables;
+import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 /**
@@ -108,11 +108,11 @@ public class SimpleTest {
 	
 		//adding variables
 		//genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
-		genPro.setVariable( new Variables("cardinality", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("templateCount", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
 		this.model.getRequiredVariables().size(); 
-		Set<Variables> aux =this.genPro.getVariablesArray().stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet()); 
+		Set<Variable> aux =this.genPro.getVariablesArray().stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet()); 
 		//System.out.println();
 		assertFalse(this.model.getRequiredVariables().size()==aux.size()  );
 	}
@@ -131,13 +131,13 @@ public class SimpleTest {
 	
 		//adding variables
 		//genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
-		genPro.setVariable( new Variables("INEXISTENT","true" ,"/exampleFolder"));//inexistent
-		genPro.setVariable( new Variables("ANOTHER INEXISTENT","true" ,"/exampleFolder"));//inexistent
-		genPro.setVariable( new Variables("cardinality", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("templateCount", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("INEXISTENT","true" ,"/exampleFolder"));//inexistent
+		genPro.setVariable( new Variable("ANOTHER INEXISTENT","true" ,"/exampleFolder"));//inexistent
+		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
 		//this.model.getRequiredVariables().stream().forEach(b->System.out.println(b.getName())); 
-		Set<Variables> aux =this.genPro.
+		Set<Variable> aux =this.genPro.
 										getVariablesArray().
 										stream().
 										filter(h->h.getRequired().equals("true")).
@@ -159,14 +159,14 @@ public class SimpleTest {
 	
 	
 		//adding variables
-		genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
-		genPro.setVariable( new Variables("INEXISTENT","true" ,"/exampleFolder"));//inexistent
-		genPro.setVariable( new Variables("ANOTHER INEXISTENT","true" ,"/exampleFolder"));//inexistent
-		genPro.setVariable( new Variables("cardinality", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("templateCount", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder"));//required
+		genPro.setVariable( new Variable("INEXISTENT","true" ,"/exampleFolder"));//inexistent
+		genPro.setVariable( new Variable("ANOTHER INEXISTENT","true" ,"/exampleFolder"));//inexistent
+		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
 		 
-		Set<Variables> aux =this.genPro.
+		Set<Variable> aux =this.genPro.
 										getVariablesArray().
 										stream().
 										filter(h->h.getRequired().equals("true")).
@@ -190,10 +190,10 @@ public class SimpleTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/inconsistentOntology/ontologies/universidad.owl");
 		this.genPro.addOntology(this.ontology,true);
 		
-		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
-		this.genPro.setVariable( new Variables("cardinality", "false","/exampleFolder4"));//optional
-		this.genPro.setVariable( new Variables("templateCount", "false","/exampleFolder5"));//optional
-		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
+		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
+		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
+		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
+		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder("src/tearget/simple-test/ontology-test");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");
@@ -305,10 +305,10 @@ public class SimpleTest {
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontology-test/workingOntology/universidad.owl");
 		this.genPro.addOntology(this.ontology,false);
-		genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder"));//required
-		genPro.setVariable( new Variables("cardinality", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("templateCount", "false","/exampleFolder"));//optional
-		genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder"));//required
+		genPro.setVariable( new Variable("cardinality", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("templateCount", "false","/exampleFolder"));//optional
+		genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder"));//optional
 
 		
 		genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/templatesWithErrors/templates/");
@@ -345,11 +345,11 @@ public class SimpleTest {
 		}catch(Exception a){
 			System.out.println(a);
 		}
-		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
+		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
 		
-		this.genPro.setVariable( new Variables("cardinality", "false","/exampleFolder4"));//optional
-		this.genPro.setVariable( new Variables("templateCount", "false","/exampleFolder5"));//optional
-		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
+		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
+		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
+		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder(this.basePath+"completeTest/target/");
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates-test/workingTemplates/");

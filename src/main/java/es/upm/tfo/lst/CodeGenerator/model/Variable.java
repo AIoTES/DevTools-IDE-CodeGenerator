@@ -6,7 +6,7 @@ package es.upm.tfo.lst.CodeGenerator.model;
  * @version 1
  * 
  */
-public class Variables {
+public class Variable {
 	private String name,defaultValue,required;
 	
 	/**
@@ -15,7 +15,7 @@ public class Variables {
 	 * @param {@link String } required: True if variable is required, false if variable is optional
 	 * @param {@link String } defaultValue: Conent of variable
 	 */
-	public Variables(String name, String required, String defaultValue) {	
+	public Variable(String name, String required, String defaultValue) {	
 		this.name = name;
 		this.required = required;
 		this.defaultValue = defaultValue;
@@ -56,7 +56,7 @@ public class Variables {
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
-		return name.equals(((Variables)obj).getName());
+		return name.equals(((Variable)obj).getName());
 	}
 
 

@@ -22,7 +22,7 @@ import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.Author;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.model.Variables;
+import es.upm.tfo.lst.CodeGenerator.model.Variable;
 /**
  * Class who read XML file and parse it to Java code
  * @author Buhid Eduardo
@@ -35,7 +35,7 @@ public class XmlParser {
 	private File xmlFile;
 	private String xmlPath;
 	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor;
-	private Set<Variables> variableList;
+	private Set<Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null; 
 	private Author author;
@@ -99,7 +99,7 @@ public class XmlParser {
 	         
 	         for(int y=0;y<this.nodeVariable.getLength();y++){
 	             	Element b = (Element)this.nodeVariable.item(y);
-	             	this.variableList.add( new Variables(
+	             	this.variableList.add( new Variable(
 	             			b.getElementsByTagName("name").item(0).getTextContent(),
 	             			b.getElementsByTagName("required").item(0).getTextContent(),
 	             			b.getElementsByTagName("default").item(0).getTextContent()));

@@ -34,7 +34,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.model.Variables;
+import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 /**
@@ -45,7 +45,7 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
  *  To develop templates, user need some information to data disponibility into velocity context.
  *  The developer have access to ontology into velocity macro from the next keys
  *  <ul>
- *  <li>{@link Set}<{@link Variables}> under key variables: to access to all variables given in XML file  </li>
+ *  <li>{@link Set}<{@link Variable}> under key variables: to access to all variables given in XML file  </li>
  *  <li>{@link OWLOntology} under key ontology: to accecs to the current processing ontology</li>
  *  <li>{@link OWLClass } under key class: to acces to current processing class</li>
  *  <li>{@link Set}<{@link OWLNamedIndividual} under key instances: to acces to all of instances to processing class></li>
@@ -65,7 +65,7 @@ public class GenerateProject {
 	private Template template;
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner;
-	private Set<Variables> variables;
+	private Set<Variable> variables;
 	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
 	private URL urlBasePath=null;
 	private Properties props;
@@ -493,7 +493,7 @@ public class GenerateProject {
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
-						Set<Variables> aux =this.variables.stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet());
+						Set<Variable> aux =this.variables.stream().filter(h->h.getRequired().equals("true")).collect(Collectors.toSet());
 						
 						if(  this.mainModel.getRequiredVariables().size() == aux.size()  ){
 							flag=true;
@@ -553,9 +553,9 @@ public class GenerateProject {
 	 * Method to add variable into project.
 	 * @param variable
 	 */
-	public void setVariable(Variables variable) {
+	public void setVariable(Variable variable) {
 		if(variable !=null) {
-			Set<Variables> aux =this.mainModel.getArrayVars().stream().filter(q->q.getName().equals(variable.getName())).collect(Collectors.toSet());
+			Set<Variable> aux =this.mainModel.getArrayVars().stream().filter(q->q.getName().equals(variable.getName())).collect(Collectors.toSet());
 			if(aux.size()==1) {
 				this.variables.add(variable);
 			}
@@ -564,10 +564,10 @@ public class GenerateProject {
 	}
 	
 	/**
-	 * Method to return {@link Set}<{@link Variables}> of all variables given in xml file
-	 * @return {@link set}<{@link Variables}> of {@link  Variables} loaded from user
+	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
+	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
 	 */
-	public Set<Variables> getVariablesArray(){
+	public Set<Variable> getVariablesArray(){
 		return this.variables;
 	}
 

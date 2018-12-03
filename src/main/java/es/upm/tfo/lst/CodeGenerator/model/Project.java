@@ -23,7 +23,7 @@ public class Project {
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
 	
-	private Set<Variables> variables;
+	private Set<Variable> variables;
 
 	
 	public Project() {

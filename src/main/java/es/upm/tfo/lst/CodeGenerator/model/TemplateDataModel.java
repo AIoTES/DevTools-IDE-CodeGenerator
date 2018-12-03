@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class TemplateDataModel {
 		private String name,version,description;
 		private Author author;
-		private Set<Variables> arrayVars;
+		private Set<Variable> arrayVars;
 		private List <MacroModel> macroList;
 		public String getName() {
 			return name;
@@ -126,32 +126,32 @@ public class TemplateDataModel {
 		/**
 		 * If in XML file exists two or more variables with same name (optional or required), the program 
 		 * automatically dont add it 
-		 * @return {@link Set} of {@link Variables} containing all variables given in XML file 
+		 * @return {@link Set} of {@link Variable} containing all variables given in XML file 
 		 */
-		public Set<Variables> getArrayVars() {
+		public Set<Variable> getArrayVars() {
 			return this.arrayVars;
 		}
 		
 		/**
 		 * 
-		 * @return {@link Set} <{@link Variables}> of variables setted as required from XML file
+		 * @return {@link Set} <{@link Variable}> of variables setted as required from XML file
 		 */
-		public Set<Variables> getRequiredVariables(){
+		public Set<Variable> getRequiredVariables(){
 			return this.arrayVars.stream().filter(t->t.getRequired().equals("true")).collect(Collectors.toSet());	
 		}
 		/**
 		 * 
-		 * @return {@link Set} <{@link Variables}> of variables setted as optional from XML file
+		 * @return {@link Set} <{@link Variable}> of variables setted as optional from XML file
 		 */
-		public Set<Variables> getOptionalVariables(){
+		public Set<Variable> getOptionalVariables(){
 			return this.arrayVars.stream().filter(t->t.getRequired().equals("false")).collect(Collectors.toSet());	
 		}
 	
 		/**
 		 * 
-		 * @param vars {@link Set} <{@link Variables}> of all variables given in XML file
+		 * @param vars {@link Set} <{@link Variable}> of all variables given in XML file
 		 */
-		public void setVars(Set<Variables> vars) {
+		public void setVars(Set<Variable> vars) {
 			this.arrayVars = vars;
 		}
 

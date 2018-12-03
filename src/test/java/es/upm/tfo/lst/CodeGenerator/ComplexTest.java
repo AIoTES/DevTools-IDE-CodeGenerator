@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.model.Variables;
+import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 /**
@@ -54,11 +54,11 @@ public class ComplexTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.basePath+"ontologies/universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
 		
-		this.genPro.setVariable( new Variables("outputBaseDir","true" ,"/exampleFolder1"));//required
+		this.genPro.setVariable( new Variable("outputBaseDir","true" ,"/exampleFolder1"));//required
 		
-		this.genPro.setVariable( new Variables("cardinality", "false","/exampleFolder4"));//optional
-		this.genPro.setVariable( new Variables("templateCount", "false","/exampleFolder5"));//optional
-		this.genPro.setVariable( new Variables("ontologyCount", "false","/exampleFolder6"));//optional
+		this.genPro.setVariable( new Variable("cardinality", "false","/exampleFolder4"));//optional
+		this.genPro.setVariable( new Variable("templateCount", "false","/exampleFolder5"));//optional
+		this.genPro.setVariable( new Variable("ontologyCount", "false","/exampleFolder6"));//optional
 		
 		this.genPro.setOutputFolder(this.baseOutputPath);
 		this.genPro.setLocalBaseLoaderPath(this.basePath+"templates/");
