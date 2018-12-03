@@ -82,15 +82,17 @@ public class GenerateProject {
 	 * @param p {@link Project} object who give the list of ontologies to be process.
 	 * @param model {@link TemplateDataModel} object builded from XML given file.
 	 */
-
 	public GenerateProject(TemplateDataModel model) {
+		this(model,defaultVelocityProperties());
+	}
+	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
 
 
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
-		this.props = new Properties();
+		this.props = velocityProperties;
 		this.variables= new HashMap<String,String>();
-		// add all default variables in the model.
+		// TODO add all default variables in the model.
 
 
 	}
@@ -416,6 +418,17 @@ public class GenerateProject {
 		return (new File(path).exists());
 	}
 
+
+	private static Properties defaultVelocityProperties() {
+		Properties props = new Properties();
+		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+	    //props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.LogChute");
+	    //props.setProperty("runtime.log.logsystem.class", NullLogChute.class.getName());
+	    //props.setProperty("runtime.log.logsystem.log4j.logger","velocity");
+	    //props.setProperty("runtime.log","/target/loggVelocity.log");
+		return props;
+	}
+
 	/**
 	 * Initialize VelocityEngine and base context who hold base data to use in all contexts.
 	 * In this method is initialized the base context who have all data wich is needed for all macros
@@ -423,16 +436,9 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void initVelocity() throws Exception{
-
 		vel_eng = new VelocityEngine();
-	    props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
-		//props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.LogChute");
-	    //props.setProperty("runtime.log.logsystem.class", NullLogChute.class.getName());
-	    //props.setProperty("runtime.log.logsystem.log4j.logger","velocity");
-	    //props.setProperty("runtime.log","/target/loggVelocity.log");
 	    this.baseContext = new VelocityContext();
 	    this.baseContext.put("variables", this.variables);
-	    //vel_eng.addProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 	   	vel_eng.init(props);
 
 	}
