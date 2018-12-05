@@ -196,9 +196,10 @@ public class GenerateProject {
 		String name="";
 
 		this.baseContext.put("ontology", ontology);
-
+		//this.context= new VelocityContext(this.baseContext);
 
 		if(!ontologyModelArray.isEmpty()) {
+			//this.context= new VelocityContext(this.baseContext);
 			for (MacroModel ontologyModel : ontologyModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+ontologyModel.getTemplateName())) {
 					//read xml output tag and parse to velocity
@@ -257,6 +258,7 @@ public class GenerateProject {
 		String directoryName="";
 		List<MacroModel> classModelArray = this.mainModel.getClassMacro();
 		if(!classModelArray.isEmpty()) {
+			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
 				c.getAnnotationPropertiesInSignature();
 				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
@@ -284,9 +286,9 @@ public class GenerateProject {
 					log.fatal("inexistent template: "+macroModel.getTemplateName());
 					flag=false;
 				}
-		}
+		   }
 		}else{
-			log.warn("not exist macro for classes");
+			
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
 				if(this.processInstances(cls,ontology)==false ) {
 					flag=false;
@@ -336,7 +338,7 @@ public class GenerateProject {
 				}
 			}
 		}else{
-			log.warn("output for instances is empty and the program will not generate any output file to instances");
+			//log.warn("output for instances is empty and the program will not generate any output file to instances");
 			state = this.processObjectProperties(c,instances,ontology);
 
 		}
@@ -398,7 +400,7 @@ public class GenerateProject {
 					}
 			  }
 			}else{
-				log.warn("output for class is empty and the program will not generate any output file to class");
+				//log.warn("output for class is empty and the program will not generate any output file to class");
 				flag=false;
 
 			}
@@ -573,6 +575,7 @@ public class GenerateProject {
 	 * Method to add variable into project. Replaces any existing value.
 	 * @param varName the name of the {@link Variable} (as in {@link Variable#getName()})
 	 * @param varValue the run value of the variable, if null, removes variable.
+	 * @return boolean
 	 */
 	public boolean setVariable(String varName, String varValue) {
 		if (varName == null) {
@@ -585,15 +588,22 @@ public class GenerateProject {
 		variables.put(varName, varValue);
 		return true;
 	}
-
 	/**
 	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
 	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
 	 */
+	/*
 	public Set<Variable> getVariablesArray(){
 		return this.mainModel.getArrayVars();
 	}
-
+	*/
+	/**
+	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
+	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
+	 */
+	public Map<String, String> getVariablesArray(){
+		return this.variables;
+	}
 
 	/**
 	 * Load recursivesly (if is allowed) given ontology. If given ontology is null, {@link #getOntologies()}

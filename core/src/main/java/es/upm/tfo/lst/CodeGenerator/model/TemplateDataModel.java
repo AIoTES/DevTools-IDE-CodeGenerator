@@ -168,17 +168,9 @@ public class TemplateDataModel {
 	 * @return Null if given macro not exist
 	 */
 		private List<MacroModel> getMacro(String type) {
-			//List<MacroModel> aux;
+		
 			return this.macroList.stream().filter(t->t.getTemplateFor().equals(type)).collect(Collectors.toList());
-			/*
-			for(MacroModel m : this.macroList) {
-				if(m.getTemplateFor().compareTo(type)==0) {
-					aux.add(m);
-				}
-
-			}
-			return aux;
-			*/
+		
 
 		}
 

@@ -57,7 +57,7 @@ public class Variable {
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
-		return name.equals(((Variable)obj).getName());
+		return name.equals(this.getName());
 	}
 
 

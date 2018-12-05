@@ -1,4 +1,0 @@
-
-ontologia: $ontology.getOntologyID().getOntologyIRI().get().getSh
-clase: $$$$class
-
