@@ -68,7 +68,7 @@ public class GenerateProject {
 	private Template template;
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner;
-	private Map<String, String> variables;
+	private Map<String, Variable> variables;
 	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
 	private URL urlBasePath=null;
 	private Properties props;
@@ -91,7 +91,7 @@ public class GenerateProject {
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
 		this.props = velocityProperties;
-		this.variables= new HashMap<String,String>();
+		this.variables= new HashMap<String,Variable>();
 		// TODO add all default variables in the model.
 
 
@@ -288,7 +288,7 @@ public class GenerateProject {
 				}
 		   }
 		}else{
-			
+
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
 				if(this.processInstances(cls,ontology)==false ) {
 					flag=false;
@@ -581,11 +581,7 @@ public class GenerateProject {
 		if (varName == null) {
 			return false;
 		}
-		if (varValue == null) {
-			variables.remove(varName);
-			return true;
-		}
-		variables.put(varName, varValue);
+		variables.get(varName).setValue(varValue);
 		return true;
 	}
 	/**
@@ -601,7 +597,7 @@ public class GenerateProject {
 	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
 	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
 	 */
-	public Map<String, String> getVariablesArray(){
+	public Map<String, Variable> getVariablesArray(){
 		return this.variables;
 	}
 

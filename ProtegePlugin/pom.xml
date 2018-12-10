@@ -15,11 +15,16 @@
   </properties>
 
   <dependencies>
-  
-  <dependency>
+
+  		<dependency>
 			<groupId>edu.stanford.protege</groupId>
             <artifactId>protege-editor-owl</artifactId>
 			<version>5.0.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>es.upm.tfo.lst</groupId>
+        	<artifactId>CodeGenerator</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
         </dependency>
   </dependencies>
   	<build>
@@ -42,7 +47,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-            
+
             <plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -58,10 +63,11 @@
 							org.protege.editor.owl.*;version="5.0.0", <!-- equivalent to [5.0.0,infinity) -->
 							*
 						</Import-Package>
+						<Embed-Dependency>CodeGenerator</Embed-Dependency>
 					</instructions>
 				</configuration>
             </plugin>
-            
+
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.9</version>

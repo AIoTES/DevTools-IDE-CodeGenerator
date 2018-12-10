@@ -9,6 +9,7 @@ package es.upm.tfo.lst.CodeGenerator.model;
 public class Variable {
 	private String name,defaultValue;
 	private boolean required;
+	private String value;
 
 	/**
 	 *
@@ -20,6 +21,7 @@ public class Variable {
 		this.name = name;
 		this.required = required;
 		this.defaultValue = defaultValue;
+		this.value = null;
 	}
 
 	/**
@@ -42,6 +44,17 @@ public class Variable {
 	 */
 	public String getDefaultValue() {
 		return this.defaultValue;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValue() {
+		if (value == null && defaultValue != null) {
+			return defaultValue;
+		}
+		return value;
 	}
 
 	@Override
