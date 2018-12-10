@@ -1,4 +1,4 @@
-package es.upm.tfo.lst.ProtegePlugin;
+package es.upm.tfo.lst.codegenerator.plugin.protege;
 
 import java.awt.event.ActionEvent;
 

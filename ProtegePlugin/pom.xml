@@ -20,6 +20,7 @@
 			<groupId>edu.stanford.protege</groupId>
             <artifactId>protege-editor-owl</artifactId>
 			<version>5.0.0</version>
+			<scope>provided</scope>
         </dependency>
         <dependency>
         	<groupId>es.upm.tfo.lst</groupId>
@@ -58,12 +59,14 @@
 						<Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
 						<Bundle-ClassPath>.</Bundle-ClassPath>
 						<Bundle-SymbolicName>${project.artifactId};singleton:=true</Bundle-SymbolicName>
-						<Bundle-Vendor>The Protege Development Team</Bundle-Vendor>
+						<Bundle-Vendor>LifeSupporting Technologies, Technical University of Madrid</Bundle-Vendor>
 						<Import-Package>
 							org.protege.editor.owl.*;version="5.0.0", <!-- equivalent to [5.0.0,infinity) -->
-							*
+                            *
 						</Import-Package>
-						<Embed-Dependency>CodeGenerator</Embed-Dependency>
+						<Export-Package>es.upm.tfo.lst.codegenerator.plugin.protege</Export-Package>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
 					</instructions>
 				</configuration>
             </plugin>

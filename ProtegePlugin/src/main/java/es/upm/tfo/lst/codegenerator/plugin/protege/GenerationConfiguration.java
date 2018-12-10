@@ -1,4 +1,4 @@
-package es.upm.tfo.lst.ProtegePlugin;
+package es.upm.tfo.lst.codegenerator.plugin.protege;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -8,12 +8,14 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import es.upm.tfo.lst.ProtegePlugin.models.TableController;
+import es.upm.tfo.lst.CodeGenerator.GenerateProject;
+import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
+import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
+import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
-import javax.swing.SpringLayout;
 import javax.swing.JTable;
 import java.awt.Color;
 import javax.swing.JTextField;
@@ -33,6 +35,10 @@ public class GenerationConfiguration extends JFrame {
 	private JTable variableTable;
 	private JTextField sourceTextField;
 	private JTextField outputTextfield;
+	private TemplateDataModel mainModel;
+	private  XmlParser parser;
+	private CodeGenerationVariableTable generateTable;
+	private GenerateProject proj;
 
 	/**
 	 * Create the frame.
@@ -47,9 +53,27 @@ public class GenerationConfiguration extends JFrame {
 		setContentPane(contentPane);
 
 		variableTable = new JTable();
-		variableTable.setModel(new TableController());
+		//receive a project
+		proj=new GenerateProject();
+		generateTable = new CodeGenerationVariableTable(proj);
+		
+		//variableTable.setModel(generateTable);
 
 		sourceTextField = new JTextField();
+		sourceTextField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(e.getActionCommand().equals(ActionEvent.ACTION_PERFORMED)) {
+					parser = new XmlParser();
+					parser.generateXMLCoordinator(sourceTextField.getText().toString());
+					mainModel = parser.getXmlCoordinatorDataModel();
+					generateTable.initProject(mainModel);	
+				}
+				
+				
+			}
+		});
+		
+		variableTable.setModel(generateTable);
 		sourceTextField.setColumns(10);
 
 		outputTextfield = new JTextField();

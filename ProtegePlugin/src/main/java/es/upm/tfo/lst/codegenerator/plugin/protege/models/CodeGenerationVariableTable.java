@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package es.upm.tfo.lst.ProtegePlugin.models;
+package es.upm.tfo.lst.codegenerator.plugin.protege.models;
 
 import java.util.Map;
 
@@ -21,6 +21,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
+import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
 
 /**
@@ -32,9 +33,10 @@ public class CodeGenerationVariableTable implements TableModel {
 	private GenerateProject project;
 
 	static private String  COLS [] = {"Name","Desciption", "Required","Value"};
-	/**
-	 *
-	 */
+/**
+ * 
+ * @param proj {@link GenerateProject}
+ */
 	public CodeGenerationVariableTable(GenerateProject proj) {
 		project = proj;
 	}
@@ -115,6 +117,11 @@ public class CodeGenerationVariableTable implements TableModel {
 	public void removeTableModelListener(TableModelListener l) {
 		// No background changes
 
+	}
+	
+	public void initProject(TemplateDataModel model) {
+		this.project = new GenerateProject(model);
+		
 	}
 
 }
