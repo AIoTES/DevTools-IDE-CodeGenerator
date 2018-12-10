@@ -6,23 +6,29 @@ import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 
 public class DeployXmlMenu extends ProtegeOWLAction {
 
+	private GenerationConfiguration sxf;
+
 	@Override
 	public void initialise() throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() throws Exception {
-		// TODO Auto-generated method stub
-		
+		sxf.dispose();
+		sxf = null;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		SetXmlFile sxf = new SetXmlFile();
-		sxf.main();
-		
+		try {
+			sxf = new GenerationConfiguration();
+			sxf.setVisible(true);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+
 	}
 
 }
