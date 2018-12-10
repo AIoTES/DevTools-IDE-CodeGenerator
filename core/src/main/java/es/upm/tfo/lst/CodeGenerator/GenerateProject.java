@@ -92,9 +92,12 @@ public class GenerateProject {
 		this.reasonerFactory = new JFactFactory();
 		this.props = velocityProperties;
 		this.variables= new HashMap<String,Variable>();
-		// TODO add all default variables in the model.
-
-
+		
+	}
+	public GenerateProject() {
+		this.reasonerFactory = new JFactFactory();
+		this.variables= new HashMap<String,Variable>();
+		
 	}
 
 	/**
@@ -645,5 +648,20 @@ public class GenerateProject {
 	public String getOutputDir() {
 		return outputFolder;
 	}
+	
+	public Properties getProps() {
+		return props;
+	}
+	public void setProps(Properties props) {
+		this.props = props;
+	}
+	public TemplateDataModel getMainModel() {
+		return mainModel;
+	}
+	public void setMainModel(TemplateDataModel mainModel) {
+		this.mainModel = mainModel;
+	}
+	
+
 
 }
