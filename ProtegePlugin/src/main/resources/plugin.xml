@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+	<!-- Menu and menu items -->
+	
+	<extension id="toolmenu1" point="org.protege.editor.core.application.EditorKitMenuAction">
+		<name value="GenerateCode Tool"/>
+		<path value="org.protege.editor.owl.menu.tools/SlotG-A"/>
+		<toolTip value="This example menu item appears in the Tools menu"/>
+		<class value="es.upm.tfo.lst.ProtegePlugin.DeployXmlMenu"/>
+		<editorKitId value="any"/>
+	</extension>
+
+    
+</plugin>
