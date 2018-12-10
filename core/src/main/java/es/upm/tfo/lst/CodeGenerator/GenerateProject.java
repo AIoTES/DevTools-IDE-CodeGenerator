@@ -579,8 +579,15 @@ public class GenerateProject {
 	 */
 	public boolean setVariable(String varName, String varValue) {
 		if (varName == null) {
+			log.warn("Reference to null variable.");
 			return false;
 		}
+
+		if (variables.get(varName) == null) {
+			log.warn("Undeclared variable: "+ varName + ", adding variable.");
+			variables.put(varName, new Variable(varName, false, varValue));
+		}
+
 		variables.get(varName).setValue(varValue);
 		return true;
 	}
