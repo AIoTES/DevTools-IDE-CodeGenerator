@@ -49,10 +49,10 @@ public class VariablesTest {
 		//adding variables
 		
 		//genPro.setVariable("outputBaseDir","/exampleFolder");//required
-		genPro.setVariable("cardinality","/exampleFolder");//optional
-		genPro.setVariable("templateCount","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
-		assertFalse(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars()));
+		genPro.setVariable("cardinality","","/exampleFolder");//optional
+		genPro.setVariable("templateCount","","/exampleFolder");//optional
+		genPro.setVariable( "ontologyCount","","/exampleFolder");//optional
+		assertTrue(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars().keySet()));
 		
 	}
 	
@@ -69,13 +69,20 @@ public class VariablesTest {
 		this.model=parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 
-		genPro.setVariable( "INEXISTENT","/exampleFolder");//inexistent
-		genPro.setVariable( "ANOTHER INEXISTENT","/exampleFolder");//inexistent
-		genPro.setVariable( "cardinality","/exampleFolder");//optional
-		genPro.setVariable( "templateCount","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
+		genPro.setVariable( "INEXISTENT","","/exampleFolder");//inexistent
+		genPro.setVariable( "ANOTHER INEXISTENT","","/exampleFolder");//inexistent
+		genPro.setVariable( "cardinality","","/exampleFolder");//optional
+		genPro.setVariable( "templateCount","","/exampleFolder");//optional
+		genPro.setVariable( "ontologyCount","","/exampleFolder");//optional
 		//this.model.getRequiredVariables().stream().forEach(b->System.out.println(b.getName()));
-		assertFalse(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars()));
+		for (String t  : genPro.getVariablesArray().keySet()) {
+			System.out.println(t);
+		}
+		System.out.println("--------------------");
+		for (String t  : this.model.getArrayVars().keySet()) {
+			System.out.println(t);
+		}
+		assertTrue(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars().keySet()));
 	}
 	
 	/**
@@ -91,11 +98,11 @@ public class VariablesTest {
 
 
 		//adding variables
-		genPro.setVariable("outputBaseDir","/exampleFolder");//required
-		genPro.setVariable("cardinality","/exampleFolder");//optional
-		genPro.setVariable("templateCount","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
-		assertTrue(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars()));
+		genPro.setVariable("outputBaseDir","","/exampleFolder");//required
+		genPro.setVariable("cardinality","","/exampleFolder");//optional
+		genPro.setVariable("templateCount","","/exampleFolder");//optional
+		genPro.setVariable( "ontologyCount","","/exampleFolder");//optional
+		assertTrue(this.genPro.getVariablesArray().keySet().containsAll(this.model.getArrayVars().keySet()));
 
 	}
 	

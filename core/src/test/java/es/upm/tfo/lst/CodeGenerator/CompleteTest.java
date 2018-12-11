@@ -40,11 +40,11 @@ public class CompleteTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
 
-		this.genPro.setVariable("outputBaseDir","/exampleFolder1");//required
+		this.genPro.setVariable("outputBaseDir","","/exampleFolder1");//required
 
-		this.genPro.setVariable( "cardinality", "/exampleFolder4");//optional
-		this.genPro.setVariable( "templateCount", "/exampleFolder5");//optional
-		this.genPro.setVariable( "ontologyCount", "/exampleFolder6");//optional
+		this.genPro.setVariable( "cardinality","", "/exampleFolder4");//optional
+		this.genPro.setVariable( "templateCount","", "/exampleFolder5");//optional
+		this.genPro.setVariable( "ontologyCount","", "/exampleFolder6");//optional
 		
 		try{
 			File f = new File("target/completeTest/");

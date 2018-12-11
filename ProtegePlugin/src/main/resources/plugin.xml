@@ -9,7 +9,7 @@
 		<name value="GenerateCode Tool"/>
 		<path value="org.protege.editor.owl.menu.tools/SlotG-A"/>
 		<toolTip value="This example menu item appears in the Tools menu"/>
-		<class value="es.upm.tfo.lst.ProtegePlugin.DeployXmlMenu"/>
+		<class value="es.upm.tfo.lst.codegenerator.plugin.protege.DeployXmlMenu"/>
 		<editorKitId value="any"/>
 	</extension>
 

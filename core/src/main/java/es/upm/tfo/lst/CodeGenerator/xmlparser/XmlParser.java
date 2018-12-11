@@ -3,9 +3,9 @@ package es.upm.tfo.lst.CodeGenerator.xmlparser;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,7 +16,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.Author;
@@ -35,13 +34,13 @@ public class XmlParser {
 	private File xmlFile;
 	private String xmlPath;
 	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor;
-	private Set<Variable> variableList;
+	private Map<String,Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
 	private Author author;
 
 	public XmlParser() {
-			this.variableList = new HashSet<>();
+			this.variableList = new HashMap<>();
 			this.macroList = new ArrayList<>();
 
 		}
@@ -99,7 +98,7 @@ public class XmlParser {
 
 	         for(int y=0;y<this.nodeVariable.getLength();y++){
 	             	Element b = (Element)this.nodeVariable.item(y);
-	             	this.variableList.add( new Variable(
+	             	this.variableList.put( b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
 	             			b.getElementsByTagName("name").item(0).getTextContent(),
 	             			b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
 	             			b.getElementsByTagName("default").item(0).getTextContent()));
@@ -118,7 +117,9 @@ public class XmlParser {
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);
+	         //mdifi definition of array pf variables
 	         this.javaXMLModel.setVars(this.variableList);
+	         
 	         this.javaXMLModel.setAuthor(this.author);
 
 

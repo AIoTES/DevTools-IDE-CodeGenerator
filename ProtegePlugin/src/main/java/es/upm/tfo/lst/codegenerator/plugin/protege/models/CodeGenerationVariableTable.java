@@ -32,7 +32,7 @@ public class CodeGenerationVariableTable implements TableModel {
 
 	private GenerateProject project;
 
-	static private String  COLS [] = {"Name","Desciption", "Required","Value"};
+	static public String  COLS [] = {"Name","Desciption", "Required","Value"};
 /**
  * 
  * @param proj {@link GenerateProject}
@@ -46,7 +46,8 @@ public class CodeGenerationVariableTable implements TableModel {
 	 */
 	@Override
 	public int getRowCount() {
-		return project.getVariablesArray().size();
+		System.out.println("row count main model"+ project.getMainModel().getArrayVars().size());
+		return project.getMainModel().getArrayVars().size();
 	}
 
 	/* (non-Javadoc)
@@ -68,8 +69,7 @@ public class CodeGenerationVariableTable implements TableModel {
 		case 0:
 			return varname;
 		case 1:
-			//return vars.get(varname).getDescription();
-			return "";
+			return vars.get(varname).getDescription();
 		case 2:
 			return vars.get(varname).isRequired();
 		case 3:
@@ -103,7 +103,7 @@ public class CodeGenerationVariableTable implements TableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (columnIndex == 3) {
-			project.setVariable(getValueAt(rowIndex, 0).toString(), aValue.toString());
+			project.setVariable(getValueAt(rowIndex, 0).toString(),getValueAt(rowIndex, 1).toString(), aValue.toString());
 		}
 	}
 

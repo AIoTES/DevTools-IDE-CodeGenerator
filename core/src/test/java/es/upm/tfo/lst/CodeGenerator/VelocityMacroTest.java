@@ -65,10 +65,10 @@ public class VelocityMacroTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		this.genPro.addOntology(this.ontology,false);
 		//adding variables
-		genPro.setVariable("outputBaseDir","/exampleFolder");//required
-		genPro.setVariable("cardinality","/exampleFolder");//optional
-		genPro.setVariable("templateCount","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
+		genPro.setVariable("outputBaseDir","","/exampleFolder");//required
+		genPro.setVariable("cardinality","","/exampleFolder");//optional
+		genPro.setVariable("templateCount","","/exampleFolder");//optional
+		genPro.setVariable( "ontologyCount","","/exampleFolder");//optional
 		
 		String out="target/ontology-test";
 		try {

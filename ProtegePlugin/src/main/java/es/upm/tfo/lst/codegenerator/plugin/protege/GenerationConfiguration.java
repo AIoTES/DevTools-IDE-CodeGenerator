@@ -1,4 +1,11 @@
 package es.upm.tfo.lst.codegenerator.plugin.protege;
+/*
+ * 
+ * 
+ * ut
+ * comprobar que la ruta de los ficheros no esten fuera de la ruta de outp
+ * 
+ * */
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -6,7 +13,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -35,9 +47,7 @@ public class GenerationConfiguration extends JFrame {
 	private JTable variableTable;
 	private JTextField sourceTextField;
 	private JTextField outputTextfield;
-	private TemplateDataModel mainModel;
-	private  XmlParser parser;
-	private CodeGenerationVariableTable generateTable;
+	private TableModel generateTable;
 	private GenerateProject proj;
 
 	/**
@@ -48,34 +58,64 @@ public class GenerationConfiguration extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 563, 355);
 		contentPane = new JPanel();
-		//contentPane.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
 		variableTable = new JTable();
 		//receive a project
-		proj=new GenerateProject();
-		generateTable = new CodeGenerationVariableTable(proj);
+		proj=null;
+		generateTable = new AbstractTableModel() {
+			
+			@Override
+			public Object getValueAt(int rowIndex, int columnIndex) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int getRowCount() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getColumnName(int column) {
+
+				return CodeGenerationVariableTable.COLS[column];
+			}
+
+			@Override
+			public int getColumnCount() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+		};
 		
 		//variableTable.setModel(generateTable);
 
 		sourceTextField = new JTextField();
 		sourceTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(e.getActionCommand().equals(ActionEvent.ACTION_PERFORMED)) {
-					parser = new XmlParser();
-					parser.generateXMLCoordinator(sourceTextField.getText().toString());
-					mainModel = parser.getXmlCoordinatorDataModel();
-					generateTable.initProject(mainModel);	
-				}
-				
-				
+				EventQueue.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						System.out.println("entered");
+						XmlParser parser = new XmlParser();
+						parser.generateXMLCoordinator(sourceTextField.getText().toString());
+						TemplateDataModel mainModel = parser.getXmlCoordinatorDataModel();
+						System.out.println("main model "+mainModel.toString());
+						proj = new GenerateProject(mainModel);
+						generateTable = new CodeGenerationVariableTable(proj);
+						variableTable.setModel(generateTable);				
+						variableTable.repaint();
+					}
+				});
 			}
 		});
-		
-		variableTable.setModel(generateTable);
+	
 		sourceTextField.setColumns(10);
-
+		//variableTable.setModel(generateTable);
 		outputTextfield = new JTextField();
 		outputTextfield.setColumns(10);
 

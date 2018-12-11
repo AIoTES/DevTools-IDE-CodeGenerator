@@ -84,16 +84,21 @@ public class GenerateProject {
 	 */
 	public GenerateProject(TemplateDataModel model) {
 		this(model,defaultVelocityProperties());
+		this.mainModel = model;
+		this.variables = this.mainModel.getArrayVars();
 	}
 	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
-
-
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
 		this.props = velocityProperties;
 		this.variables= new HashMap<String,Variable>();
+		this.variables = this.mainModel.getArrayVars();
 		
 	}
+	/**
+	 * if user initialize project without parsing the XmlTemplateModel, user must set it later
+	 * variables array will be empty
+	 */
 	public GenerateProject() {
 		this.reasonerFactory = new JFactFactory();
 		this.variables= new HashMap<String,Variable>();
@@ -508,12 +513,12 @@ public class GenerateProject {
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				if(this.resourcesLoaderCOntrol()) {
+					
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
-						Set<String> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
-
-
+						//Map<String,Variable> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
+						Set<String> requierdVars = mainModel.getRequiredVariables().keySet();
 						if(  variables.keySet().containsAll(requierdVars)  ){
 							flag=true;
 						}else {
@@ -524,6 +529,7 @@ public class GenerateProject {
 							}
 							log.fatal(msg);
 							throw new MissingRequiredVariableValueException(msg);
+							
 						}
 					}
 				}else {
@@ -580,7 +586,7 @@ public class GenerateProject {
 	 * @param varValue the run value of the variable, if null, removes variable.
 	 * @return boolean
 	 */
-	public boolean setVariable(String varName, String varValue) {
+	public boolean setVariable(String varName,String description, String varValue) {
 		if (varName == null) {
 			log.warn("Reference to null variable.");
 			return false;
@@ -588,10 +594,10 @@ public class GenerateProject {
 
 		if (variables.get(varName) == null) {
 			log.warn("Undeclared variable: "+ varName + ", adding variable.");
-			variables.put(varName, new Variable(varName, false, varValue));
+			variables.put(varName, new Variable(varName, description,false, varValue));
 		}
 
-		variables.get(varName).setValue(varValue);
+		//variables.get(varName).setValue(varValue);
 		return true;
 	}
 	/**
@@ -621,28 +627,7 @@ public class GenerateProject {
 	public void addOntology( OWLOntology ont, boolean recursive){
 		ontologies2BProcesed.addAll(ont.getImports());
 		ontologies2BProcesed.add(ont);
-		//System.out.println("GENERATE PROJECT 590 "+this.ontologies2BProcesed.size());
-		/*
-		Set<OWLOntology> aux;
-		if(ont != null) {
-			boolean consistency = OntologyLoader.checkConsistency(ont);
-			System.out.println("GENERATE PROJECT 590 "+OntologyLoader.checkConsistency(ont));
-			aux=ont.getImportsClosure();
-
-			ontologies2BProcesed.add(ont);
-			if(aux.size()==1)
-				recursive=false;
-
-			if(recursive) {
-				if(consistency) {
-					int y=1;
-						for(;y<=aux.size();y++) {
-							addOntology(aux.iterator().next(), recursive);
-						}
-					}
-				}
-		}
-		*/
+	
 	}
 
 	public String getOutputDir() {

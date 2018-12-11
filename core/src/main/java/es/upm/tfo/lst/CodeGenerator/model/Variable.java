@@ -9,7 +9,7 @@ package es.upm.tfo.lst.CodeGenerator.model;
 public class Variable {
 	private String name,defaultValue;
 	private boolean required;
-	private String value;
+	private String value,description;
 
 	/**
 	 *
@@ -17,11 +17,27 @@ public class Variable {
 	 * @param {@link String } required: True if variable is required, false if variable is optional
 	 * @param {@link String } defaultValue: Conent of variable
 	 */
-	public Variable(String name, boolean required, String defaultValue) {
+	public Variable(String name,String description, boolean required, String defaultValue) {
 		this.name = name;
 		this.required = required;
 		this.defaultValue = defaultValue;
 		this.value = null;
+		this.description = description;
+	}
+	public Variable(String name,boolean required, String defaultValue) {
+		this.name = name;
+		this.required = required;
+		this.defaultValue = defaultValue;
+		this.value = null;
+		
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -56,7 +72,9 @@ public class Variable {
 		}
 		return value;
 	}
-
+	
+	
+	
 	@Override
 	public String toString() {
 		return "name "+this.name+" required "+this.required+" defaultValue "+this.defaultValue;

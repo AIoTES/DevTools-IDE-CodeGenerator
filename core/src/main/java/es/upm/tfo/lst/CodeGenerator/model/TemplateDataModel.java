@@ -1,7 +1,8 @@
 package es.upm.tfo.lst.CodeGenerator.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 /**
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class TemplateDataModel {
 		private String name,version,description;
 		private Author author;
-		private Set<Variable> arrayVars;
+		private Map<String,Variable> arrayVars;
 		private List <MacroModel> macroList;
 		public String getName() {
 			return name;
@@ -128,7 +129,7 @@ public class TemplateDataModel {
 		 * automatically dont add it
 		 * @return {@link Set} of {@link Variable} containing all variables given in XML file
 		 */
-		public Set<Variable> getArrayVars() {
+		public Map<String,Variable> getArrayVars() {
 			return this.arrayVars;
 		}
 
@@ -136,22 +137,39 @@ public class TemplateDataModel {
 		 *
 		 * @return {@link Set} <{@link Variable}> of variables setted as required from XML file
 		 */
-		public Set<Variable> getRequiredVariables(){
-			return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
+		public Map<String, Variable> getRequiredVariables(){
+			Set <String> aux =this.arrayVars.keySet();
+			Map <String, Variable> aux_map = new HashMap<String, Variable>();
+			for (String t : aux) {
+				if( !this.arrayVars.get(t).isRequired() ) {
+					aux_map.put(t, this.arrayVars.get(t));
+				}
+			}
+			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
+			return aux_map;
+			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
 		}
 		/**
 		 *
 		 * @return {@link Set} <{@link Variable}> of variables setted as optional from XML file
 		 */
-		public Set<Variable> getOptionalVariables(){
-			return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
+		public Map<String, Variable> getOptionalVariables(){
+			Set <String> aux =this.arrayVars.keySet();
+			Map <String, Variable> aux_map = new HashMap<String, Variable>();
+			for (String t : aux) {
+				if( !this.arrayVars.get(t).isRequired() ) {
+					aux_map.put(t, this.arrayVars.get(t));
+				}
+			}
+			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
+			return aux_map;
 		}
 
 		/**
 		 *
 		 * @param vars {@link Set} <{@link Variable}> of all variables given in XML file
 		 */
-		public void setVars(Set<Variable> vars) {
+		public void setVars(Map<String,Variable> vars) {
 			this.arrayVars = vars;
 		}
 
@@ -162,7 +180,6 @@ public class TemplateDataModel {
 			this.macroList.stream().forEach(r->System.out.println(r.getTemplateFor()));
 		}
 
-
 	 /**
 	 * @param type
 	 * @return Null if given macro not exist
@@ -170,10 +187,8 @@ public class TemplateDataModel {
 		private List<MacroModel> getMacro(String type) {
 		
 			return this.macroList.stream().filter(t->t.getTemplateFor().equals(type)).collect(Collectors.toList());
-		
 
 		}
-
 
 		@Override
 		public String toString() {

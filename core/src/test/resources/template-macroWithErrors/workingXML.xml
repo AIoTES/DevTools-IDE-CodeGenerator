@@ -16,12 +16,14 @@
 				<name>outputBaseDir</name>
 				<default>""</default>
 				<required>true</required>	
+				<description>"variable to set ontology count"</description>					
 			</variable>
 		
 			<variable>
 				<name>cardinality</name>
 				<default>0</default>
 				<required>false</required>
+				<description>"variable to set ontology count"</description>					
 			
 			</variable>
 			
@@ -29,6 +31,7 @@
 				<name>templateCount</name>
 				<default>0</default>
 				<required>false</required>	
+				<description>"variable to set ontology count"</description>					
 			</variable>
 		
 			
@@ -36,6 +39,7 @@
 				<name>ontologyCount</name>
 				<default>0</default>
 				<required>false</required>	
+				<description>"variable to set ontology count"</description>					
 			</variable>
 
 		</variables>

@@ -50,7 +50,7 @@ public class OntologyTest {
 	public void ontologyInconsistemtImports() {
 		 System.out.println("\n------------------------------inconsistent ontology--------------------------------------\n");
 
-		this.parser.generateXMLCoordinator(this.templatesBasePath+"complexXml.xml");
+		this.parser.generateXMLCoordinator(this.templatesBasePath+"simple.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad-inconsistentImports.owl");
@@ -64,7 +64,7 @@ public class OntologyTest {
 	@Test
 	public void ontologyFileMissingImports() {
 		 System.out.println("\n------------------------------ontology missing imports--------------------------------------\n");
-		this.parser.generateXMLCoordinator(this.templatesBasePath+"complexXml.xml");
+		this.parser.generateXMLCoordinator(this.templatesBasePath+"simple.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
@@ -82,7 +82,7 @@ public class OntologyTest {
 	public void InexistentOnlineOntology() {
 		 System.out.println("\n------------------------------ontology online inexistent--------------------------------------\n");
 
-		this.parser.generateXMLCoordinator(this.templatesBasePath+"complexXml.xml");
+		this.parser.generateXMLCoordinator(this.templatesBasePath+"simple.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
@@ -97,7 +97,7 @@ public class OntologyTest {
 	public void existentOnlinetOntology() {
 		System.out.println("\n------------------------------ontology online existent--------------------------------------\n");
 
-		this.parser.generateXMLCoordinator(this.templatesBasePath+"complexXml.xml");
+		this.parser.generateXMLCoordinator(this.templatesBasePath+"simple.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
@@ -112,7 +112,7 @@ public class OntologyTest {
 	public void existentLocalOntology() {
 		 System.out.println("\n------------------------------ontology local existent--------------------------------------\n");
 
-		this.parser.generateXMLCoordinator(this.templatesBasePath+"complexXml.xml");
+		this.parser.generateXMLCoordinator(this.templatesBasePath+"simple.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
