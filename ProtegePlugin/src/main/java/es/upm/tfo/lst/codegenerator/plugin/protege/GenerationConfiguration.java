@@ -91,7 +91,7 @@ public class GenerationConfiguration extends JFrame {
 			}
 		};
 		
-		//variableTable.setModel(generateTable);
+		
 
 		sourceTextField = new JTextField();
 		sourceTextField.addActionListener(new ActionListener() {
@@ -100,11 +100,11 @@ public class GenerationConfiguration extends JFrame {
 					
 					@Override
 					public void run() {
-						System.out.println("entered");
+						
 						XmlParser parser = new XmlParser();
 						parser.generateXMLCoordinator(sourceTextField.getText().toString());
 						TemplateDataModel mainModel = parser.getXmlCoordinatorDataModel();
-						System.out.println("main model "+mainModel.toString());
+						
 						proj = new GenerateProject(mainModel);
 						generateTable = new CodeGenerationVariableTable(proj);
 						variableTable.setModel(generateTable);				

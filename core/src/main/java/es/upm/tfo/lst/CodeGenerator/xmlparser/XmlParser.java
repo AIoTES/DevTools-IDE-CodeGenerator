@@ -98,10 +98,12 @@ public class XmlParser {
 
 	         for(int y=0;y<this.nodeVariable.getLength();y++){
 	             	Element b = (Element)this.nodeVariable.item(y);
-	             	this.variableList.put( b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
-	             			b.getElementsByTagName("name").item(0).getTextContent(),
-	             			b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
-	             			b.getElementsByTagName("default").item(0).getTextContent()));
+	             	this.variableList.put(
+	             			b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
+		             			b.getElementsByTagName("name").item(0).getTextContent(),
+		             			b.getElementsByTagName("description").item(0).getTextContent(),
+		             			b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
+		             			b.getElementsByTagName("default").item(0).getTextContent()));
 
 	         }
 

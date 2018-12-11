@@ -46,7 +46,7 @@ public class CodeGenerationVariableTable implements TableModel {
 	 */
 	@Override
 	public int getRowCount() {
-		System.out.println("row count main model"+ project.getMainModel().getArrayVars().size());
+		
 		return project.getMainModel().getArrayVars().size();
 	}
 
@@ -102,6 +102,7 @@ public class CodeGenerationVariableTable implements TableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		
 		if (columnIndex == 3) {
 			project.setVariable(getValueAt(rowIndex, 0).toString(),getValueAt(rowIndex, 1).toString(), aValue.toString());
 		}
