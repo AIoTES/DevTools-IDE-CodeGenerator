@@ -49,6 +49,7 @@ import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariable
 
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 
 
 
@@ -63,6 +64,7 @@ public class GenerationConfiguration extends JFrame  {
 	private OWLModelManager owlModelManager;
 	private TemplateDataModel mainModel;
 	private XmlParser parser;
+	private boolean checkValue;
 
 	/**
 	 * Create the frame.
@@ -71,12 +73,13 @@ public class GenerationConfiguration extends JFrame  {
 		 this.owlModelManager=owlModelManager;
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 563, 355);
+		setBounds(100, 100, 567, 430);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
 		variableTable = new JTable();
+		
 		//receive a project
 		proj=null;
 		generateTable = new AbstractTableModel() {
@@ -132,13 +135,22 @@ public class GenerationConfiguration extends JFrame  {
 			public void actionPerformed(ActionEvent e) {
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getText().equals("")) {
 					System.out.println(sourceTextField.getEditor().getItem().toString());
-					JOptionPane.showMessageDialog(null, " empty path not allowed");
+					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
 				}else {
-					
-					//OWLModelManager owlModelManager = ;
 					OWLOntology owlOntology = owlModelManager.getActiveOntology();
+					System.out.println(owlOntology.getClassesInSignature().size());
+					proj = new GenerateProject();
+					proj.addOntology(owlOntology, false);
+					proj.setMainModel(mainModel);
+					System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
+					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath());
+					proj.setOutputFolder(outputTextfield.getText());
+					try {
+						proj.process();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
 					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
-					mainModel.printVariables();
 					JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
@@ -151,7 +163,7 @@ public class GenerationConfiguration extends JFrame  {
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				dispose();
 			}
 		});
 
@@ -199,17 +211,15 @@ public class GenerationConfiguration extends JFrame  {
 		        }
 			}
 		});
+		
+		JCheckBox checkRecursive = new JCheckBox("Recursive");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(25)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(sourceTextField, GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
 						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 							.addGap(224)
 							.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
@@ -218,7 +228,13 @@ public class GenerationConfiguration extends JFrame  {
 						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
-							.addComponent(outputTextfield, GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)))
+							.addComponent(outputTextfield, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(checkRecursive)
+								.addComponent(sourceTextField, 0, 353, Short.MAX_VALUE))))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
@@ -232,8 +248,10 @@ public class GenerationConfiguration extends JFrame  {
 						.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 						.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnTemplateFileChooser))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+					.addComponent(checkRecursive)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(outputTextfield, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)

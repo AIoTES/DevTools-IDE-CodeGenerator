@@ -100,6 +100,7 @@ public class GenerateProject {
 	 * variables array will be empty
 	 */
 	public GenerateProject() {
+		this.props=defaultVelocityProperties();
 		this.reasonerFactory = new JFactFactory();
 		this.variables= new HashMap<String,Variable>();
 
