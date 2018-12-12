@@ -44,6 +44,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import es.upm.lst.codegenerator.plugin.protege.interfaces.GenerateCodeCallback;
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
+import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
 
 
@@ -111,7 +112,6 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 						XmlParser parser = new XmlParser();
 						parser.generateXMLCoordinator(sourceTextField.getText().toString());
 						TemplateDataModel mainModel = parser.getXmlCoordinatorDataModel();
-						
 						proj = new GenerateProject(mainModel);
 						generateTable = new CodeGenerationVariableTable(proj);
 						variableTable.setModel(generateTable);				
@@ -132,9 +132,9 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 				if(sourceTextField.getText().equals("") || sourceTextField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, " empty path not allowed");
 				}else {
-					//OWLModelManager owlModelManager = getOWLModelManager();
-					//OWLOntology owlOntology = owlModelManager.getActiveOntology();
-					//System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
+					OWLModelManager owlModelManager = getOWLModelManager();
+					OWLOntology owlOntology = owlModelManager.getActiveOntology();
+					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
 					JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
