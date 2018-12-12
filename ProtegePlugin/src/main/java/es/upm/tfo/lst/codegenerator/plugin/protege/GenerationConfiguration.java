@@ -20,10 +20,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import es.upm.tfo.lst.CodeGenerator.GenerateProject;
-import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
-import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
+
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -41,7 +38,17 @@ import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-public class GenerationConfiguration extends JFrame {
+import org.protege.editor.owl.model.OWLModelManager;
+import org.semanticweb.owlapi.model.OWLOntology;
+
+import es.upm.lst.codegenerator.plugin.protege.interfaces.GenerateCodeCallback;
+import es.upm.tfo.lst.CodeGenerator.GenerateProject;
+import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
+import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
+
+
+
+public class GenerationConfiguration extends JFrame implements GenerateCodeCallback {
 
 	private JPanel contentPane;
 	private JTable variableTable;
@@ -125,6 +132,9 @@ public class GenerationConfiguration extends JFrame {
 				if(sourceTextField.getText().equals("") || sourceTextField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, " empty path not allowed");
 				}else {
+					//OWLModelManager owlModelManager = getOWLModelManager();
+					//OWLOntology owlOntology = owlModelManager.getActiveOntology();
+					//System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
 					JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
@@ -230,5 +240,23 @@ public class GenerationConfiguration extends JFrame {
 					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	@Override
+	public void okClicked() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cancelClicked() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public OWLModelManager getOWLModelManager() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
