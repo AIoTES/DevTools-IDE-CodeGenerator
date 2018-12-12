@@ -8,5 +8,6 @@
     <modules>
         <module>core</module>
         <module>ProtegePlugin</module>
+        <module>RESTPlugin</module>
     </modules>
 </project>
