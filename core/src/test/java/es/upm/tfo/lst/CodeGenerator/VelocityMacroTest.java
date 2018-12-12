@@ -27,9 +27,9 @@ public class VelocityMacroTest {
 	private GenerateProject genPro=null;
 	private OntologyLoader ontologyLoader=null;
 	private OWLOntology ontology;
-	
+
 	//----constants
-	
+
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	private final String templatesBasePath="src/test/resources/";
 	private final String templatesWithErrors="src/test/resources/template-macroWithErrors/";
@@ -42,10 +42,10 @@ public class VelocityMacroTest {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
 		parser = new XmlParser();
 		ontologyLoader = new OntologyLoader();
-	}	
-	
-	
-	
+	}
+
+
+
 	/**
 	 * Test templates with code errors located in src/test/simpleTest/templates-test/templatesWithErrors/templates/
 	 */
@@ -65,11 +65,11 @@ public class VelocityMacroTest {
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		this.genPro.addOntology(this.ontology,false);
 		//adding variables
-		genPro.setVariable("outputBaseDir","","/exampleFolder");//required
-		genPro.setVariable("cardinality","","/exampleFolder");//optional
-		genPro.setVariable("templateCount","","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","","/exampleFolder");//optional
-		
+		genPro.setVariable("outputBaseDir","/exampleFolder");//required
+		genPro.setVariable("cardinality","/exampleFolder");//optional
+		genPro.setVariable("templateCount","/exampleFolder");//optional
+		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
+
 		String out="target/ontology-test";
 		try {
 			File f = new File(out);
@@ -78,12 +78,12 @@ public class VelocityMacroTest {
 				System.out.println(g);
 			}
 		}catch(Exception a){
-			//a.printStackTrace();	
+			//a.printStackTrace();
 		}
-		
+
 		genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
 		genPro.setOutputFolder(out);
-		
+
 		try {
 			assertFalse(genPro.process());
 		}catch(Exception e) {
@@ -93,5 +93,5 @@ public class VelocityMacroTest {
 
 	}
 
-	
+
 }
