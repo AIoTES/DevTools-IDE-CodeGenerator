@@ -129,7 +129,7 @@ public class GenerationConfiguration extends JFrame  {
 		//variableTable.setModel(generateTable);
 		outputTextfield = new JTextField();
 		outputTextfield.setColumns(10);
-
+//   /home/edu/Desktop/CodeGenerator/core/src/test/resource
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -143,7 +143,7 @@ public class GenerationConfiguration extends JFrame  {
 					proj.addOntology(owlOntology, false);
 					proj.setMainModel(mainModel);
 					System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
-					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath());
+					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					proj.setOutputFolder(outputTextfield.getText());
 					try {
 						proj.process();

@@ -492,7 +492,7 @@ public class GenerateProject {
 	 * @return
 	 */
 	private boolean resourcesLoaderCOntrol() {
-		if(this.jarFullPath == null &&  this.urlBasePath==null && this.localBaseLoaderPath == null) {
+		if(this.localBaseLoaderPath == null) {
 			return false;
 		}
 		return true;
@@ -509,12 +509,13 @@ public class GenerateProject {
 	 * @return boolean value indicating result of control
 	 * @throws MissingRequiredVariableValueException
 	 */
-	private boolean control() throws MissingRequiredVariableValueException {
+	private boolean control() {
 		boolean flag=false;
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				if(this.resourcesLoaderCOntrol()) {
-
+					flag=true;
+					/*
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
@@ -529,10 +530,11 @@ public class GenerateProject {
 								msg += var + ", ";
 							}
 							log.fatal(msg);
-							throw new MissingRequiredVariableValueException(msg);
+							
 
 						}
 					}
+					*/
 				}else {
 					log.fatal("Resources folder isn't set, program will stop");
 				}

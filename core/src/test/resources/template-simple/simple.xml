@@ -12,35 +12,35 @@
 			<author-phone>123523</author-phone>
 		</template-author>
 			<variables>
-			<variable>
-				<name>outputBaseDir</name>
-				<default>""</default>
-				<required>false</required>	
-				<description>"variable to set ontology count"</description>					
-			</variable>
-		
-			<variable>
-				<name>cardinality</name>
-				<default>0</default>
-				<required>false</required>
-				<description>"variable to set ontology count"</description>					
-			
-			</variable>
-			
-			<variable>
-				<name>templateCount</name>
-				<default>0</default>
-				<required>false</required>	
-				<description>"variable to set ontology count"</description>					
-			</variable>
-		
-			
-			<variable>
-				<name>ontologyCount</name>
-				<default>0</default>
-				<required>false</required>	
-				<description>"variable to set ontology count"</description>					
-			</variable>
+					<variable>
+						<name>outputBaseDir</name>
+						<default>""</default>
+						<required>false</required>	
+						<description>"variable to set ontology count"</description>					
+					</variable>
+				
+					<variable>
+						<name>cardinality</name>
+						<default>0</default>
+						<required>false</required>
+						<description>"variable to set ontology count"</description>					
+					
+					</variable>
+					
+					<variable>
+						<name>templateCount</name>
+						<default>0</default>
+						<required>false</required>	
+						<description>"variable to set ontology count"</description>					
+					</variable>
+				
+					
+					<variable>
+						<name>ontologyCount</name>
+						<default>0</default>
+						<required>true</required>	
+						<description>"variable to set ontology count"</description>					
+					</variable>
 
 		</variables>
 		<macros>
