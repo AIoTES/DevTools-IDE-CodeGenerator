@@ -46,6 +46,7 @@ import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
+
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 
@@ -61,6 +62,7 @@ public class GenerationConfiguration extends JFrame  {
 	private GenerateProject proj;
 	private OWLModelManager owlModelManager;
 	private TemplateDataModel mainModel;
+	private XmlParser parser;
 
 	/**
 	 * Create the frame.
@@ -110,6 +112,14 @@ public class GenerationConfiguration extends JFrame  {
 		sourceTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				parser = new XmlParser();
+				parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+				mainModel = parser.getXmlCoordinatorDataModel();
+				generateTable= new CodeGenerationVariableTable(mainModel);
+				variableTable.setModel(generateTable);
+				variableTable.repaint();
+				
+				
 			}
 		});
 		sourceTextField.setEditable(true);
@@ -120,7 +130,8 @@ public class GenerationConfiguration extends JFrame  {
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(sourceTextField.getSelectedItem().toString().equals("") || outputTextfield.getText().equals("")) {
+				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getText().equals("")) {
+					System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed");
 				}else {
 					
