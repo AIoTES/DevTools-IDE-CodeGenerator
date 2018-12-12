@@ -625,7 +625,9 @@ public class GenerateProject {
 	 * @param recursive {@link Boolean} value indicating recursive load
 	 */
 	public void addOntology( OWLOntology ont, boolean recursive){
+		if (recursive) {
 		ontologies2BProcesed.addAll(ont.getImports());
+		}
 		ontologies2BProcesed.add(ont);
 	
 	}
