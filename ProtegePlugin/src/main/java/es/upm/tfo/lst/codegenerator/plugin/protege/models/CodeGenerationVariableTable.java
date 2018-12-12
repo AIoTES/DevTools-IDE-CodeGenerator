@@ -30,15 +30,21 @@ import es.upm.tfo.lst.CodeGenerator.model.Variable;
  */
 public class CodeGenerationVariableTable implements TableModel {
 
-	private GenerateProject project;
+	//private GenerateProject project;
+	private TemplateDataModel model;
 
 	static public String  COLS [] = {"Name","Desciption", "Required","Value"};
 /**
  *
  * @param proj {@link GenerateProject}
  */
+	/*
 	public CodeGenerationVariableTable(GenerateProject proj) {
 		project = proj;
+	}
+	*/
+	public CodeGenerationVariableTable(TemplateDataModel model) {
+		this.model=model;
 	}
 
 	/* (non-Javadoc)
@@ -47,7 +53,7 @@ public class CodeGenerationVariableTable implements TableModel {
 	@Override
 	public int getRowCount() {
 
-		return project.getMainModel().getArrayVars().size();
+		return model.getArrayVars().size();
 	}
 
 	/* (non-Javadoc)
@@ -63,7 +69,7 @@ public class CodeGenerationVariableTable implements TableModel {
 	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Map<String, Variable> vars = project.getVariablesArray();
+		Map<String, Variable> vars = model.getArrayVars();
 		String varname = (String) vars.keySet().toArray()[rowIndex];
 		switch (columnIndex) {
 		case 0:
@@ -104,7 +110,8 @@ public class CodeGenerationVariableTable implements TableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 
 		if (columnIndex == 3) {
-			project.setVariable(getValueAt(rowIndex, 0).toString(), aValue.toString());
+			//project.setVariable(getValueAt(rowIndex, 0).toString(), aValue.toString());
+			model.modifyVariable(getValueAt(rowIndex, 0).toString(), aValue.toString());
 		}
 	}
 
@@ -119,10 +126,11 @@ public class CodeGenerationVariableTable implements TableModel {
 		// No background changes
 
 	}
-
+/*
 	public void initProject(TemplateDataModel model) {
 		this.project = new GenerateProject(model);
 
 	}
+	*/
 
 }

@@ -41,27 +41,32 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import es.upm.lst.codegenerator.plugin.protege.interfaces.GenerateCodeCallback;
+
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
+import javax.swing.JSpinner;
+import javax.swing.JComboBox;
 
 
 
-public class GenerationConfiguration extends JFrame implements GenerateCodeCallback {
+public class GenerationConfiguration extends JFrame  {
 
 	private JPanel contentPane;
 	private JTable variableTable;
-	private JTextField sourceTextField;
+	private JComboBox sourceTextField;
 	private JTextField outputTextfield;
 	private TableModel generateTable;
 	private GenerateProject proj;
+	private OWLModelManager owlModelManager;
+	private TemplateDataModel mainModel;
 
 	/**
 	 * Create the frame.
 	 */
-	public GenerationConfiguration() {
+	public GenerationConfiguration(OWLModelManager owlModelManager) {
+		 this.owlModelManager=owlModelManager;
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 563, 355);
@@ -101,27 +106,13 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 		
 		
 
-		sourceTextField = new JTextField();
+		sourceTextField = new JComboBox();
 		sourceTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				EventQueue.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						XmlParser parser = new XmlParser();
-						parser.generateXMLCoordinator(sourceTextField.getText().toString());
-						TemplateDataModel mainModel = parser.getXmlCoordinatorDataModel();
-						proj = new GenerateProject(mainModel);
-						generateTable = new CodeGenerationVariableTable(proj);
-						variableTable.setModel(generateTable);				
-						variableTable.repaint();
-					}
-				});
+				
 			}
 		});
-	
-		sourceTextField.setColumns(10);
+		sourceTextField.setEditable(true);
 		//variableTable.setModel(generateTable);
 		outputTextfield = new JTextField();
 		outputTextfield.setColumns(10);
@@ -129,12 +120,14 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(sourceTextField.getText().equals("") || sourceTextField.getText().equals("")) {
+				if(sourceTextField.getSelectedItem().toString().equals("") || outputTextfield.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, " empty path not allowed");
 				}else {
-					OWLModelManager owlModelManager = getOWLModelManager();
+					
+					//OWLModelManager owlModelManager = ;
 					OWLOntology owlOntology = owlModelManager.getActiveOntology();
 					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
+					mainModel.printVariables();
 					JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
@@ -156,7 +149,7 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 		JButton btnTemplateFileChooser = new JButton("...");
 		btnTemplateFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(sourceTextField.getText());
+				JFileChooser fc = new JFileChooser();
 				fc.setFileFilter(new FileFilter() {
 
 					@Override
@@ -173,11 +166,13 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
-		            sourceTextField.setText(file.getAbsolutePath());
+		            sourceTextField.setSelectedItem(file.getAbsolutePath());
 		        }
 			}
 		});
 
+		
+		
 		JButton btnOutputFileChooser = new JButton("...");
 		btnOutputFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -242,21 +237,10 @@ public class GenerationConfiguration extends JFrame implements GenerateCodeCallb
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	@Override
-	public void okClicked() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cancelClicked() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public OWLModelManager getOWLModelManager() {
-		// TODO Auto-generated method stub
-		return null;
+	private void saveComboContent(String t){
+			if(new File(t).exists()) {
+				//save data
+			}
+			
 	}
 }

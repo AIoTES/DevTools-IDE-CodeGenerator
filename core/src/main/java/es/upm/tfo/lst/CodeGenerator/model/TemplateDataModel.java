@@ -179,7 +179,20 @@ public class TemplateDataModel {
 		public void showMacros() {
 			this.macroList.stream().forEach(r->System.out.println(r.getTemplateFor()));
 		}
+		/**
+		 * mthod to modifify existing variable
+		 */
+		public void modifyVariable(String name, String value) {
+			this.arrayVars.get(name).setValue(value);
+		}
 
+		public  void printVariables() {
+			Set<String> aux= this.arrayVars.keySet();
+			for (String t : aux) {
+				System.out.println(this.arrayVars.get(t).getValue());
+			}
+		}
+		
 	 /**
 	 * @param type
 	 * @return Null if given macro not exist
