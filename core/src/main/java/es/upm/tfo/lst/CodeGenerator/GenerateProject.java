@@ -93,7 +93,7 @@ public class GenerateProject {
 		this.props = velocityProperties;
 		this.variables= new HashMap<String,Variable>();
 		this.variables = this.mainModel.getArrayVars();
-		
+
 	}
 	/**
 	 * if user initialize project without parsing the XmlTemplateModel, user must set it later
@@ -102,7 +102,7 @@ public class GenerateProject {
 	public GenerateProject() {
 		this.reasonerFactory = new JFactFactory();
 		this.variables= new HashMap<String,Variable>();
-		
+
 	}
 
 	/**
@@ -513,7 +513,7 @@ public class GenerateProject {
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				if(this.resourcesLoaderCOntrol()) {
-					
+
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
@@ -529,7 +529,7 @@ public class GenerateProject {
 							}
 							log.fatal(msg);
 							throw new MissingRequiredVariableValueException(msg);
-							
+
 						}
 					}
 				}else {
@@ -586,7 +586,7 @@ public class GenerateProject {
 	 * @param varValue the run value of the variable, if null, removes variable.
 	 * @return boolean
 	 */
-	public boolean setVariable(String varName,String description, String varValue) {
+	public boolean setVariable(String varName, String varValue) {
 		if (varName == null) {
 			log.warn("Reference to null variable.");
 			return false;
@@ -594,7 +594,7 @@ public class GenerateProject {
 
 		if (variables.get(varName) == null) {
 			log.warn("Undeclared variable: "+ varName + ", adding variable.");
-			variables.put(varName, new Variable(varName, description,false, varValue));
+			variables.put(varName, new Variable(varName, "Undeclared variable, added automatically.",false, varValue));
 		}
 
 		//variables.get(varName).setValue(varValue);
@@ -629,13 +629,13 @@ public class GenerateProject {
 		ontologies2BProcesed.addAll(ont.getImports());
 		}
 		ontologies2BProcesed.add(ont);
-	
+
 	}
 
 	public String getOutputDir() {
 		return outputFolder;
 	}
-	
+
 	public Properties getProps() {
 		return props;
 	}
@@ -648,7 +648,7 @@ public class GenerateProject {
 	public void setMainModel(TemplateDataModel mainModel) {
 		this.mainModel = mainModel;
 	}
-	
+
 
 
 }
