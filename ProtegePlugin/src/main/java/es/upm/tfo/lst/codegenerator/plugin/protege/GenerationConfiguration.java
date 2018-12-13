@@ -7,49 +7,39 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
  * 
  * */
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.awt.event.ActionEvent;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
-
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
-
-import javax.swing.JSpinner;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
 
 
 
@@ -65,6 +55,8 @@ public class GenerationConfiguration extends JFrame  {
 	private TemplateDataModel mainModel;
 	private XmlParser parser;
 	private boolean checkValue;
+	private Boolean flag=null;
+    private static SwingWorker<Integer, Void> swingWorker;
 
 	/**
 	 * Create the frame.
@@ -73,7 +65,7 @@ public class GenerationConfiguration extends JFrame  {
 		 this.owlModelManager=owlModelManager;
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 567, 430);
+		setBounds(100, 100, 570, 444);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -129,7 +121,7 @@ public class GenerationConfiguration extends JFrame  {
 		//variableTable.setModel(generateTable);
 		outputTextfield = new JTextField();
 		outputTextfield.setColumns(10);
-//   /home/edu/Desktop/CodeGenerator/core/src/test/resource
+		
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -140,18 +132,17 @@ public class GenerationConfiguration extends JFrame  {
 					OWLOntology owlOntology = owlModelManager.getActiveOntology();
 					System.out.println(owlOntology.getClassesInSignature().size());
 					proj = new GenerateProject();
-					proj.addOntology(owlOntology, false);
+					proj.addOntology(owlOntology, checkValue);
 					proj.setMainModel(mainModel);
 					System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
-					proj.setOutputFolder(outputTextfield.getText());
-					try {
-						proj.process();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(null, e1.getMessage());
-					}
+					proj.setOutputFolder(outputTextfield.getText()+"/");
 					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
-					JOptionPane.showMessageDialog(null, "Generating source code ...");
+					ProgressBar p = new ProgressBar();
+					p.main();
+					asyncProcess();
+					
+					//JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
 		});
@@ -213,32 +204,43 @@ public class GenerationConfiguration extends JFrame  {
 		});
 		
 		JCheckBox checkRecursive = new JCheckBox("Recursive");
+		checkRecursive.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				checkValue=checkRecursive.isSelected();
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(25)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addGap(224)
-							.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
-							.addComponent(outputTextfield, GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(checkRecursive)
-								.addComponent(sourceTextField, 0, 353, Short.MAX_VALUE))))
-					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(25)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(224)
+									.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(sourceTextField, 0, 357, Short.MAX_VALUE)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addGap(29)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addComponent(outputTextfield, GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(110)
+									.addComponent(checkRecursive)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -248,7 +250,7 @@ public class GenerationConfiguration extends JFrame  {
 						.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 						.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnTemplateFileChooser))
-					.addPreferredGap(ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+					.addGap(18)
 					.addComponent(checkRecursive)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE)
@@ -257,7 +259,7 @@ public class GenerationConfiguration extends JFrame  {
 						.addComponent(outputTextfield, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnOutputFileChooser))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
@@ -270,6 +272,36 @@ public class GenerationConfiguration extends JFrame  {
 			if(new File(t).exists()) {
 				//save data
 			}
+	}
+	private void asyncProcess() {
+		 
+		
+		swingWorker = new SwingWorker<Integer, Void>(){
+
+		
+			@Override
+			protected void done() {
+				System.out.println("Done!");
+				
+			}
+
+			@Override
+			protected Integer doInBackground() throws Exception {
+				System.out.println("doInBackground...");
+				try {
+					while(flag==null) {
+						flag=proj.process();	
+					}
+
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+				}
+				return null;
+			}
 			
+		};
+		swingWorker.execute();
+				
+		
 	}
 }

@@ -449,7 +449,7 @@ public class GenerateProject {
 	private void initVelocity() throws Exception{
 		vel_eng = new VelocityEngine();
 	    this.baseContext = new VelocityContext();
-	    this.baseContext.put("variables", this.variables);
+	    this.baseContext.put("variables", this.mainModel.getArrayVars());
 	   	vel_eng.init(props);
 
 	}
@@ -595,9 +595,9 @@ public class GenerateProject {
 			return false;
 		}
 
-		if (variables.get(varName) == null) {
+		if (this.mainModel.getArrayVars().get(varName) == null) {
 			log.warn("Undeclared variable: "+ varName + ", adding variable.");
-			variables.put(varName, new Variable(varName, "Undeclared variable, added automatically.",false, varValue));
+			this.mainModel.getArrayVars().put(varName, new Variable(varName, "Undeclared variable, added automatically.",false, varValue));
 		}
 
 		//variables.get(varName).setValue(varValue);
@@ -613,11 +613,11 @@ public class GenerateProject {
 	}
 	*/
 	/**
-	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file
+	 * Method to return {@link Set}<{@link Variable}> of all variables given in xml file.
 	 * @return {@link set}<{@link Variable}> of {@link  Variable} loaded from user
 	 */
 	public Map<String, Variable> getVariablesArray(){
-		return this.variables;
+		return this.mainModel.getArrayVars();
 	}
 
 	/**
