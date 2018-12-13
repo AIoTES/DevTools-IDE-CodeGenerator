@@ -17,10 +17,6 @@
 
 	<dependencies>
 
-
-
-
-
 		<dependency>
 			<groupId>edu.stanford.protege</groupId>
 			<artifactId>protege-editor-owl</artifactId>

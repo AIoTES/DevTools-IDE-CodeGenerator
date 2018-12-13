@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema
+	xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.example.org/prueba2" 
+	xmlns:ts="http://www.example.org/prueba2">
+
+
+
+<element name="Template">
+    	<complexType>
+    		<sequence >
+    			<element name="template-name" type="string" maxOccurs="1" minOccurs="1"></element>
+    			<element name="template-version" type="string" maxOccurs="1" minOccurs="1"></element>
+    			<element name="template-description" type="string"></element>
+    			<element name="template-author" type="ts:author"></element>
+    			<element name="variables" maxOccurs="1" minOccurs="1">
+    				<complexType>
+    					<sequence>
+    						<element  name="variable" type="ts:project-var" maxOccurs="unbounded" minOccurs="1"></element>
+    					</sequence>
+    				</complexType>
+    			</element>
+    			<element  name="macros" maxOccurs="1" minOccurs="1">
+    				<complexType>
+					<sequence>
+						<element name="macro" type="ts:macro"  maxOccurs="unbounded" minOccurs="1"></element>    					 
+					</sequence>	
+    				</complexType>
+    			</element>
+
+    		</sequence>
+    	</complexType>
+    </element>
+    
+
+
+<complexType name="author">
+	<sequence>
+		<element name="author-name" type="string" />
+		<element name="author-email" type="string"/>
+		<element name="author-phone" type="string"/>
+	</sequence>
+</complexType>    
+
+
+
+<complexType name="project-var">
+	
+	 <sequence>
+		<element name="name" type="string"></element>
+		<element name="value" type="string" default="string"></element>
+		<element name="required" type="ts:boolean">
+		<element name="description" type="string">
+		</element>
+	</sequence>	 
+</complexType>
+
+<complexType name="macro">
+	<sequence>
+		<element name="tempalate" type="string"></element>
+		<element name="for" type="ts:target"></element>	
+        <element name="output" type="string"></element>
+        </sequence>
+
+</complexType>
+
+
+
+
+
+<simpleType name="boolean">
+	<restriction base="string">
+					<enumeration value="true"></enumeration>
+					<enumeration value="false"></enumeration>	
+				</restriction>
+</simpleType>
+
+<simpleType name="target">
+	<restriction base="string">
+		<enumeration value="ontology"></enumeration>
+		<enumeration value="class"></enumeration>
+		<enumeration value="instance"></enumeration>
+		<enumeration value="enumeration"></enumeration>
+		
+	</restriction>	
+	
+</simpleType>
+
+
+
+</schema>

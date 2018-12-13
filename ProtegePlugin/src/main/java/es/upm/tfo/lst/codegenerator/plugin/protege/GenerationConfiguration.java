@@ -10,7 +10,10 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -43,7 +46,7 @@ import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariable
 
 
 
-public class GenerationConfiguration extends JFrame  {
+public class GenerationConfiguration extends JFrame{
 
 	private JPanel contentPane;
 	private JTable variableTable;
@@ -57,20 +60,23 @@ public class GenerationConfiguration extends JFrame  {
 	private boolean checkValue;
 	private Boolean flag=null;
     private static SwingWorker<Integer, Void> swingWorker;
-
+    private List<String> options;
+    
+    
 	/**
 	 * Create the frame.
 	 */
 	public GenerationConfiguration(OWLModelManager owlModelManager) {
 		 this.owlModelManager=owlModelManager;
+		 this.options = new ArrayList<>();
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 570, 444);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-
 		variableTable = new JTable();
+		
 		
 		//receive a project
 		proj=null;
@@ -103,7 +109,7 @@ public class GenerationConfiguration extends JFrame  {
 		
 		
 
-		sourceTextField = new JComboBox();
+		sourceTextField = new JComboBox(options.toArray());
 		sourceTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -304,4 +310,7 @@ public class GenerationConfiguration extends JFrame  {
 				
 		
 	}
+
+	
+
 }
