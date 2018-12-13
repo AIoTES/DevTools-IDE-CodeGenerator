@@ -59,10 +59,11 @@ public class XmlParser {
 		URL url;
 		try {
 			url = new URL(xmlPath);
+			//readFromURL(url, "");
 		}catch (Exception e) {
-			
+			this.readXML(xmlPath);
 		}
-		this.readXML(xmlPath);
+		//this.readXML(xmlPath);
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class XmlParser {
 	 * @param url
 	 * @throws Exception
 	 */
-	  private void generateFile(URL url) throws Exception{
+	  private void readFromURL(URL url,String targetDir) throws Exception{
 		  	 StringBuilder sb = new StringBuilder();
 		     //URI uri = new URI("http://localhost/templates/simple.xml");
 	         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -163,7 +164,7 @@ public class XmlParser {
 	         in.close();
 			BufferedWriter bw = null;
 			FileWriter fw = null;
-            fw = new FileWriter("target/example.xml");
+            fw = new FileWriter(targetDir);
 			bw = new BufferedWriter(fw);
 			bw.write(sb.toString());
 			bw.close();
