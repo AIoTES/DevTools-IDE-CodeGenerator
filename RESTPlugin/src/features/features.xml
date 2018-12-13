@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="universAAL-Feature" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+
+	<feature name="CodeGenerator-Service" description="A rest Service wraping code generator from ontologies using templates."
+		version="${pom.version}" resolver='(obr)'>
+		<feature>http</feature>
+		<!-- Velocity -->
+		<!-- OWLAPI -->		
+		<bundle start-level='60' start='true'>mvn:${project.groupid}/${project.artifactid}/${project.version}</bundle>
+	</feature>
+		
+</features>
