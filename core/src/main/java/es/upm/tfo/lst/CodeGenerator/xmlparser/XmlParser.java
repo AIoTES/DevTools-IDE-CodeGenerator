@@ -1,7 +1,13 @@
 package es.upm.tfo.lst.CodeGenerator.xmlparser;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +56,15 @@ public class XmlParser {
 	 * @param xmlPath {@link String } path to XML file
 	 */
 	public void generateXMLCoordinator(String xmlPath){
+		URL url;
+		try {
+			url = new URL(xmlPath);
+		}catch (Exception e) {
+			
+		}
 		this.readXML(xmlPath);
 	}
+
 	/**
 	 *
 	 * @return {@link TemplateDataModel} object. Null if method {@link #generateXMLCoordinator(String)} isn't called
@@ -133,6 +146,28 @@ public class XmlParser {
 
 
 	}
+	
+	/**
+	 * method to get XML file readed of website
+	 * @param url
+	 * @throws Exception
+	 */
+	  private void generateFile(URL url) throws Exception{
+		  	 StringBuilder sb = new StringBuilder();
+		     //URI uri = new URI("http://localhost/templates/simple.xml");
+	         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+	         String inputLine;
+	         while ((inputLine = in.readLine()) != null)
+	        	 sb.append(inputLine+"\n");
+	             System.out.println(inputLine);
+	         in.close();
+			BufferedWriter bw = null;
+			FileWriter fw = null;
+            fw = new FileWriter("target/example.xml");
+			bw = new BufferedWriter(fw);
+			bw.write(sb.toString());
+			bw.close();
 
+	    }
 
 }
