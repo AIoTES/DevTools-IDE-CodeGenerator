@@ -449,7 +449,7 @@ public class GenerateProject {
 	private void initVelocity() throws Exception{
 		vel_eng = new VelocityEngine();
 	    this.baseContext = new VelocityContext();
-	    this.baseContext.put("variables", this.variables);
+	    this.baseContext.put("variables", this.mainModel.getArrayVars());
 	   	vel_eng.init(props);
 
 	}
