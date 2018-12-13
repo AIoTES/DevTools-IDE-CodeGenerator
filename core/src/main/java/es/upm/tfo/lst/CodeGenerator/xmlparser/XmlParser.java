@@ -44,6 +44,7 @@ public class XmlParser {
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
 	private Author author;
+	private URL url=null;
 
 	public XmlParser() {
 			this.variableList = new HashMap<>();
@@ -56,12 +57,12 @@ public class XmlParser {
 	 * @param xmlPath {@link String } path to XML file
 	 */
 	public void generateXMLCoordinator(String xmlPath){
-		URL url;
+		this.xmlPath = xmlPath;
 		try {
-			url = new URL(xmlPath);
+			this.url = new URL(this.xmlPath);
 			//readFromURL(url, "");
 		}catch (Exception e) {
-			this.readXML(xmlPath);
+			this.readFromLocalFileSystem();
 		}
 		//this.readXML(xmlPath);
 	}
@@ -79,8 +80,8 @@ public class XmlParser {
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
 	 * @param xmlPath {@link String}  representing the location from XML file to load
 	 */
-	private void readXML(String xmlPath)  {
-		this.xmlPath=xmlPath;
+	private void readFromLocalFileSystem()  {
+		
 		Element t;
 		this.author = new Author();
 		try {
@@ -171,4 +172,18 @@ public class XmlParser {
 
 	    }
 
+	  /**
+	   * Method who return the parent URL or File of selected XML.
+	   * @return
+	   */
+	 public String getParentTemplateDir() throws Exception{
+		 URI uri;
+		 if(this.url==null)
+			 return new File(this.xmlPath).getParentFile().getPath();
+		 else {
+			 uri = this.url.toURI().resolve(".");
+			 return uri.getPath();
+		 }
+			 
+	 } 
 }
