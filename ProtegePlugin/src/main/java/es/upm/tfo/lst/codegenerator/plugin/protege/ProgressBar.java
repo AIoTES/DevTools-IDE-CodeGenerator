@@ -46,7 +46,6 @@ public class ProgressBar extends JFrame {
 		progressBar.setMinimum(0);
         progressBar.setMaximum(100);
 		progressBar.setStringPainted(true);
-		progressBar.setIndeterminate(true);
 		
 		JLabel lblGeneratingCode = new JLabel("Generating code");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -70,4 +69,7 @@ public class ProgressBar extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+
+	
+
 }

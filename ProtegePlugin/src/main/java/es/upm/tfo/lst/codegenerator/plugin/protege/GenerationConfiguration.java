@@ -54,7 +54,8 @@ public class GenerationConfiguration extends JFrame  {
 	private OWLModelManager owlModelManager;
 	private TemplateDataModel mainModel;
 	private XmlParser parser;
-	private boolean checkValue,flag=true;
+	private boolean checkValue;
+	private Boolean flag=null;
     private static SwingWorker<Integer, Void> swingWorker;
 
 	/**
@@ -137,7 +138,10 @@ public class GenerationConfiguration extends JFrame  {
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					proj.setOutputFolder(outputTextfield.getText()+"/");
 					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
+					ProgressBar p = new ProgressBar();
+					p.main();
 					asyncProcess();
+					
 					//JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
@@ -270,25 +274,25 @@ public class GenerationConfiguration extends JFrame  {
 			}
 	}
 	private void asyncProcess() {
-		System.out.println("async");
+		 
 		
-		ProgressBar p = new ProgressBar();
-		p.main();
 		swingWorker = new SwingWorker<Integer, Void>(){
 
 		
 			@Override
 			protected void done() {
-				p.dispose();
-				super.done();
+				System.out.println("Done!");
+				
 			}
 
 			@Override
 			protected Integer doInBackground() throws Exception {
-				
+				System.out.println("doInBackground...");
 				try {
-					proj.process();
-					
+					while(flag==null) {
+						flag=proj.process();	
+					}
+
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
@@ -297,7 +301,7 @@ public class GenerationConfiguration extends JFrame  {
 			
 		};
 		swingWorker.execute();
-		
+				
 		
 	}
 }
