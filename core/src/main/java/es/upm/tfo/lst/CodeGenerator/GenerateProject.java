@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,10 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
 public class GenerateProject {
 
 
+	public static interface ProgessCallback {
+		void updateProgress(int done, int total);
+	}
+
 	private TemplateDataModel mainModel=null;
 	private VelocityContext context,baseContext;
 	private VelocityEngine vel_eng;
@@ -73,8 +78,10 @@ public class GenerateProject {
 	private URL urlBasePath=null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
+	private List<ProgessCallback> progressCallbacs = new ArrayList<>();
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
+	private int total2Process;
 
 	/**
 	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro
@@ -115,6 +122,7 @@ public class GenerateProject {
 	 */
 	public boolean process() throws Exception{
 		boolean flag=false;
+		total2Process = 0; // TODO calculate
 		if(this.control()) {
 			try {
 				this.initVelocity();
@@ -161,6 +169,7 @@ public class GenerateProject {
 					}else {
 						log.warn("output for project is empty and the program will not generate any output file to project");
 					}
+				    // updateProgress(done++);
 
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
@@ -530,7 +539,7 @@ public class GenerateProject {
 								msg += var + ", ";
 							}
 							log.fatal(msg);
-							
+
 
 						}
 					}
@@ -652,6 +661,14 @@ public class GenerateProject {
 		this.mainModel = mainModel;
 	}
 
+	public void addProgressCallback(ProgessCallback pc) {
+		progressCallbacs.add(pc);
+	}
 
+	private void updateProgress(int done) {
+		for (ProgessCallback pc : progressCallbacs) {
+			pc.updateProgress(total2Process, total2Process);
+		}
+	}
 
 }

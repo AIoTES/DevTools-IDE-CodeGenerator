@@ -2,6 +2,7 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.lang.reflect.GenericArrayType;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,43 +11,29 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
+import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 
-public class ProgressBar extends JFrame {
+public class ProgressBar extends JFrame implements GenerateProject.ProgessCallback{
 
 	private JPanel contentPane;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ProgressBar frame = new ProgressBar();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
 	public ProgressBar() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 463, 199);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		
+
 		JProgressBar progressBar = new JProgressBar();
-		
+
 		progressBar.setMinimum(0);
         progressBar.setMaximum(100);
 		progressBar.setStringPainted(true);
-		
+
 		JLabel lblGeneratingCode = new JLabel("Generating code");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -70,6 +57,16 @@ public class ProgressBar extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	
+	@Override
+	public void updateProgress(int done, int total) {
+		// TODO update progress
+
+		 if (done>= total) {
+			 this.setVisible(false);
+			 this.dispose();
+		 }
+	}
+
+
 
 }
