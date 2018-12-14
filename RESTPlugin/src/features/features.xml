@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features name="universAAL-Feature" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
-	<feature name="CodeGenerator-Service" description="A rest Service wraping code generator from ontologies using templates."
+	<feature name="CodeGenerator-Service" description="A rest Service wrapping code generator from ontologies using templates."
 		version="${pom.version}" resolver='(obr)'>
 		<feature>http</feature>
+		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-lang:jar:2.4_6</bundle>
+		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-collections:3.2.1_3</bundle>
 		<!-- Velocity -->
-		<!-- OWLAPI -->		
+		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.velocity:1.7_6</bundle>
+		<!-- OWLAPI -->
+		<bundle start-level='50' start='true'>mvn:net.sourceforge.owlapi:owlapi-osgidistribution:5.1.9</bundle>
+		<bundle start-level='50' start='true'>mvn:net.sourceforge.owlapi:jfact:4.0.4</bundle>
+		<bundle start-level='50' start='true'>mvn:com.google.guava:guava:27.0.1-jre</bundle>
+		<!-- Codegenerator REST-->
 		<bundle start-level='60' start='true'>mvn:${project.groupid}/${project.artifactid}/${project.version}</bundle>
 	</feature>
-		
+
 </features>
