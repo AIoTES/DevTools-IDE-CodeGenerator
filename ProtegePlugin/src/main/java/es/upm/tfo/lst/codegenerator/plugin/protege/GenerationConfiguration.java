@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -51,24 +53,41 @@ public class GenerationConfiguration extends JFrame{
 	private JPanel contentPane;
 	private JTable variableTable;
 	private JComboBox sourceTextField;
-	private JTextField outputTextfield;
+	private JComboBox outputTextfield;
 	private TableModel generateTable;
 	private GenerateProject proj;
 	private OWLModelManager owlModelManager;
-	private TemplateDataModel mainModel;
+	private TemplateDataModel mainModel=null;
 	private XmlParser parser;
 	private boolean checkValue;
 	private Boolean flag=null;
     private static SwingWorker<Integer, Void> swingWorker;
-    private List<String> options;
-    
+    private List<String> templateArrayOptions;
+    private List<String> outputArrayOptions;
+    private File templateFileOptions=null;
+    private File outputFileOptions=null;
     
 	/**
 	 * Create the frame.
 	 */
 	public GenerationConfiguration(OWLModelManager owlModelManager) {
 		 this.owlModelManager=owlModelManager;
-		 this.options = new ArrayList<>();
+		
+			try
+			{ 
+				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
+				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
+				if(!templateFileOptions.exists())
+					templateFileOptions.createNewFile();
+				if(!outputFileOptions.exists())
+					outputFileOptions.createNewFile();
+				
+			}catch (Exception e) {
+				
+			}
+		 readFile();
+		 
+		
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 570, 444);
@@ -107,56 +126,66 @@ public class GenerationConfiguration extends JFrame{
 			}
 		};
 		
+	
+		sourceTextField = new JComboBox(templateArrayOptions.toArray());
 		
-
-		sourceTextField = new JComboBox(options.toArray());
 		sourceTextField.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent e) {
-				
 				parser = new XmlParser();
 				parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+				System.out.println(sourceTextField.getEditor().getItem().toString());
 				mainModel = parser.getXmlCoordinatorDataModel();
-				generateTable= new CodeGenerationVariableTable(mainModel);
-				variableTable.setModel(generateTable);
-				variableTable.repaint();
+				if(mainModel!=null) {
+					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
+					generateTable= new CodeGenerationVariableTable(mainModel);
+					variableTable.setModel(generateTable);
+					variableTable.repaint();
+				}else {
+					JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
+				}
 				
 				
 			}
 		});
 		sourceTextField.setEditable(true);
-		//variableTable.setModel(generateTable);
-		outputTextfield = new JTextField();
-		outputTextfield.setColumns(10);
 		
+		outputTextfield = new JComboBox(outputArrayOptions.toArray());
+		outputTextfield.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			}
+		});
+		outputTextfield.setEditable(true);
+		
+		//button to generate code
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getText().equals("")) {
+				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
 					System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
 				}else {
-					OWLOntology owlOntology = owlModelManager.getActiveOntology();
-					System.out.println(owlOntology.getClassesInSignature().size());
+					OWLOntology owlOntology = null; 
+					owlOntology = owlModelManager.getActiveOntology();
 					proj = new GenerateProject();
 					proj.addOntology(owlOntology, checkValue);
 					proj.setMainModel(mainModel);
-					System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
+					//System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
-					proj.setOutputFolder(outputTextfield.getText()+"/");
-					System.out.println(owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
-					ProgressBar p = new ProgressBar();
-					p.main();
+					String aux = outputTextfield.getEditor().getItem().toString();
+					if(!aux.endsWith("/")) aux += "/";
+					proj.setOutputFolder(aux);
+					System.out.println("actual ontology name "+owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
+					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					asyncProcess();
-					
-					//JOptionPane.showMessageDialog(null, "Generating source code ...");
 				}
 			}
 		});
 
 		JLabel lblTemplateSource = new JLabel("Template source");
-
-		JLabel lblOutput = new JLabel("Output");
-
+		// button to close panel
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -165,16 +194,17 @@ public class GenerationConfiguration extends JFrame{
 		});
 
 		JScrollPane scrollPane = new JScrollPane(variableTable);
-
+		//button to deploy file chooser to XML
 		JButton btnTemplateFileChooser = new JButton("...");
 		btnTemplateFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				
 				fc.setFileFilter(new FileFilter() {
 
 					@Override
 					public String getDescription() {
-						return "Corrdinator XML file";
+						return "Coordinator XML file";
 					}
 
 					@Override
@@ -188,27 +218,44 @@ public class GenerationConfiguration extends JFrame{
 		            File file = fc.getSelectedFile();
 		            sourceTextField.setSelectedItem(file.getAbsolutePath());
 		        }
+		        //
 			}
 		});
 
 		
-		
+		//button to select output directory
 		JButton btnOutputFileChooser = new JButton("...");
+		
 		btnOutputFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+							
+				fc.setFileFilter(new FileFilter() {
+				
+					@Override
+					public String getDescription() {
+						return "Coordinator XML file";
+					}
+					
+					@Override
+					public boolean accept(File f) {
+						return f.getName().toLowerCase().endsWith(".xml");
+						}
+				});
 
-				JFileChooser fc = new JFileChooser(outputTextfield.getText());
+				
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 				int returnVal = fc.showOpenDialog(GenerationConfiguration.this);
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
-		            outputTextfield.setText(file.getAbsolutePath());
+		            outputTextfield.setSelectedItem(file.getAbsolutePath());
 		        }
 			}
 		});
 		
+		JLabel lblOutput = new JLabel("Output");
 		JCheckBox checkRecursive = new JCheckBox("Recursive");
 		checkRecursive.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -311,6 +358,58 @@ public class GenerationConfiguration extends JFrame{
 		
 	}
 
+	private void readFile() {
+
+		 this.templateArrayOptions = new ArrayList<>();
+		 this.outputArrayOptions= new ArrayList<>();
+		try {
+			  BufferedReader br = new BufferedReader(new FileReader(this.templateFileOptions)); 
+			  String st; 
+			  while ((st = br.readLine()) != null) { 
+				  templateArrayOptions.add(st);
+			  } 
+			  br.close();
+			  
+			  st=null;
+			  
+			  br = new BufferedReader(new FileReader(this.outputFileOptions)); 
+			  while ((st = br.readLine()) != null) { 
+				  outputArrayOptions.add(st);
+			  } 
+			  br.close();
+			  
+		}catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+				
+		}
+	}
+	private void writeFile( File f,String dataToWrite) {
+		 
+		boolean aux=true;
+		 
+		try {
+			 BufferedReader br = new BufferedReader(new FileReader(f)); 
+			  String st; 
+			  while ((st = br.readLine()) != null) { 
+				  if(st.equals(dataToWrite)) {
+					  aux =false;
+					  break;
+				  }
+			  }
+			br.close();
+			if(aux) {
+				FileWriter fr = new FileWriter(f, true);
+				fr.write(dataToWrite);
+				fr.write("\n");
+				fr.close();
+			}
+			
+			  
+		}catch (Exception e) {
+			System.out.println("writeFile "+e.getMessage());
+				
+		}
+	}
 	
 
 }
