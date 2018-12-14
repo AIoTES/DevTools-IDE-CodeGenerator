@@ -9,6 +9,7 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -28,10 +29,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -43,13 +43,15 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
+
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
 
 
 
-public class GenerationConfiguration extends JFrame{
+
+public class GenerationConfiguration extends JFrame implements GenerateProject.ProgessCallbackPublisher {
 
 	private JPanel contentPane;
 	private JTable variableTable;
@@ -67,13 +69,17 @@ public class GenerationConfiguration extends JFrame{
     private List<String> outputArrayOptions;
     private File templateFileOptions=null;
     private File outputFileOptions=null;
+    private int progress;
+    private ProgressBar pb;
     
 	/**
 	 * Create the frame.
 	 */
 	public GenerationConfiguration(OWLModelManager owlModelManager) {
 		 this.owlModelManager=owlModelManager;
-		
+		 proj = new GenerateProject();
+		 this.proj.GenConf = this;
+
 			try
 			{ 
 				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
@@ -100,7 +106,7 @@ public class GenerationConfiguration extends JFrame{
 		
 		
 		//receive a project
-		proj=null;
+		
 		generateTable = new AbstractTableModel() {
 			
 			@Override
@@ -147,8 +153,7 @@ public class GenerationConfiguration extends JFrame{
 					JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
 					parser = new XmlParser();
 				}
-				
-				
+	
 			}
 		});
 		sourceTextField.setEditable(true);
@@ -170,13 +175,12 @@ public class GenerationConfiguration extends JFrame{
 					System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
 				}else {
-					
-					
-					
+					 
 					OWLOntology owlOntology = null; 
 					owlOntology = owlModelManager.getActiveOntology();
-					proj = new GenerateProject();
-					proj.addOntology(owlOntology, checkValue);
+					
+					//proj.addOntology(owlOntology, checkValue);
+					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					String aux = outputTextfield.getEditor().getItem().toString();
@@ -329,25 +333,30 @@ public class GenerationConfiguration extends JFrame{
 		contentPane.setLayout(gl_contentPane);
 	}
 
+	
+
 	private void saveComboContent(String t){
 			if(new File(t).exists()) {
 				//save data
 			}
 	}
-	private void asyncProcess() {
+	private void asyncProcess() {	 
 		 
-		
+		pb = new ProgressBar();
 		swingWorker = new SwingWorker<Integer, Void>(){
-
+			
 		
 			@Override
 			protected void done() {
 				System.out.println("Done!");
-				
+				pb.setVisible(false);
+				JOptionPane.showMessageDialog(null, "Code successfully generated");
+				dispose();
 			}
 
 			@Override
 			protected Integer doInBackground() throws Exception {
+			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
 					while(flag==null) {
@@ -355,7 +364,7 @@ public class GenerationConfiguration extends JFrame{
 					}
 
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage());
+					
 				}
 				return null;
 			}
@@ -418,6 +427,23 @@ public class GenerationConfiguration extends JFrame{
 				
 		}
 	}
+
+
+
+	@Override
+	public void updateProgress(int done, int total) {
+		this.progress = total;
+		this.pb.progressBar.setValue(total);
+	}
+
+
+
+
+
+
+	
+
+
 	
 
 }

@@ -21,7 +21,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
@@ -39,7 +38,6 @@ import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
-import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 /**
  * Main class whos read {@link OWLOntology} and XML, and generate code.
@@ -62,7 +60,7 @@ import uk.ac.manchester.cs.jfact.JFactFactory;
 public class GenerateProject {
 
 
-	public static interface ProgessCallback {
+	public interface ProgessCallbackPublisher {
 		void updateProgress(int done, int total);
 	}
 
@@ -78,10 +76,10 @@ public class GenerateProject {
 	private URL urlBasePath=null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
-	private List<ProgessCallback> progressCallbacs = new ArrayList<>();
-
+	//private List<ProgessCallback> progressCallbacs = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process;
+	public  ProgessCallbackPublisher GenConf;
 
 	/**
 	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro
@@ -122,7 +120,7 @@ public class GenerateProject {
 	 */
 	public boolean process() throws Exception{
 		boolean flag=false;
-		total2Process = 0; // TODO calculate
+		total2Process = 4; // TODO calculate
 		if(this.control()) {
 			try {
 				this.initVelocity();
@@ -169,7 +167,7 @@ public class GenerateProject {
 					}else {
 						log.warn("output for project is empty and the program will not generate any output file to project");
 					}
-				    // updateProgress(done++);
+				    update(1);
 
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
@@ -238,7 +236,7 @@ public class GenerateProject {
 					}else {
 						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
 					}
-
+					update(2);
 					//iterate over classes into actual ontology  and process each one
 					for(OWLClass c : ontology.getClassesInSignature()) {
 						if (!this.processClass(c,ontology)){
@@ -253,6 +251,7 @@ public class GenerateProject {
 				}
 			}
 		}else{
+			update(2);
 			log.warn("ontology macro for ontology isn't exists");
 			for(OWLClass c : ontology.getClassesInSignature()) {
 				if (!this.processClass(c,ontology)){
@@ -278,6 +277,7 @@ public class GenerateProject {
 		if(!classModelArray.isEmpty()) {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
+				
 				c.getAnnotationPropertiesInSignature();
 				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
 					this.context.put("ontology",ontology);
@@ -294,7 +294,7 @@ public class GenerateProject {
 					}else {
 						log.warn("output for class is empty and the program will not generate any output file to class");
 					}
-
+					
 					for(OWLClass cls : ontology.getClassesInSignature() ) {
 						if(! this.processInstances(cls,ontology) ) {
 							flag=false;
@@ -306,7 +306,7 @@ public class GenerateProject {
 				}
 		   }
 		}else{
-
+			update(3);
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
 				if(this.processInstances(cls,ontology)==false ) {
 					flag=false;
@@ -314,7 +314,7 @@ public class GenerateProject {
 			}
 
 		}
-
+		update(3);
 		return flag;
 	}
 
@@ -349,6 +349,7 @@ public class GenerateProject {
 					this.fr = new FileWriter(this.outputFolder+name,true);
 					template.merge(context, fr);
 					fr.close();
+					
 					state = this.processObjectProperties(c,instances,ontology);
 				}else {
 					log.fatal("template file not exists: "+macroModel.getTemplateName());
@@ -356,10 +357,12 @@ public class GenerateProject {
 				}
 			}
 		}else{
+			
 			//log.warn("output for instances is empty and the program will not generate any output file to instances");
 			state = this.processObjectProperties(c,instances,ontology);
 
 		}
+		update(4);
 		return flag && state;
 	}
 	/**
@@ -404,7 +407,7 @@ public class GenerateProject {
 					this.context.put("classesInstances",macroModel);
 					this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
 					this.context.put("propertyValues", aux);
-
+					update(5);
 					if(!macroModel.getOutput().equals("")){
 						this.fr = new FileWriter(this.outputFolder+name,true);
 					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
@@ -424,7 +427,7 @@ public class GenerateProject {
 			}
 
 
-
+		update(5);
 		return flag;
 	}
 
@@ -664,14 +667,13 @@ public class GenerateProject {
 		this.mainModel = mainModel;
 	}
 
-	public void addProgressCallback(ProgessCallback pc) {
+	/*
+	private void addProgressCallback(ProgessCallback pc) {
 		progressCallbacs.add(pc);
 	}
-
-	private void updateProgress(int done) {
-		for (ProgessCallback pc : progressCallbacs) {
-			pc.updateProgress(total2Process, total2Process);
-		}
+*/
+	private void update(int done) {
+			GenConf.updateProgress(4, done);
 	}
 
 }

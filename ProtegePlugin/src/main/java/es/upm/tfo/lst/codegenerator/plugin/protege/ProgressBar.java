@@ -9,13 +9,16 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JProgressBar;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import es.upm.tfo.lst.CodeGenerator.GenerateProject;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.border.EmptyBorder;
 
-public class ProgressBar extends JFrame {
+public class ProgressBar extends JFrame{
 
 	private JPanel contentPane;
+	public JProgressBar progressBar;
 
 	/**
 	 * Create the frame.
@@ -28,12 +31,11 @@ public class ProgressBar extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
-		JProgressBar progressBar = new JProgressBar();
-
+		progressBar = new JProgressBar();
 		progressBar.setMinimum(0);
-        progressBar.setMaximum(100);
+        progressBar.setMaximum(5);
 		progressBar.setStringPainted(true);
-
+		
 		JLabel lblGeneratingCode = new JLabel("Generating code");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -56,6 +58,9 @@ public class ProgressBar extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+
+
+
 
 
 
