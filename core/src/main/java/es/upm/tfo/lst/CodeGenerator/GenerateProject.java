@@ -458,6 +458,9 @@ public class GenerateProject {
 	private void initVelocity() throws Exception{
 		vel_eng = new VelocityEngine();
 	    this.baseContext = new VelocityContext();
+	    for (String s : this.mainModel.getArrayVars().keySet()) {
+			this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
+		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
 	   	vel_eng.init(props);
 
@@ -609,7 +612,7 @@ public class GenerateProject {
 			this.mainModel.getArrayVars().put(varName, new Variable(varName, "Undeclared variable, added automatically.",false, varValue));
 		}
 
-		//variables.get(varName).setValue(varValue);
+		this.mainModel.getArrayVars().get(varName).setValue(varValue);
 		return true;
 	}
 	/**

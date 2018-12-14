@@ -62,6 +62,7 @@ public class XmlParser {
 			this.url = new URL(this.xmlPath);
 			//readFromURL(url, "");
 		}catch (Exception e) {
+			log.warn("given URL ist valid, trying to load from filesystem");
 			this.readFromLocalFileSystem();
 		}
 		//this.readXML(xmlPath);

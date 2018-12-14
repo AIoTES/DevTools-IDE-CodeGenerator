@@ -8,6 +8,7 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
  * */
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -95,6 +96,7 @@ public class GenerationConfiguration extends JFrame{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		variableTable = new JTable();
+		variableTable.setMinimumSize(new Dimension(500, 200));
 		
 		
 		//receive a project
@@ -137,12 +139,13 @@ public class GenerationConfiguration extends JFrame{
 				System.out.println(sourceTextField.getEditor().getItem().toString());
 				mainModel = parser.getXmlCoordinatorDataModel();
 				if(mainModel!=null) {
-					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
 					generateTable= new CodeGenerationVariableTable(mainModel);
 					variableTable.setModel(generateTable);
+					
 					variableTable.repaint();
 				}else {
 					JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
+					parser = new XmlParser();
 				}
 				
 				
@@ -167,18 +170,21 @@ public class GenerationConfiguration extends JFrame{
 					System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
 				}else {
+					
+					
+					
 					OWLOntology owlOntology = null; 
 					owlOntology = owlModelManager.getActiveOntology();
 					proj = new GenerateProject();
 					proj.addOntology(owlOntology, checkValue);
 					proj.setMainModel(mainModel);
-					//System.out.println(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";
 					proj.setOutputFolder(aux);
 					System.out.println("actual ontology name "+owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
+					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
 					asyncProcess();
 				}
 			}
@@ -264,59 +270,61 @@ public class GenerationConfiguration extends JFrame{
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(25)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(224)
-									.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(sourceTextField, 0, 357, Short.MAX_VALUE)))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addGap(29)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-									.addGap(18)
-									.addComponent(outputTextfield, GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(110)
-									.addComponent(checkRecursive)))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
+					.addGap(25)
+					.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
+					.addGap(12)
+					.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 360, GroupLayout.PREFERRED_SIZE)
+					.addGap(6)
+					.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(139)
+					.addComponent(checkRecursive))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(29)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 466, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(29)
+					.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(outputTextfield, GroupLayout.PREFERRED_SIZE, 356, GroupLayout.PREFERRED_SIZE)
+					.addGap(6)
+					.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(249)
+					.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+					.addGap(12)
+					.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(2)
+							.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
 						.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnTemplateFileChooser))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(1)
+							.addComponent(btnTemplateFileChooser)))
 					.addGap(18)
 					.addComponent(checkRecursive)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGap(2)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addGap(12)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(2)
+							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
 						.addComponent(outputTextfield, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnOutputFileChooser))
-					.addPreferredGap(ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(1)
+							.addComponent(btnOutputFileChooser)))
+					.addGap(17)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnCancel)
+						.addComponent(btnGenerate)))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
@@ -384,7 +392,7 @@ public class GenerationConfiguration extends JFrame{
 		}
 	}
 	private void writeFile( File f,String dataToWrite) {
-		 
+		 System.out.println("write file "+dataToWrite);
 		boolean aux=true;
 		 
 		try {

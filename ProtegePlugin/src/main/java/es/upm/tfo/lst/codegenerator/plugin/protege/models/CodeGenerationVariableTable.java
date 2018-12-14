@@ -29,7 +29,7 @@ import es.upm.tfo.lst.CodeGenerator.model.Variable;
  *
  */
 public class CodeGenerationVariableTable implements TableModel {
-
+	
 	//private GenerateProject project;
 	private TemplateDataModel model;
 
@@ -38,11 +38,7 @@ public class CodeGenerationVariableTable implements TableModel {
  *
  * @param proj {@link GenerateProject}
  */
-	/*
-	public CodeGenerationVariableTable(GenerateProject proj) {
-		project = proj;
-	}
-	*/
+	
 	public CodeGenerationVariableTable(TemplateDataModel model) {
 		this.model=model;
 	}
@@ -126,11 +122,6 @@ public class CodeGenerationVariableTable implements TableModel {
 		// No background changes
 
 	}
-/*
-	public void initProject(TemplateDataModel model) {
-		this.project = new GenerateProject(model);
-
-	}
-	*/
+	
 
 }
