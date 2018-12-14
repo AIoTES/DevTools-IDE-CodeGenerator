@@ -13,7 +13,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 
-public class ProgressBar extends JFrame implements GenerateProject.ProgessCallback{
+public class ProgressBar extends JFrame {
 
 	private JPanel contentPane;
 
@@ -57,15 +57,7 @@ public class ProgressBar extends JFrame implements GenerateProject.ProgessCallba
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	@Override
-	public void updateProgress(int done, int total) {
-		// TODO update progress
 
-		 if (done>= total) {
-			 this.setVisible(false);
-			 this.dispose();
-		 }
-	}
 
 
 
