@@ -34,7 +34,7 @@ import es.upm.tfo.lst.CodeGenerator.model.Variable;
 public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
-	private URL xmlPath;
+	private URL xmlSource;
 	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor;
 	private Map<String,Variable> variableList;
 	private List<MacroModel> macroList;
@@ -53,40 +53,32 @@ public class XmlParser {
 	 */
 	public void generateXMLCoordinator(String xmlPath){
 		try {
-			this.xmlPath =  new URL(xmlPath);;
-			//readFromURL(url, "");
+			this.xmlSource =  new URL(xmlPath);;
+			//readFromURL(this.xmlSource);
 		}catch (Exception e) {
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
-				this.xmlPath = new File(xmlPath).toURI().toURL();;
+				this.xmlSource = new File(xmlPath).toURI().toURL();
+			
 			} catch (Exception e2) {
 				log.fatal("giving up.", e2);
+				
 			}
 		}
 		this.readFromLocalFileSystem();
 	}
 
 	/**
-	 *generate XmlCoordinator object who represent XML file into java code
-	 * @param xmlPath {@link URL } path to XML file
-	 */
-	public void generateXMLCoordinator(URL xmlPath){
-		this.xmlPath = xmlPath;
-		this.readFromLocalFileSystem();
-	}
-	
-	/**
 	 *
 	 * @return {@link TemplateDataModel} object. Null if method {@link #generateXMLCoordinator(String)} isn't called
 	 */
 	public TemplateDataModel getXmlCoordinatorDataModel() {
-
 		return this.javaXMLModel;
 	}
 
 	/**
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
-	 * @param xmlPath {@link String}  representing the location from XML file to load
+	 * @param xmlSource {@link String}  representing the location from XML file to load
 	 */
 	private void readFromLocalFileSystem()  {
 		
@@ -97,7 +89,7 @@ public class XmlParser {
 			this.javaXMLModel = new TemplateDataModel();
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-	         Document doc = docBuilder.parse (xmlPath.openStream());
+	         Document doc = docBuilder.parse (xmlSource.openStream());
 	         this.nodeMacro = doc.getElementsByTagName("macro");
 	         this.nodeVariable = doc.getElementsByTagName("variable");
 	         this.templateAuthor = doc.getElementsByTagName("template-author");
@@ -141,7 +133,7 @@ public class XmlParser {
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);
-	         //modifi definition of array of variables
+	         //modify definition of array of variables
 	         this.javaXMLModel.setVars(this.variableList);
 	         
 	         this.javaXMLModel.setAuthor(this.author);
@@ -158,4 +150,5 @@ public class XmlParser {
 	 public URL getParentTemplateDir() throws MalformedURLException, URISyntaxException {
 		 return xmlPath.toURI().resolve("..").toURL();
 	 }
+
 }

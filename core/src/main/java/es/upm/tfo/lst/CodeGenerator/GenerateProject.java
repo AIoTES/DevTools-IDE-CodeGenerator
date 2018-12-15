@@ -38,8 +38,6 @@ import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
-import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
-import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 /**
  * Main class whos read {@link OWLOntology} and XML, and generate code.
@@ -83,31 +81,17 @@ public class GenerateProject {
 	private int total2Process;
 	public  ProgessCallbackPublisher GenConf;
 
-	public GenerateProject(URL xmlCoordinator) {
-		this(xmlCoordinator,defaultVelocityProperties());
-	}
-	
-	public GenerateProject(URL xmlCoordinator, Properties velocityProperties) {
-		XmlParser parser = new XmlParser();
-		parser.generateXMLCoordinator(xmlCoordinator);
-		TemplateDataModel model = parser.getXmlCoordinatorDataModel();
-		this.mainModel = model;
-		this.reasonerFactory = new JFactFactory();
-		this.props = velocityProperties;
-		this.variables= new HashMap<String,Variable>();
-		this.variables = this.mainModel.getArrayVars();
-	}
-	
-	public GenerateProject(TemplateDataModel model) {
-		this(model,defaultVelocityProperties());
-	}
-	
 	/**
 	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro
 	 *
 	 * @param p {@link Project} object who give the list of ontologies to be process.
 	 * @param model {@link TemplateDataModel} object builded from XML given file.
 	 */
+	public GenerateProject(TemplateDataModel model) {
+		this(model,defaultVelocityProperties());
+		this.mainModel = model;
+		this.variables = this.mainModel.getArrayVars();
+	}
 	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
@@ -116,6 +100,8 @@ public class GenerateProject {
 		this.variables = this.mainModel.getArrayVars();
 
 	}
+	
+	
 	/**
 	 * if user initialize project without parsing the XmlTemplateModel, user must set it later
 	 * variables array will be empty
@@ -651,25 +637,19 @@ public class GenerateProject {
 		return this.mainModel.getArrayVars();
 	}
 
-	public void addOntology (URL ont, boolean recursive) {
-		OntologyLoader ontologyLoader = new OntologyLoader();
-		addOntology(ontologyLoader.loadOntology(ont.toString()), recursive);
-	}
-	
 	/**
-	 * Load recursivesly (if requested) given ontology. If given ontology is null, {@link #getOntologies()}
+	 * Load recursivesly (if is allowed) given ontology. If given ontology is null, {@link #getOntologies()}
 	 * returns a empty Set of {@link OWLOntology}
 	 *
 	 * @param ont {@link OWLOntology} to be load
 	 * @param recursive {@link Boolean} value indicating recursive load
 	 */
 	public void addOntology( OWLOntology ont, boolean recursive){
-		ontologies2BProcesed.add(ont);
 		if (recursive) {
-			for (OWLOntology importlOntology : ont.getImports()) {
-				addOntology(importlOntology, recursive);
-			} 
+		ontologies2BProcesed.addAll(ont.getImports());
 		}
+		ontologies2BProcesed.add(ont);
+
 	}
 
 	public String getOutputDir() {
