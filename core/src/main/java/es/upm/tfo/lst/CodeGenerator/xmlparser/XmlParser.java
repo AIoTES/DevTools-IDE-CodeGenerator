@@ -154,8 +154,7 @@ public class XmlParser {
 
 	}
 
-
-	 public URL getParentTemplateDir() throws MalformedURLException, URISyntaxException {
+	public URL getParentTemplateDir() throws MalformedURLException, URISyntaxException {
 		 return xmlPath.toURI().resolve("..").toURL();
 	 }
 }
