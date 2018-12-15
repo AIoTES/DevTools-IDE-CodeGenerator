@@ -141,7 +141,7 @@ public class XmlParser {
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);
-	         //mdifi definition of array pf variables
+	         //modifi definition of array of variables
 	         this.javaXMLModel.setVars(this.variableList);
 	         
 	         this.javaXMLModel.setAuthor(this.author);
