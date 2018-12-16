@@ -2,14 +2,13 @@ package es.upm.tfo.lst.codegenerator.plugin.protege;
 /*
  * 
  * 
- * ut
- * comprobar que la ruta de los ficheros no esten fuera de la ruta de outp
+ * 
+ * comprobar que la ruta de los ficheros no esten fuera de la ruta de output
  * 
  * */
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -29,7 +28,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
@@ -38,12 +36,12 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.osgi.framework.BundleContext;
 import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
-
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
@@ -90,7 +88,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					outputFileOptions.createNewFile();
 				
 			}catch (Exception e) {
-				
+				System.out.println("bundle "+e.getMessage());
 			}
 		 readFile();
 		 

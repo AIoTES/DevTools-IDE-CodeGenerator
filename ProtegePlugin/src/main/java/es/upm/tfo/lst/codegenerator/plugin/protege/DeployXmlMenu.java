@@ -8,7 +8,7 @@ import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 public class DeployXmlMenu extends ProtegeOWLAction {
 
 	private GenerationConfiguration sxf;
-
+	
 	@Override
 	public void initialise() throws Exception {
 		// TODO Auto-generated method stub
@@ -24,6 +24,7 @@ public class DeployXmlMenu extends ProtegeOWLAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
+			
 			 OWLModelManager owlModelManager = getOWLModelManager();
 			sxf = new GenerationConfiguration(owlModelManager);
 			sxf.setVisible(true);
