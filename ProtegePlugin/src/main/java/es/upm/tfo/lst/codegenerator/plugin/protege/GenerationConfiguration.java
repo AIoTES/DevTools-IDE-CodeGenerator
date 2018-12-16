@@ -15,6 +15,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,7 @@ import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
+import es.upm.tfo.lst.webprocess.ProcessWebContent;
 
 
 
@@ -65,11 +68,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
     private static SwingWorker<Integer, Void> swingWorker;
     private List<String> templateArrayOptions;
     private List<String> outputArrayOptions;
-    private File templateFileOptions=null;
-    private File outputFileOptions=null;
+    private File templateFileOptions=null,outputFileOptions=null,tempWebTemplate=null;
+    
     private int progress;
     private ProgressBar pb;
-    
+    private String xmlParentDir=null;
+   
 	/**
 	 * Create the frame.
 	 */
@@ -82,10 +86,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			{ 
 				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
 				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
+				tempWebTemplate=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.temp.template").getAbsolutePath());
 				if(!templateFileOptions.exists())
 					templateFileOptions.createNewFile();
 				if(!outputFileOptions.exists())
 					outputFileOptions.createNewFile();
+				if(!tempWebTemplate.exists())
+					tempWebTemplate.mkdir();
 				
 			}catch (Exception e) {
 				System.out.println("bundle "+e.getMessage());
@@ -103,7 +110,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		variableTable.setMinimumSize(new Dimension(500, 200));
 		
 		
-		//receive a project
+
 		
 		generateTable = new AbstractTableModel() {
 			
@@ -140,12 +147,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			public void actionPerformed(ActionEvent e) {
 				parser = new XmlParser();
 				parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
-				System.out.println(sourceTextField.getEditor().getItem().toString());
 				mainModel = parser.getXmlCoordinatorDataModel();
+				System.out.println(tempWebTemplate.getPath());
+				parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
 					generateTable= new CodeGenerationVariableTable(mainModel);
 					variableTable.setModel(generateTable);
-					
 					variableTable.repaint();
 				}else {
 					JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
@@ -177,7 +184,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					OWLOntology owlOntology = null; 
 					owlOntology = owlModelManager.getActiveOntology();
 					
-					//proj.addOntology(owlOntology, checkValue);
+					
 					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
 					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");

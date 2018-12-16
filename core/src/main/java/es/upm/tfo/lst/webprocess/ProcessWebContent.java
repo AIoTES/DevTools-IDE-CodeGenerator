@@ -24,14 +24,10 @@ import org.jsoup.select.Elements;
  */
 public class ProcessWebContent {
 	private Document doc; 
-	private String test=null;
-	
 	private URI uri;
 	private Elements t;
 	private String output="";
-	public void setOutput(String output) {
-		this.output = output;
-	}
+	private File fileToWrite;
 
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
@@ -42,7 +38,7 @@ public class ProcessWebContent {
 	 * @throws Exception
 	 */
 	public String processURL(URL url) throws Exception{
-		
+		String test=null;
 		this.uri=url.toURI().resolve(".");
 		StringBuilder sb = new StringBuilder();
     	try {
@@ -80,8 +76,7 @@ public class ProcessWebContent {
 		this.getDirectoryContent();
 		StringBuilder sb = new StringBuilder();
 		BufferedWriter bufferWriter=null;
-    	BufferedWriter bw = null;
-		FileWriter fw = null;
+    	
 		for (URL url : arrayOfSites) {
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -97,10 +92,15 @@ public class ProcessWebContent {
             bufferWriter.write("\n");
             bufferWriter.close();
 		}
-		
-		
 
     }
+	public void setOutput(String output) {
+		this.output = output;
+	}
+	public void setFileToWrite(File fileToWrite) {
+		this.fileToWrite = fileToWrite;
+	}
+
 	
 	
 }

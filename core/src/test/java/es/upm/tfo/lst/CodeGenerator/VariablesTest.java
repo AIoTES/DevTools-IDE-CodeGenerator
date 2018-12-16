@@ -67,6 +67,7 @@ public class VariablesTest {
 		 System.out.println("\n------------------------------inexistent variables--------------------------------------\n");
 		parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
 		this.model=parser.getXmlCoordinatorDataModel();
+		System.out.println(model!=null);
 		this.genPro = new GenerateProject(this.model);
 
 		genPro.setVariable( "INEXISTENT","/exampleFolder");//inexistent

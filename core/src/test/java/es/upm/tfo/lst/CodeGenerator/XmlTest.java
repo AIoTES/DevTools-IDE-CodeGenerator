@@ -3,6 +3,9 @@ package es.upm.tfo.lst.CodeGenerator;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;

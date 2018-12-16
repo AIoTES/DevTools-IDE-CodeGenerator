@@ -37,6 +37,7 @@ public class WebLoadTemplateTest {
 		try {
 			resp=this.webContent.processURL(new URL(templateDir));
 			assertNotNull(resp);
+			
 		}catch (Exception e) {
 				
 		}
