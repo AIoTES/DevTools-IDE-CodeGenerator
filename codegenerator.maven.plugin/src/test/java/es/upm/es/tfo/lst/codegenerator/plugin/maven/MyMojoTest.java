@@ -1,15 +1,18 @@
 package es.upm.es.tfo.lst.codegenerator.plugin.maven;
 
 
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
-
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.junit.Rule;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 
-public class MyMojoTest
+public class MyMojoTest 
 {
     @Rule
     public MojoRule rule = new MojoRule()
@@ -37,8 +40,18 @@ public class MyMojoTest
         assertTrue( pom.exists() );
 
         CodegenerationMojo myMojo = ( CodegenerationMojo ) rule.lookupConfiguredMojo( pom, "generate" );
+//        CodegenerationMojo myMojo = ( CodegenerationMojo ) lookupMojo("generate", pom);
         assertNotNull( myMojo );
-//        myMojo.execute();
+//        URL xmlTemplate = (URL) rule.getVariableValueFromObject( myMojo, "xmlTemplate" );
+//        assertNotNull(xmlTemplate);
+//        InputStream in = xmlTemplate.openStream();
+//        assertNotNull(in);
+//        int size = 0;
+//        byte[] buffer = new byte[1024];
+//        while ((size = in.read(buffer)) != -1) System.out.write(buffer, 0, size);
+        PlexusConfiguration config = rule.extractPluginConfiguration("codegenerator.maven.plugin", new File(pom, "pom.xml"));
+        rule.configureMojo(myMojo, config);
+        myMojo.execute();
 
 //        File outputDirectory = ( File ) rule.getVariableValueFromObject( myMojo, "outputDirectory" );
 //        assertNotNull( outputDirectory );
@@ -49,13 +62,7 @@ public class MyMojoTest
 
     }
 
-    /** Do not need the MojoRule. */
-    @WithoutMojo
-    @Test
-    public void testSomethingWhichDoesNotNeedTheMojoAndProbablyShouldBeExtractedIntoANewClassOfItsOwn()
-    {
-        assertTrue( true );
-    }
+
 
 }
 

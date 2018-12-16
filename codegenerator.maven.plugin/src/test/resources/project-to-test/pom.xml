@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>es.upm.tfo.lst</groupId>
-  <artifactId>codegenerator.maven.plugin</artifactId>
+  <artifactId>codegenerator.maven.plugin.test</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Test MyMojo</name>
@@ -13,19 +13,17 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-my-plugin</artifactId>
+        <artifactId>codegenerator.maven.plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
         <configuration>
-          <!-- Specify the MyMojo parameter -->
           <outputDirectory>target/test-harness/project-to-test</outputDirectory>
-            <configuration>
-            	<template>file://../CodeGenerator/src/test/resources/template-complex/complexXml.xml</template>
-            	<variables>
-            		<outputBaseDir>/exampleFolder1</outputBaseDir>
-            		<cardinality>/exampleFolder4</cardinality>
-            		<templateCount>/exampleFolder5</templateCount>
-            		<ontologyCount>/exampleFolder6</ontologyCount>
-            	</variables>
-            </configuration>
+          <xmlTemplate>file:../core/src/test/resources/template-complex/complexXml.xml</xmlTemplate>
+          <variables>
+          	<outputBaseDir>/exampleFolder1</outputBaseDir>
+         	<cardinality>/exampleFolder4</cardinality>
+         	<templateCount>/exampleFolder5</templateCount>
+         	<ontologyCount>/exampleFolder6</ontologyCount>
+          </variables>
         </configuration>
       </plugin>
     </plugins>
