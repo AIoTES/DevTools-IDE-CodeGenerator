@@ -24,10 +24,15 @@ import org.jsoup.select.Elements;
  */
 public class ProcessWebContent {
 	private Document doc; 
-	private String test;
+	private String test=null;
 	
 	private URI uri;
 	private Elements t;
+	private String output="";
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
 	
@@ -48,10 +53,11 @@ public class ProcessWebContent {
 	        	 sb.append(inputLine+"\n");
 	         in.close();
 	        test=sb.toString();
+	        this.generateFiles();
     	}catch(Exception a) {
-    		a.printStackTrace();
+    		//a.printStackTrace();
     	}
-    	this.generateFiles();
+    	
     	return test;
 	}
 	
@@ -85,7 +91,7 @@ public class ProcessWebContent {
 	        in.close();
 	        //System.out.println(sb.toString());
 	        inputLine="";
-	        File fileToWrite = new File("target/",this.arrayOfNames.get(this.arrayOfSites.indexOf(url)));
+	        File fileToWrite = new File(this.output,this.arrayOfNames.get(this.arrayOfSites.indexOf(url)));
             bufferWriter= new BufferedWriter(new java.io.FileWriter(fileToWrite,true));
             bufferWriter.write(sb.toString());
             bufferWriter.write("\n");

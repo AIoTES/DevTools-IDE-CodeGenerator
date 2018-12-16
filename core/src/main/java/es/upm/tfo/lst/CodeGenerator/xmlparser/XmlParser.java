@@ -53,8 +53,12 @@ public class XmlParser {
 	 */
 	public void generateXMLCoordinator(String xmlPath){
 		try {
+<<<<<<< HEAD
 			this.xmlSource =  new URL(xmlPath);;
 			//readFromURL(this.xmlSource);
+=======
+			this.xmlPath =  new URL(xmlPath);;
+>>>>>>> temp-branch
 		}catch (Exception e) {
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
@@ -65,10 +69,22 @@ public class XmlParser {
 				
 			}
 		}
-		this.readFromLocalFileSystem();
+		this.readXML();
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	 *generate XmlCoordinator object who represent XML file into java code
+	 * @param xmlPath {@link URL } path to XML file
+	 */
+	public void generateXMLCoordinator(URL xmlPath){
+		this.xmlPath = xmlPath;
+		this.readXML();
+	}
+	
+	/**
+>>>>>>> temp-branch
 	 *
 	 * @return {@link TemplateDataModel} object. Null if method {@link #generateXMLCoordinator(String)} isn't called
 	 */
@@ -80,7 +96,7 @@ public class XmlParser {
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
 	 * @param xmlSource {@link String}  representing the location from XML file to load
 	 */
-	private void readFromLocalFileSystem()  {
+	private void readXML()  {
 		
 		Element t;
 		this.author = new Author();
@@ -146,9 +162,8 @@ public class XmlParser {
 
 	}
 
-
-	 public URL getParentTemplateDir() throws MalformedURLException, URISyntaxException {
-		 return xmlPath.toURI().resolve("..").toURL();
+	public URL getParentTemplateDir() throws MalformedURLException, URISyntaxException {
+		 return xmlPath.toURI().resolve(".").toURL();
 	 }
 
 }
