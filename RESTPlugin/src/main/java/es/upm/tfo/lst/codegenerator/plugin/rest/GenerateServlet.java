@@ -48,18 +48,8 @@ public class GenerateServlet extends HttpServlet {
 	private static final String ONT = "ontologies";
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
-	static File tempFolder;
-
-	static {
-		try {
-			tempFolder = File.createTempFile("CodeGenerator", null);
-			tempFolder.deleteOnExit();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	private File tempFolder;
+	private String outputAlias;
 
 	/**
 	 *
@@ -122,7 +112,6 @@ public class GenerateServlet extends HttpServlet {
 			try {
 				 result = gp.process();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace(resp.getWriter());
 				result = false;
 			}
@@ -130,15 +119,9 @@ public class GenerateServlet extends HttpServlet {
 			if (result) {
 				// response with Output reference
 				JsonObject outO = new JsonObject();
-				try {
-					URI path = new URI(req.getRequestURI());
-					outO.addProperty("output", path.toString() + "/" + out);
-					resp.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-					resp.getWriter().println(outO.toString());
-				} catch (URISyntaxException e) {
-					e.printStackTrace(resp.getWriter());
-					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				}
+				outO.addProperty("output", outputAlias + "/" + out);
+				resp.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+				resp.getWriter().println(outO.toString());
 			}else {
 				resp.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
@@ -147,6 +130,11 @@ public class GenerateServlet extends HttpServlet {
 			}
 
 		}
+	}
+
+	public void setOutputDir(File outputDir, String outputAlias) {
+		tempFolder = outputDir;
+		this.outputAlias = outputAlias;
 	}
 
 
