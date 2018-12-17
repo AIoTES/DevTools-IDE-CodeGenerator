@@ -153,6 +153,7 @@ public class GenerateProject {
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
+				//System.out.println("Generateproject "+this.localBaseLoaderPath+projectModel.getTemplateName());
 				if(this.fileControl(this.localBaseLoaderPath+projectModel.getTemplateName())) {
 
 					text = this.processName(projectModel.getOutput(), this.context);

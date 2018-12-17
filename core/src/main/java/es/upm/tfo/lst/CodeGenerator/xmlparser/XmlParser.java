@@ -52,11 +52,16 @@ public class XmlParser {
 	private URI uri;
 	private Elements t;
 	private String output="";
-	private File fileToWrite;
+	private File fileToWrite,templatesTempDir;
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
+	private boolean isLocal=true;
 	
 	
+
+	public boolean isLocal() {
+		return isLocal;
+	}
 
 	public XmlParser() {
 			this.variableList = new HashMap<>();
@@ -73,8 +78,10 @@ public class XmlParser {
 
 			this.xmlSource =  new URL(xmlPath);
 			System.out.println(this.xmlSource);
+			this.isLocal=false;
 			this.readWebTemplate(this.xmlSource);
 		}catch (Exception e) {
+			this.isLocal=true;
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
@@ -178,6 +185,8 @@ public class XmlParser {
 	 }
 
 	private void readWebTemplate( URL url) {
+		String tmpDirStr = System.getProperty("java.io.tmpdir");
+		System.out.println(" tmpDirStr "+tmpDirStr);
 		try {
 		System.out.println("url parent path "+url.toURI().resolve("."));
 		
@@ -200,15 +209,19 @@ public class XmlParser {
 		BufferedWriter bufferWriter=null;
  	
 		for (URL x : arrayOfSites) {
-			System.out.println("array of sites "+x);
+			
 			BufferedReader in = new BufferedReader(new InputStreamReader(x.openStream()));
 	        String inputLine="";
 	        while ((inputLine = in.readLine()) != null)
 	       	 	sb.append(inputLine+"\n");
 	        in.close();
 	        
+	        //templatesTempDir = File.createTempFile(this.arrayOfNames.get(this.arrayOfSites.indexOf(x)), null);
+	        templatesTempDir = new File(tmpDirStr);
+	        System.out.println("tempFiles "+templatesTempDir.getPath());
 	        inputLine="";
-	        File fileToWrite = new File(output,this.arrayOfNames.get(this.arrayOfSites.indexOf(x)));
+	        File fileToWrite = new File(templatesTempDir.getPath()+"/"+this.arrayOfNames.get(this.arrayOfSites.indexOf(x)));
+	        
 	        System.out.println("fitetowrite "+fileToWrite.getPath());
 	        
             bufferWriter= new BufferedWriter(new FileWriter(fileToWrite,true));

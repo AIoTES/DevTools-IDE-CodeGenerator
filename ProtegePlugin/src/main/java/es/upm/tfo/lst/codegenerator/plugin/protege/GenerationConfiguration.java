@@ -47,7 +47,6 @@ import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
-import es.upm.tfo.lst.webprocess.ProcessWebContent;
 
 
 
@@ -68,7 +67,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
     private static SwingWorker<Integer, Void> swingWorker;
     private List<String> templateArrayOptions;
     private List<String> outputArrayOptions;
-    private File templateFileOptions=null,outputFileOptions=null,tempWebTemplate=null;
+    private File templateFileOptions=null,outputFileOptions=null;
     
     private int progress;
     private ProgressBar pb;
@@ -86,13 +85,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			{ 
 				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
 				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
-				tempWebTemplate=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.temp.template").getAbsolutePath());
 				if(!templateFileOptions.exists())
 					templateFileOptions.createNewFile();
 				if(!outputFileOptions.exists())
 					outputFileOptions.createNewFile();
-				if(!tempWebTemplate.exists())
-					tempWebTemplate.mkdir();
+				
 				
 			}catch (Exception e) {
 				System.out.println("bundle "+e.getMessage());
@@ -148,8 +145,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				parser = new XmlParser();
 				parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
 				mainModel = parser.getXmlCoordinatorDataModel();
-				System.out.println(tempWebTemplate.getPath());
-				parser.setOutput(tempWebTemplate.getPath());
+				//parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
 					generateTable= new CodeGenerationVariableTable(mainModel);
 					variableTable.setModel(generateTable);
@@ -175,6 +171,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		//button to generate code
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent e) {
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
 					System.out.println(sourceTextField.getEditor().getItem().toString());
@@ -184,10 +181,14 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					OWLOntology owlOntology = null; 
 					owlOntology = owlModelManager.getActiveOntology();
 					
-					
 					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
-					proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
+					
+					if(parser.isLocal())
+						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
+					else
+						proj.setLocalBaseLoaderPath("/tmp/");
+					
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";
 					proj.setOutputFolder(aux);
