@@ -106,6 +106,7 @@ public class CodegenerationMojo
 
 					@Override
 					public boolean test(String t) {
+						// TODO use url.sameFile(other)
 						return t.contains(url) || url.contains(t);
 					}
 				});
@@ -115,14 +116,14 @@ public class CodegenerationMojo
 		}
 		if (localOntologies.exists() && localOntologies.isFile()) {
 			String url = localOntologies.toPath().toString();
-			boolean recursive = recursiveOntologies.contains(url);
-	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");			
+			boolean recursive = recursiveOntologies.contains(url); // TODO use url.sameFile(other)
+	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url), recursive);
 		}
 
 		// add remote ontologies
 		for (URL url : remoteOntologies) {
-			boolean recursive = recursiveOntologies.contains(url.toString());
+			boolean recursive = recursiveOntologies.contains(url.toString());// TODO use url.sameFile(other)
 	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url.toString()), recursive);
 		}
