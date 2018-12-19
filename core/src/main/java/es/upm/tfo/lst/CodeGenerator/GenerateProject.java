@@ -154,9 +154,8 @@ public class GenerateProject {
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
-				//System.out.println("Generateproject "+this.localBaseLoaderPath+projectModel.getTemplateName());
-				if(this.fileControl(this.localBaseLoaderPath+projectModel.getTemplateName())) {
-
+				
+				if( new File(this.localBaseLoaderPath+projectModel.getTemplateName()).exists() ) {
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
@@ -490,7 +489,7 @@ public class GenerateProject {
 
 	}
 	/**
-	 * Set path to load velocity macros from local filesystem.
+	 * Set path to load velocity macros from local filesystem relative to selected XML
 	 * @param localBaseLoaderPath {@link String } path to load velocity templates from local file system.
 	 */
 	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
