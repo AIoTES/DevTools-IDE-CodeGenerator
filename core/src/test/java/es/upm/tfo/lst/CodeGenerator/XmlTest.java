@@ -37,7 +37,9 @@ public class XmlTest {
 	 */
 	@Test
 	public void testBadSchema() {
+		
 		System.out.println("\n------------------------------bad schema XML --------------------------------------\n");
+		System.out.println(this.basePath+"template-XMLbadSchema/badSchema.xml");
 		parser.generateXMLCoordinator(this.basePath+"template-XMLbadSchema/badSchema.xml");
 		this.model=parser.getXmlCoordinatorDataModel();
 		assertNull(this.model);

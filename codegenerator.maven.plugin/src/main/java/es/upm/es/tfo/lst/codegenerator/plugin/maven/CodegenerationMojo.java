@@ -3,6 +3,7 @@ package es.upm.es.tfo.lst.codegenerator.plugin.maven;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -78,13 +79,18 @@ public class CodegenerationMojo
         throws MojoExecutionException
     {
     
+    	
     	if (xmlTemplate == null) {
     		throw new MojoExecutionException("Invalid XML Template referece (null).");
     	}
+    	
     	getLog().info("Generating code from Ontologies");
+    	getLog().info("xml template "+xmlTemplate.toString());
+    	System.out.println(xmlTemplate==null);
+   
     	// set template & init project
 		XmlParser parser = new XmlParser();
-		parser.generateXMLCoordinator(xmlTemplate);
+		parser.generateXMLCoordinator(xmlTemplate.getPath());
 		TemplateDataModel model = parser.getXmlCoordinatorDataModel();
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
@@ -94,6 +100,7 @@ public class CodegenerationMojo
 		gp.setMainModel(model);
 		
 		//bug in 97...NPE
+		
 		gp.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		
@@ -159,7 +166,8 @@ public class CodegenerationMojo
         try {
         	result = gp.process();
         } catch (Exception e) {
-        	throw new MojoExecutionException("unable to generate code.", e);
+        	getLog().debug(e);
+        	throw new MojoExecutionException("unable to generate code.");
         }
 
         if (!result) {

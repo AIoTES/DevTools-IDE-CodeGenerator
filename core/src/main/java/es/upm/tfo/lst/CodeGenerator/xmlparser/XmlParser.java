@@ -54,7 +54,7 @@ public class XmlParser {
 	private URI uri;
 	private Elements t;
 	private String output="";
-	private File fileToWrite,templatesTempDir;
+	private File fileToWrite,templatesTempDir,xmlFile;
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
 	private boolean isLocal=true;
@@ -76,20 +76,36 @@ public class XmlParser {
 	 * @param xmlPath {@link String } path to XML file
 	 */
 	public void generateXMLCoordinator(String xmlPath){
-		try {
-
-				this.xmlSource =  new URL(xmlPath);
-				System.out.println(this.xmlSource);
-				this.isLocal=false;
-				this.readWebTemplate(this.xmlSource);
-				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
-				System.out.println(templateBasePath);
-			}catch (Exception e) {
+		boolean flag=false;
+		System.out.println("generate XML coordinator "+xmlPath);
+		
+		try{
+			flag=true;
+			this.xmlSource =  new URL(xmlPath);
 			
+		}catch(Exception a) {
+			System.out.println(a.getMessage());
+			flag=false;
+		}
+		if(flag) {
+			System.out.println("load from url");
+
+			System.out.println(this.xmlSource);
+			this.isLocal=false;
+			this.readWebTemplate(this.xmlSource);
+			
+			try {
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
+			} catch (MalformedURLException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.out.println("load from local filesystem");
 			this.isLocal=true;
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
+				System.out.println("files source "+this.xmlSource.toString());
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
 				System.out.println(templateBasePath);
 
@@ -98,6 +114,8 @@ public class XmlParser {
 				
 			}
 		}
+		
+
 		this.readXML();
 	}
 
@@ -105,7 +123,7 @@ public class XmlParser {
 	public void generateXMLCoordinator(URL xmlPath){
 		this.xmlSource = xmlPath;
 		this.readXML();
-		//readWebTemplate();
+
 	}
 	
 	
@@ -238,7 +256,7 @@ public class XmlParser {
             
 		}
 		}catch (Exception e) {
-			System.out.println(e.getLocalizedMessage());
+			e.printStackTrace();
 		}
 		
 	}
