@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>es.upm.tfo.lst</groupId>
-		<artifactId>CodeGenerator-suite</artifactId>
+		<artifactId>codegenerator</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>REST.plugin</artifactId>
+	<artifactId>codegenerator.rest.plugin</artifactId>
 	<packaging>bundle</packaging>
 	<description>A Servlet annotated web application for Apache Karaf that calls the code generator core</description>
 
@@ -32,8 +32,8 @@
 		</dependency>
 		<dependency>
 		  <groupId>es.upm.tfo.lst</groupId>
-		  <artifactId>CodeGenerator</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
+		  <artifactId>codegenerator.core</artifactId>
+		  <version>${project.version}</version>
 		</dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>

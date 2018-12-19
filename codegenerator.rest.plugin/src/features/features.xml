@@ -6,6 +6,7 @@
 		<feature>http</feature>
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-lang:jar:2.4_6</bundle>
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-collections:3.2.1_3</bundle>
+		<bundle start-level='50'>mvn:com.google.code.gson/gson/2.8.0</bundle>	
 		<!-- Velocity -->
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles:org.apache.servicemix.bundles.velocity:1.7_6</bundle>
 		<!-- OWLAPI -->
