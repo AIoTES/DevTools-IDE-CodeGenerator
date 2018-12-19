@@ -89,10 +89,12 @@ public class CodegenerationMojo
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
 		}
-		GenerateProject gp = new GenerateProject(model);
-
-		// add ontologies into directory
+		
+		GenerateProject gp = new GenerateProject();
+		gp.setMainModel(model);
+		gp.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
+		
 		if (localOntologies.exists() && localOntologies.isDirectory()) {
 				File[] onts = localOntologies.listFiles(new FilenameFilter() {
 	

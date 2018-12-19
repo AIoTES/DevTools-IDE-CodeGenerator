@@ -138,8 +138,6 @@ public class GenerateProject {
 			flag = false;
 		}
 
-
-
 		return flag;
 	}
 
@@ -509,7 +507,7 @@ public class GenerateProject {
 	 * control if sources loader path is set
 	 * @return
 	 */
-	private boolean resourcesLoaderCOntrol() {
+	private boolean templateBaseLoaderSourceControl() {
 		if(this.localBaseLoaderPath == null) {
 			return false;
 		}
@@ -532,31 +530,34 @@ public class GenerateProject {
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				flag=true;
-				/*if(this.resourcesLoaderCOntrol()) {
+				if(this.templateBaseLoaderSourceControl()) {
 					
 					
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
-					}else {
-						//Map<String,Variable> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
-						Set<String> requierdVars = mainModel.getRequiredVariables().keySet();
-						if(  variables.keySet().containsAll(requierdVars)  ){
-							flag=true;
-						}else {
-							requierdVars.removeAll(variables.keySet());
-							String msg = "Required variables are not set:";
-							for (String var : requierdVars) {
-								msg += var + ", ";
-							}
-							log.fatal(msg);
-
-
-						}
 					}
+					/*
+					else {
+					//Map<String,Variable> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
+					Set<String> requierdVars = mainModel.getRequiredVariables().keySet();
+						if(  variables.keySet().containsAll(requierdVars)  ){
+						flag=true;
+						}else {
+						requierdVars.removeAll(variables.keySet());
+						String msg = "Required variables are not set:";
+						for (String var : requierdVars) {
+								msg += var + ", ";
+						}
+							log.fatal(msg);
+					
+					
+					}
+					}
+					 */
 					
 				}else {
 					log.fatal("Resources folder isn't set, program will stop");
-				}*/
+				}
 			}else {
 				log.fatal("please be shure if method generateXMLCoordinator() is called from XmlParser object");
 			}
