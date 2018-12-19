@@ -47,7 +47,8 @@ public class XmlParser {
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
 	private Author author;
-	private URL templateBasePath;
+	private URL templateBasePath=null;
+	
 	//---------------
 	private org.jsoup.nodes.Document doc; 
 	private URI uri;
@@ -250,6 +251,8 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-	
+	public URL getTemplateBasePath() {
+		return templateBasePath;
+	}
 
 }

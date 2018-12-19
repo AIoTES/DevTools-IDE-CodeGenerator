@@ -123,6 +123,7 @@ public class GenerateProject {
 	public boolean process() throws Exception{
 		boolean flag=false;
 		total2Process = 4; // TODO calculate
+		//this.localBaseLoaderPath = 
 		if(this.control()) {
 			try {
 				this.initVelocity();

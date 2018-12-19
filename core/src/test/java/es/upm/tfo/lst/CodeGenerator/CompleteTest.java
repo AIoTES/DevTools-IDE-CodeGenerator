@@ -40,13 +40,16 @@ public class CompleteTest {
 		this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		//this.genPro = new GenerateProject(this.model);
-		this.genPro = new GenerateProject();
 		
-		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
-		this.genPro.addOntology(this.ontology, true);
-
+		this.genPro = new GenerateProject();
+		this.genPro.setMainModel(this.model);
+		this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath().toString());
+		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+		
+		//this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+		//this.genPro.addOntology(this.ontology, true);
+		
 		this.genPro.setVariable("outputBaseDir","/exampleFolder1");//required
-
 		this.genPro.setVariable( "cardinality", "/exampleFolder4");//optional
 		this.genPro.setVariable( "templateCount", "/exampleFolder5");//optional
 		this.genPro.setVariable( "ontologyCount", "/exampleFolder6");//optional
