@@ -41,7 +41,7 @@ import es.upm.tfo.lst.CodeGenerator.model.Variable;
 public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
-	private URL xmlSource;
+	private URL xmlSource=null;
 	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor;
 	private Map<String,Variable> variableList;
 	private List<MacroModel> macroList;
@@ -78,17 +78,21 @@ public class XmlParser {
 	public void generateXMLCoordinator(String xmlPath){
 		try {
 
-			this.xmlSource =  new URL(xmlPath);
-			System.out.println(this.xmlSource);
-			this.isLocal=false;
-			this.readWebTemplate(this.xmlSource);
-			this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
-		}catch (Exception e) {
+				this.xmlSource =  new URL(xmlPath);
+				System.out.println(this.xmlSource);
+				this.isLocal=false;
+				this.readWebTemplate(this.xmlSource);
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
+				System.out.println(templateBasePath);
+			}catch (Exception e) {
+			
 			this.isLocal=true;
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
-				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
+				System.out.println(templateBasePath);
+
 			} catch (Exception e2) {
 				log.fatal("giving up.", e2);
 				

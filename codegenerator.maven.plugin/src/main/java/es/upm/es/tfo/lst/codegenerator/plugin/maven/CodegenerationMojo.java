@@ -92,6 +92,8 @@ public class CodegenerationMojo
 		
 		GenerateProject gp = new GenerateProject();
 		gp.setMainModel(model);
+		
+		//bug in 97...NPE
 		gp.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		
