@@ -1,5 +1,5 @@
 #macro(ontology $ontology)
-    ONTOLOGY NAME $ontology.getOntologyID().getOntologyIRI().get().getShortForm() 
+    ONTOLOGY IRI $ontology.getOntologyID().getOntologyIRI()) 
 #end
 #macro(vars $varsArray)
 #foreach( $v in $varsArray )
