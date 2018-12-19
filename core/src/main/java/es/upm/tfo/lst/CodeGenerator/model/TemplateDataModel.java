@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 public class TemplateDataModel {
 		private String name,version,description;
+		
+
 		private Author author;
 		private Map<String,Variable> arrayVars;
 		private List <MacroModel> macroList;
@@ -186,6 +188,8 @@ public class TemplateDataModel {
 			this.arrayVars.get(name).setValue(value);
 		}
 
+	
+		
 		public  void printVariables() {
 			Set<String> aux= this.arrayVars.keySet();
 			for (String t : aux) {

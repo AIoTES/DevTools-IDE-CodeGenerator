@@ -29,14 +29,19 @@ public class CompleteTest {
 		parser = new XmlParser();
 		ontologyLoader = new OntologyLoader();
 	}
+	
+	
+	
 	@Test
 	public void test1() {
 		 System.out.println("\n------------------------------complex test--------------------------------------\n");
-
-
+ 
+		 //cambiar los test para que todo cargue desde la url relativa al XML
 		this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
-		this.genPro = new GenerateProject(this.model);
+		//this.genPro = new GenerateProject(this.model);
+		this.genPro = new GenerateProject();
+		
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		this.genPro.addOntology(this.ontology, true);
 

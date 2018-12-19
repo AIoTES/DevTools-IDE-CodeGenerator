@@ -100,7 +100,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 570, 444);
+		setMinimumSize( new Dimension(570, 444));
 		contentPane = new JPanel();
+		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		variableTable = new JTable();
@@ -283,9 +285,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(25)
-					.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lblTemplateSource, GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
 					.addGap(12)
-					.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 360, GroupLayout.PREFERRED_SIZE)
+					.addComponent(sourceTextField, 0, 362, Short.MAX_VALUE)
 					.addGap(6)
 					.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_contentPane.createSequentialGroup()
@@ -293,12 +295,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addComponent(checkRecursive))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(29)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 466, GroupLayout.PREFERRED_SIZE))
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+					.addGap(53))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(29)
-					.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lblOutput, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
 					.addGap(18)
-					.addComponent(outputTextfield, GroupLayout.PREFERRED_SIZE, 356, GroupLayout.PREFERRED_SIZE)
+					.addComponent(outputTextfield, 0, 356, Short.MAX_VALUE)
 					.addGap(6)
 					.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 				.addGroup(gl_contentPane.createSequentialGroup()
@@ -321,9 +324,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addGap(18)
 					.addComponent(checkRecursive)
 					.addGap(2)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 239, GroupLayout.PREFERRED_SIZE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
 					.addGap(12)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(2)
 							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
@@ -334,7 +337,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addGap(17)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnCancel)
-						.addComponent(btnGenerate)))
+						.addComponent(btnGenerate))
+					.addGap(5))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

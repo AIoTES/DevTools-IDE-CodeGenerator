@@ -47,6 +47,7 @@ public class XmlParser {
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
 	private Author author;
+	private URL templateBasePath;
 	//---------------
 	private org.jsoup.nodes.Document doc; 
 	private URI uri;
@@ -80,12 +81,13 @@ public class XmlParser {
 			System.out.println(this.xmlSource);
 			this.isLocal=false;
 			this.readWebTemplate(this.xmlSource);
+			this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
 		}catch (Exception e) {
 			this.isLocal=true;
 			log.warn("given URL ist valid, trying to interpret as filesystem");
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
-				
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
 			} catch (Exception e2) {
 				log.fatal("giving up.", e2);
 				

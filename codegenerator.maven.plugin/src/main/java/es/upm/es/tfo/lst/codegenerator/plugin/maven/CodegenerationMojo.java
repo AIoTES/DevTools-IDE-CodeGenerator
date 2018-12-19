@@ -77,6 +77,7 @@ public class CodegenerationMojo
     public void execute()
         throws MojoExecutionException
     {
+    
     	if (xmlTemplate == null) {
     		throw new MojoExecutionException("Invalid XML Template referece (null).");
     	}
@@ -90,29 +91,32 @@ public class CodegenerationMojo
 		}
 		GenerateProject gp = new GenerateProject(model);
 
-		// add ontologies
+		// add ontologies into directory
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		if (localOntologies.exists() && localOntologies.isDirectory()) {
-			File[] onts = localOntologies.listFiles(new FilenameFilter() {
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().contains(".owl");
-				}
-			});
-			for (int i = 0; i < onts.length; i++) {
-				final String url = onts[i].toPath().toString();
-				boolean recursive = recursiveOntologies.stream().anyMatch(new Predicate<String>() {
-
+				File[] onts = localOntologies.listFiles(new FilenameFilter() {
+	
 					@Override
-					public boolean test(String t) {
-						return t.contains(url) || url.contains(t);
+					public boolean accept(File dir, String name) {
+
+						return name.toLowerCase().contains(".owl");
 					}
 				});
-		    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
-				gp.addOntology(ontologyLoader.loadOntology(url), recursive);
-			}
+				
+				for (int i = 0; i < onts.length; i++) {
+					final String url = onts[i].toPath().toString();
+					boolean recursive = recursiveOntologies.stream().anyMatch(new Predicate<String>() {
+	
+						@Override
+						public boolean test(String t) {
+							return t.contains(url) || url.contains(t);
+						}
+					});
+			    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
+					gp.addOntology(ontologyLoader.loadOntology(url), recursive);
+				}
 		}
+		
 		if (localOntologies.exists() && localOntologies.isFile()) {
 			String url = localOntologies.toPath().toString();
 			boolean recursive = recursiveOntologies.contains(url);
@@ -120,13 +124,17 @@ public class CodegenerationMojo
 			gp.addOntology(ontologyLoader.loadOntology(url), recursive);
 		}
 
+	
+		
 		// add remote ontologies
 		for (URL url : remoteOntologies) {
 			boolean recursive = recursiveOntologies.contains(url.toString());
 	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url.toString()), recursive);
 		}
-
+		 
+		
+		
 		// add variables
 		for (Entry<String, String> entry : variables.entrySet()) {
 			gp.setVariable(entry.getKey(), entry.getValue());
@@ -154,5 +162,9 @@ public class CodegenerationMojo
         	throw new MojoExecutionException("Code generation was not successuful.");
         }
         getLog().info("generation completed.");
+        
+        
+
+
     }
 }

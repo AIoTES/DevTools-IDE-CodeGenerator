@@ -39,9 +39,10 @@ public class MyMojoTest
         assertNotNull( pom );
         assertTrue( pom.exists() );
 
-        CodegenerationMojo myMojo = ( CodegenerationMojo ) rule.lookupConfiguredMojo( pom, "generate" );
+          CodegenerationMojo myMojo = ( CodegenerationMojo ) rule.lookupConfiguredMojo( pom, "generate" );
 //        CodegenerationMojo myMojo = ( CodegenerationMojo ) lookupMojo("generate", pom);
-        assertNotNull( myMojo );
+        
+          assertNotNull( myMojo );
 //        URL xmlTemplate = (URL) rule.getVariableValueFromObject( myMojo, "xmlTemplate" );
 //        assertNotNull(xmlTemplate);
 //        InputStream in = xmlTemplate.openStream();
@@ -49,6 +50,7 @@ public class MyMojoTest
 //        int size = 0;
 //        byte[] buffer = new byte[1024];
 //        while ((size = in.read(buffer)) != -1) System.out.write(buffer, 0, size);
+          
         PlexusConfiguration config = rule.extractPluginConfiguration("codegenerator.maven.plugin", new File(pom, "pom.xml"));
         rule.configureMojo(myMojo, config);
         myMojo.execute();

@@ -531,9 +531,10 @@ public class GenerateProject {
 		boolean flag=false;
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
-				if(this.resourcesLoaderCOntrol()) {
-					flag=true;
-					/*
+				flag=true;
+				/*if(this.resourcesLoaderCOntrol()) {
+					
+					
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}else {
@@ -552,10 +553,10 @@ public class GenerateProject {
 
 						}
 					}
-					*/
+					
 				}else {
 					log.fatal("Resources folder isn't set, program will stop");
-				}
+				}*/
 			}else {
 				log.fatal("please be shure if method generateXMLCoordinator() is called from XmlParser object");
 			}
@@ -676,7 +677,9 @@ public class GenerateProject {
 	}
 */
 	private void update(int done) {
+		if(GenConf!=null) {
 			GenConf.updateProgress(4, done);
+		}
 	}
 
 }
