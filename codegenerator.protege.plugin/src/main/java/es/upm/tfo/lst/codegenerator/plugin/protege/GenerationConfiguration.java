@@ -1,3 +1,11 @@
+package es.upm.tfo.lst.codegenerator.plugin.protege;
+/*
+ * 
+ * 
+ * 
+ * comprobar que la ruta de los ficheros no esten fuera de la ruta de output
+ * 
+ * */
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -449,4 +457,3 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	
 
 }
-==== BASE ====

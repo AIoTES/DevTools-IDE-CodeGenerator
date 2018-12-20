@@ -4,13 +4,14 @@
   	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
   	>
   <modelVersion>4.0.0</modelVersion>
-
-  <groupId>es.upm.tfo.lst</groupId>
-  <artifactId>CodeGenerator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <parent>
+	<groupId>es.upm.tfo.lst</groupId>
+	<artifactId>codegenerator</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+  </parent>
   <packaging>jar</packaging>
 
-  <name>CodeGenerator</name>
+  <artifactId>codegenerator.core</artifactId>
   <url>http://maven.apache.org</url>
 
   <properties>
