@@ -8,10 +8,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:universidad="http://www.semanticweb.org/edu/ontologies/2018/8/universidad#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-    <owl:Ontology rdf:about="http://www.semanticweb.org/edu/ontologies/2018/8/universidad">
-        <owl:imports rdf:resource="http://www.co-ode.org/ontologies/pizza/pizza.owl"/>
-    </owl:Ontology>
-    
+  
 
 
     <!-- 

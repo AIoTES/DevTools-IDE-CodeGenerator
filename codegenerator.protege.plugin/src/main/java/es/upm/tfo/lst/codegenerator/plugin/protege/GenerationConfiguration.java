@@ -280,6 +280,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		checkRecursive.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				checkValue=checkRecursive.isSelected();
+				if(checkRecursive.isSelected()) {
+					checkRecursive.setText("Recursive");
+				}else {
+					checkRecursive.setText("Not recursive");
+				}
 			}
 		});
 		
