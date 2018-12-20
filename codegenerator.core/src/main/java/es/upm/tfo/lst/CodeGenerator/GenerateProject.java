@@ -72,7 +72,9 @@ public class GenerateProject {
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner;
 	private Map<String, Variable> variables;
-	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
+	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null,outputFromUI=null;
+	
+
 	private URL urlBasePath=null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
@@ -128,6 +130,7 @@ public class GenerateProject {
 			try {
 				this.initVelocity();
 				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
+				this.baseContext.put("output", this.outputFromUI);
 				flag =  this.processProject();
 			}catch(Exception a){
 				flag=false;
@@ -672,11 +675,9 @@ public class GenerateProject {
 		this.mainModel = mainModel;
 	}
 
-	/*
-	private void addProgressCallback(ProgessCallback pc) {
-		progressCallbacs.add(pc);
+	public void setOutputFromUI(String outputFromUI) {
+		this.outputFromUI = outputFromUI;
 	}
-*/
 	private void update(int done) {
 		if(GenConf!=null) {
 			GenConf.updateProgress(4, done);

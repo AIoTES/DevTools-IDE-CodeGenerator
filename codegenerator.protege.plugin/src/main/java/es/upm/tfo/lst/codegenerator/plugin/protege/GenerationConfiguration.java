@@ -187,7 +187,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					
 					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
-					
+					proj.setOutputFromUI(sourceTextField.getEditor().toString());
 					if(parser.isLocal())
 						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					else
