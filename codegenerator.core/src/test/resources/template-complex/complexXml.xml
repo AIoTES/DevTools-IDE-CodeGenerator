@@ -52,7 +52,7 @@
 			<macro>
 				<template>classes2.vm</template>
 				<for>class</for>
-				<output>classes2/${ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace(".","")}</output>
+				<output>classes2/${ontology.getOntologyID().getOntologyIRI()}</output>
 				 
 			</macro>
 			
