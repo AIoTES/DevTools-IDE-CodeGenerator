@@ -33,7 +33,7 @@ public class CodeGenerationVariableTable implements TableModel {
 	//private GenerateProject project;
 	private TemplateDataModel model;
 
-	static public String  COLS [] = {"Name","Desciption", "Required","Value"};
+	static public String  COLS [] = {"Name","Desciption", "Required","Default Value"};
 /**
  *
  * @param proj {@link GenerateProject}

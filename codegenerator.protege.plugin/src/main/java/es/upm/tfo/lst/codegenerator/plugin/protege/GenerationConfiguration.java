@@ -196,7 +196,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";
 					proj.setOutputFolder(aux);
-					System.out.println("actual ontology name "+owlOntology.getOntologyID().getDefaultDocumentIRI().get().getShortForm());
+					
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
 					asyncProcess();
@@ -288,7 +288,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			}
 		});
 		
-		JLabel lblloadRecursivesly = new JLabel("¿Load recursivesly?");
+		JLabel lblloadRecursively = new JLabel("¿Load recursively?");
 		
 		JLabel lblVariablesInXml = new JLabel("Variables in XML file");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -298,7 +298,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addGap(29)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblloadRecursivesly)
+							.addComponent(lblloadRecursively)
 							.addGap(41))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
@@ -360,7 +360,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 							.addComponent(btnCancel)
-							.addComponent(lblloadRecursivesly))
+							.addComponent(lblloadRecursively))
 						.addComponent(btnGenerate)
 						.addComponent(checkRecursive))
 					.addGap(8))
