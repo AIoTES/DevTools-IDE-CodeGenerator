@@ -131,7 +131,7 @@ public class GenerateProject {
 				flag =  this.processProject();
 			}catch(Exception a){
 				flag=false;
-				log.fatal("error",a);
+				log.fatal("problem initializing velocity",a);
 				throw a;
 			}
 		}else {
@@ -152,8 +152,9 @@ public class GenerateProject {
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
-				
+				//checking if the template for project exists
 				if( new File(this.localBaseLoaderPath+projectModel.getTemplateName()).exists() ) {
+					//interpreting text from xml as VTL
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
@@ -166,7 +167,7 @@ public class GenerateProject {
 						template.merge(context,fr);
 						fr.close();
 					}else {
-						log.warn("output for project is empty and the program will not generate any output file to project");
+						log.warn("output name in XML for project is empty and the program will not generate any output file to project");
 					}
 				    update(1);
 
@@ -182,13 +183,13 @@ public class GenerateProject {
 
 				}else {
 					flag=false;
-					log.fatal("cant find velocity macro in given XML: "+this.localBaseLoaderPath+projectModel.getTemplateName());
+					log.fatal("cant find velocity macro file to project in given XML. Searching template "+this.localBaseLoaderPath+projectModel.getTemplateName()+" failed...");
 				}
 			}
 		}else {
-			log.warn("doesn't exist macro to project");
+			log.warn("cant find macro for project...going to process ontologies");
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
-				//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
+				//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				//System.out.println(this.reasoner);
 				this.baseContext.put("reasoner", this.reasoner);
@@ -213,13 +214,12 @@ public class GenerateProject {
 		String name="";
 
 		this.baseContext.put("ontology", ontology);
-		//this.context= new VelocityContext(this.baseContext);
-
+		//check if exists macro models to process ontologies
 		if(!ontologyModelArray.isEmpty()) {
-			//this.context= new VelocityContext(this.baseContext);
+			//iterating over macros for ontology and applying VMs to any ontology
 			for (MacroModel ontologyModel : ontologyModelArray) {
 				if(this.fileControl(this.localBaseLoaderPath+ontologyModel.getTemplateName())) {
-					//read xml output tag and parse to velocity
+					//interpreting text from xml as VTL
 					name = this.processName(ontologyModel.getOutput(), baseContext);
 					//control directory existance for result of velocity process of output
 					File outputFolder = new File(this.outputFolder+name);
@@ -228,7 +228,6 @@ public class GenerateProject {
 					//merge base context to actual context
 					this.context= new VelocityContext(this.baseContext);
 
-					//this.context.put("ontology",ontology);
 					if(!name.equals("")) {
 						template = vel_eng.getTemplate(ontologyModel.getTemplateName());
 						this.fr = new FileWriter(this.outputFolder+name,true);
@@ -247,7 +246,7 @@ public class GenerateProject {
 
 					flag=true;
 				}else {
-					log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
+					log.fatal("cant find velocity macro file to ontology in given XML. Searching template "+ontologyModel.getTemplateName()+" failed...");
 					flag=false;
 				}
 			}
@@ -531,29 +530,11 @@ public class GenerateProject {
 			if(this.mainModel!=null) {
 				flag=true;
 				if(this.templateBaseLoaderSourceControl()) {
-					
-					
+
 					if(this.mainModel.getRequiredVariables().size()==0) {
 						flag=true;
 					}
-					/*
-					else {
-					//Map<String,Variable> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
-					Set<String> requierdVars = mainModel.getRequiredVariables().keySet();
-						if(  variables.keySet().containsAll(requierdVars)  ){
-						flag=true;
-						}else {
-						requierdVars.removeAll(variables.keySet());
-						String msg = "Required variables are not set:";
-						for (String var : requierdVars) {
-								msg += var + ", ";
-						}
-							log.fatal(msg);
-					
-					
-					}
-					}
-					 */
+				
 					
 				}else {
 					log.fatal("Resources folder isn't set, program will stop");

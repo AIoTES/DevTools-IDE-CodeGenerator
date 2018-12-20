@@ -70,7 +70,14 @@ public class GenerateServlet extends HttpServlet {
 				XmlParser parser = new XmlParser();
 				parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
 				TemplateDataModel model = parser.getXmlCoordinatorDataModel();
-				GenerateProject gp = new GenerateProject(model);
+				
+				//GenerateProject gp = new GenerateProject(model);
+				GenerateProject gp = new GenerateProject();
+				//setting model to main class
+				gp.setMainModel(model);
+				//setting templates loader source
+				gp.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
+				
 
 				// set ontologies
 				OntologyLoader ontologyLoader = new OntologyLoader();

@@ -51,7 +51,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Web-ContextPath>packt-sample</Web-ContextPath>
+						<Web-ContextPath>packt-sample</Web-ContextPath>				
 						<Embed-Dependency>CodeGenerator;inline=true</Embed-Dependency>
 					</instructions>
 				</configuration>
