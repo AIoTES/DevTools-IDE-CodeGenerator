@@ -86,8 +86,7 @@ public class CodegenerationMojo
     	
     	getLog().info("Generating code from Ontologies");
     	getLog().info("xml template "+xmlTemplate.toString());
-    	System.out.println(xmlTemplate==null);
-   
+    
     	// set template & init project
 		XmlParser parser = new XmlParser();
 		parser.generateXMLCoordinator(xmlTemplate.getPath());

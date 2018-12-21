@@ -34,6 +34,7 @@ public class CompleteTest {
 	public void test1() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
  		 
+		
 		this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		//this.genPro = new GenerateProject(this.model);
