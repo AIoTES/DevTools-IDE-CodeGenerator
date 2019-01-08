@@ -57,7 +57,7 @@ public class GenerateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if (req.getHeader(HttpHeaders.CONTENT_TYPE).contains("application/json")) {
 			// interpret JSon
 
@@ -128,9 +128,15 @@ public class GenerateServlet extends HttpServlet {
 			}else {
 				resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			}
-
 		}
 	}
+	
+//	@Override
+//	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//		req.getParameter(ONT);
+//		req.getParameter(TEMPLATE);
+//		req.getParameter(VAR);
+//	}
 
 	public void setOutputDir(File outputDir, String outputAlias) {
 		tempFolder = outputDir;
