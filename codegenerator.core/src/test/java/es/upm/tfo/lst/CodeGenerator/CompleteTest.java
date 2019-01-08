@@ -34,7 +34,6 @@ public class CompleteTest {
 	public void test1() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
  		 
-		
 		this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 		this.model = this.parser.getXmlCoordinatorDataModel();
 		//this.genPro = new GenerateProject(this.model);
@@ -44,8 +43,7 @@ public class CompleteTest {
 		//set the ontology to project and recursive state
 		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
 		//set diectory path to load all template needed files
-		this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
-		//System.out.println("base loader path "+parser.getTemplateBasePath());
+		//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 		//set output directory
 		this.genPro.setOutputFolder("target/completeTest/");
 		//add value to variables

@@ -33,7 +33,8 @@ import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
 /**
- * Class who read XML file and parse it to Java code
+ * Class who read XML file and parse it to Java code. These class can recognize if given string represents a URL or a directory in local file system.
+ * If user give a URL, these class automatically read all of files contained in given URL and store it into a temporary directory
  * @author Buhid Eduardo
  * @version 1
  *
@@ -72,7 +73,7 @@ public class XmlParser {
 		}
 
 	/**
-	 *generate XmlCoordinator object who represent XML file into java code
+	 *generate XmlCoordinator object who represent XML file into java code. In this method will be generated all files contained in remote directory (URL)
 	 * @param xmlPath {@link String } path to XML file
 	 */
 	public void generateXMLCoordinator(String xmlPath){
@@ -197,6 +198,7 @@ public class XmlParser {
 	         
 	         this.javaXMLModel.setAuthor(this.author);
 
+	         this.javaXMLModel.setBaseTemplatePath(this.getTemplateBasePath());
 
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
 			log.fatal("error" , a);
@@ -273,8 +275,8 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-	public URL getTemplateBasePath() {
-		return templateBasePath;
+	public String getTemplateBasePath() {
+		return templateBasePath.getPath();
 	}
 
 }

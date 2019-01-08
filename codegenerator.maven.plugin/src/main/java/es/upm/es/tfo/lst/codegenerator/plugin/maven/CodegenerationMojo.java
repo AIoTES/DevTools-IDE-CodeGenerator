@@ -100,7 +100,7 @@ public class CodegenerationMojo
 		
 		//bug in 97...NPE
 		
-		gp.setLocalBaseLoaderPath(parser.getTemplateBasePath().getPath());
+		gp.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		
 		if (localOntologies.exists() && localOntologies.isDirectory()) {

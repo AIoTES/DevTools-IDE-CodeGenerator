@@ -14,8 +14,14 @@ import java.util.stream.Collectors;
  */
 
 public class TemplateDataModel {
-		private String name,version,description;
+	
+		private String name,version,description,baseTemplatePath;
 		
+
+
+		public String getBaseTemplatePath() {
+			return baseTemplatePath;
+		}
 
 		private Author author;
 		private Map<String,Variable> arrayVars;
@@ -24,6 +30,7 @@ public class TemplateDataModel {
 			return name;
 		}
 		public void setName(String name) {
+			
 			this.name = name;
 		}
 		public String getVersion() {
@@ -186,6 +193,14 @@ public class TemplateDataModel {
 		 */
 		public void modifyVariable(String name, String value) {
 			this.arrayVars.get(name).setValue(value);
+		}
+		
+		/**
+		 * setter to add local base loader path to project
+		 * @param baseTemplatePath
+		 */
+		public void setBaseTemplatePath(String baseTemplatePath) {
+			this.baseTemplatePath = baseTemplatePath;
 		}
 
 	

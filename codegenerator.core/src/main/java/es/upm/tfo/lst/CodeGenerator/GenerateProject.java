@@ -21,6 +21,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
+import org.apache.velocity.runtime.log.LogDisplayWrapper;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
@@ -155,8 +156,8 @@ public class GenerateProject {
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
-				
-				if( new File(this.localBaseLoaderPath+projectModel.getTemplateName()).exists() ) {
+				log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
+				if( new File(this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName()).exists() ) {
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
@@ -221,7 +222,7 @@ public class GenerateProject {
 		if(!ontologyModelArray.isEmpty()) {
 			//this.context= new VelocityContext(this.baseContext);
 			for (MacroModel ontologyModel : ontologyModelArray) {
-				if(this.fileControl(this.localBaseLoaderPath+ontologyModel.getTemplateName())) {
+				if(this.fileControl(this.mainModel.getBaseTemplatePath()+ontologyModel.getTemplateName())) {
 					//read xml output tag and parse to velocity
 					name = this.processName(ontologyModel.getOutput(), baseContext);
 					//control directory existance for result of velocity process of output
@@ -283,7 +284,7 @@ public class GenerateProject {
 			for (MacroModel macroModel : classModelArray) {
 				
 				c.getAnnotationPropertiesInSignature();
-				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
+				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
 					this.context.put("ontology",ontology);
 					this.context.put("class",c);
 					directoryName=this.processName(macroModel.getOutput(),this.context);
@@ -338,7 +339,7 @@ public class GenerateProject {
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
 		if(!instancesModelArray.isEmpty()) {
 			for (MacroModel macroModel : instancesModelArray) {
-				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
+				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
 					//instances = reasoner.getInstances(c, true).getFlattened();
 					this.context= new VelocityContext(this.baseContext);
@@ -398,7 +399,7 @@ public class GenerateProject {
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
 
-				if(this.fileControl(this.localBaseLoaderPath+macroModel.getTemplateName())) {
+				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
 
 					this.context= new VelocityContext(this.baseContext);
 					name = this.processName(macroModel.getOutput(), this.context);
@@ -534,32 +535,8 @@ public class GenerateProject {
 			if(this.mainModel!=null) {
 				flag=true;
 				if(this.templateBaseLoaderSourceControl()) {
-					
-					
-					if(this.mainModel.getRequiredVariables().size()==0) {
+
 						flag=true;
-					}
-					/*
-					else {
-					//Map<String,Variable> requierdVars = mainModel.getArrayVars().stream().filter(h->h.isRequired()).map(l->l.getName()).collect(Collectors.toSet());
-					Set<String> requierdVars = mainModel.getRequiredVariables().keySet();
-						if(  variables.keySet().containsAll(requierdVars)  ){
-						flag=true;
-						}else {
-						requierdVars.removeAll(variables.keySet());
-						String msg = "Required variables are not set:";
-						for (String var : requierdVars) {
-								msg += var + ", ";
-						}
-							log.fatal(msg);
-					
-					
-					}
-					}
-					 */
-					
-				}else {
-					log.fatal("Resources folder isn't set, program will stop");
 				}
 			}else {
 				log.fatal("please be shure if method generateXMLCoordinator() is called from XmlParser object");
