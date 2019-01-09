@@ -9,4 +9,9 @@ all ontologies
 variables
 #vars ($variables)
 -----------------------
-		
+separated variables
+##(String name,String description, boolean required, String defaultValue
+$cardinality.getName() | $cardinality.getDescription() | $cardinality.isRequired()
+$templateCount.getName() | $templateCount.getDescription() | $templateCount.isRequired()
+$ontologyCount.getName() | $ontologyCount.getDescription() | $ontologyCount.isRequired()
+$outputBaseDir.getName() | $outputBaseDir.getDescription() | $outputBaseDir.isRequired()
