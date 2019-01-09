@@ -51,6 +51,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+					    <Bundle-Activator>es.upm.tfo.lst.codegenerator.plugin.rest.Activator</Bundle-Activator>
 						<Web-ContextPath>packt-sample</Web-ContextPath>
 						<Embed-Dependency>codegenerator.core;inline=true</Embed-Dependency>
 					</instructions>
