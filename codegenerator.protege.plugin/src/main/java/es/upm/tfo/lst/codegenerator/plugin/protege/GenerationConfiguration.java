@@ -189,6 +189,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					proj.setMainModel(mainModel);
 					proj.setOutputFromUI(sourceTextField.getEditor().toString());
 					if(parser.isLocal())
+						//uso file para poder usar get parent file y obtener el directorio superior
 						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
 					else
 						proj.setLocalBaseLoaderPath("/tmp/");
