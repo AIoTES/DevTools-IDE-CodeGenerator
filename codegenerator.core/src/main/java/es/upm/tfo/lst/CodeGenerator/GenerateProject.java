@@ -185,7 +185,7 @@ public class GenerateProject {
 
 				}else {
 					flag=false;
-					log.fatal("cant find velocity macro in given XML: "+this.localBaseLoaderPath+projectModel.getTemplateName());
+					log.fatal("cant find velocity macro in given XML: "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
 				}
 			}
 		}else {
@@ -472,6 +472,7 @@ public class GenerateProject {
 		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
 	  //¿add the base loader path?
+	    props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
 	    vel_eng.init(props);
 
 	}
