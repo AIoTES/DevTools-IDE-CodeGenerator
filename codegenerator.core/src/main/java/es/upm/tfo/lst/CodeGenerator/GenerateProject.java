@@ -126,7 +126,6 @@ public class GenerateProject {
 	public boolean process(){
 		boolean flag=false;
 		total2Process = 4; // TODO calculate
-		//this.localBaseLoaderPath = 
 		if(this.control()) {
 			try {
 				this.initVelocity();
@@ -192,7 +191,7 @@ public class GenerateProject {
 		}else {
 			log.warn("doesn't exist macro to project");
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
-				//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
+				//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				//System.out.println(this.reasoner);
 				this.baseContext.put("reasoner", this.reasoner);
@@ -468,7 +467,8 @@ public class GenerateProject {
 	    this.baseContext = new VelocityContext();
 	    //adding separately each variable to velocity context
 	    for (String s : this.mainModel.getArrayVars().keySet()) {
-			this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
+			//this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
+	    	this.baseContext.put(s,this.mainModel.getArrayVars().get(s));
 		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
 	  //¿add the base loader path?
