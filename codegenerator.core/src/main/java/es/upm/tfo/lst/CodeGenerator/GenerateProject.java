@@ -123,7 +123,7 @@ public class GenerateProject {
 	 *
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 */
-	public boolean process() throws Exception{
+	public boolean process(){
 		boolean flag=false;
 		total2Process = 4; // TODO calculate
 		//this.localBaseLoaderPath = 
@@ -136,7 +136,7 @@ public class GenerateProject {
 			}catch(Exception a){
 				flag=false;
 				log.fatal("error",a);
-				throw a;
+				
 			}
 		}else {
 			flag = false;
@@ -466,11 +466,13 @@ public class GenerateProject {
 	private void initVelocity() throws Exception{
 		vel_eng = new VelocityEngine();
 	    this.baseContext = new VelocityContext();
+	    //adding separately each variable to velocity context
 	    for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
 		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
-	   	vel_eng.init(props);
+	  //¿add the base loader path?
+	    vel_eng.init(props);
 
 	}
 	/**
@@ -495,6 +497,7 @@ public class GenerateProject {
 	 * @param localBaseLoaderPath {@link String } path to load velocity templates from local file system.
 	 */
 	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
+		System.out.println("local base loader path "+localBaseLoaderPath);
 		this.localBaseLoaderPath=localBaseLoaderPath;
 		 props.put("file.resource.loader.path", this.localBaseLoaderPath);
 	}
