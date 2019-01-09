@@ -4,17 +4,17 @@
 	<feature name="CodeGenerator-Service" description="A rest Service wrapping code generator from ontologies using templates."
 		version="${pom.version}" resolver='(obr)'>
 		<feature>http</feature>
+		<bundle start-level='49' start='true'>mvn:com.google.guava/guava/18.0</bundle>
 		<bundle dependency="true" start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-lang/2.4_6</bundle>
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-collections/3.2.1_3</bundle>
 		<bundle start-level='50'>mvn:com.google.code.gson/gson/2.8.5</bundle>
 		<!-- Velocity -->
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.7_6</bundle>
+		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/1_2</bundle>
 		<!-- OWLAPI -->
 		<bundle start-level='51' start='true'>mvn:net.sourceforge.owlapi/owlapi-osgidistribution/4.5.7</bundle>
-		<bundle start-level='52' start='true'>mvn:net.sourceforge.owlapi/jfact/4.0.4</bundle>
-		<bundle start-level='49' start='true'>mvn:com.google.guava/guava/18.0</bundle>
 		<bundle start-level='51' start='true'>mvn:org.jsoup/jsoup/1.11.3</bundle>
-		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/1_2</bundle>
+		<bundle start-level='52' start='true'>mvn:net.sourceforge.owlapi/jfact/4.0.4</bundle>
 		
 		<!-- Codegenerator REST-->
 		<bundle start-level='60' start='true'>mvn:${project.groupId}/${project.artifactId}/${project.version}</bundle>
