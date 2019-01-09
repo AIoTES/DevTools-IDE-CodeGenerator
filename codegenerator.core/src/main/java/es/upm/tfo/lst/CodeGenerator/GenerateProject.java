@@ -73,7 +73,7 @@ public class GenerateProject {
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner;
 	private Map<String, Variable> variables;
-	private  String jarFullPath=null,outputFolder=null,outputFromUI=null;
+	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null,outputFromUI=null;
 	
 
 	private URL urlBasePath=null;
@@ -95,12 +95,6 @@ public class GenerateProject {
 		this.mainModel = model;
 		this.variables = this.mainModel.getArrayVars();
 	}
-	
-	/**
-	 * overloaded method allowing to parse a personalized velocityProperties {@link Properties} object
-	 * @param model
-	 * @param velocityProperties
-	 */
 	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
 		this.mainModel = model;
 		this.reasonerFactory = new JFactFactory();
@@ -162,7 +156,6 @@ public class GenerateProject {
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
 				log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
-				
 				if( new File(this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName()).exists() ) {
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
@@ -192,7 +185,7 @@ public class GenerateProject {
 
 				}else {
 					flag=false;
-					log.fatal("cant find velocity macro in given XML: "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
+					log.fatal("cant find velocity macro in given XML: "+this.localBaseLoaderPath+projectModel.getTemplateName());
 				}
 			}
 		}else {
@@ -478,7 +471,7 @@ public class GenerateProject {
 	    	this.baseContext.put(s,this.mainModel.getArrayVars().get(s));
 		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
-	    props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
+	  //¿add the base loader path?
 	    vel_eng.init(props);
 
 	}
@@ -503,12 +496,11 @@ public class GenerateProject {
 	 * Set path to load velocity macros from local filesystem relative to selected XML
 	 * @param localBaseLoaderPath {@link String } path to load velocity templates from local file system.
 	 */
-	
-//	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
-//		System.out.println("local base loader path "+localBaseLoaderPath);
-//		this.localBaseLoaderPath=localBaseLoaderPath;
-//		 props.put("file.resource.loader.path", this.localBaseLoaderPath);
-//	}
+	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
+		System.out.println("local base loader path "+localBaseLoaderPath);
+		this.localBaseLoaderPath=localBaseLoaderPath;
+		 props.put("file.resource.loader.path", this.localBaseLoaderPath);
+	}
 
 	/**
 	 *  Sets the output folder to generated files.
@@ -522,12 +514,12 @@ public class GenerateProject {
 	 * control if sources loader path is set
 	 * @return
 	 */
-//	private boolean templateBaseLoaderSourceControl() {
-//		if(this.localBaseLoaderPath == null) {
-//			return false;
-//		}
-//		return true;
-//	}
+	private boolean templateBaseLoaderSourceControl() {
+		if(this.localBaseLoaderPath == null) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * all of controls before ejecute project:
@@ -545,11 +537,10 @@ public class GenerateProject {
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				flag=true;
-//				if(this.templateBaseLoaderSourceControl()) {
-//
-//						flag=true;
-//				}
-				flag = true;
+				if(this.templateBaseLoaderSourceControl()) {
+
+						flag=true;
+				}
 			}else {
 				log.fatal("please be shure if method generateXMLCoordinator() is called from XmlParser object");
 			}
