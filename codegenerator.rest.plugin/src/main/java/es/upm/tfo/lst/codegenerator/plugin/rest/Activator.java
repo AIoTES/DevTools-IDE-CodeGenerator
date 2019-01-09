@@ -65,9 +65,9 @@ public class Activator implements BundleActivator, ServiceListener {
 	
 	public boolean register() {
 		Logger logger = LoggerFactory.getLogger(Activator.class);
-		Object sRef = context.getServiceReference(HttpService.class.getName());
+		 ServiceReference sRef = context.getServiceReference(HttpService.class.getName());
 		if (sRef != null) {
-			HttpService httpService = (HttpService) sRef;
+			HttpService httpService = (HttpService) context.getService(sRef);
 
 			try {
 				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet, null, null);
@@ -90,9 +90,9 @@ public class Activator implements BundleActivator, ServiceListener {
 
 	public boolean unregister() {
 		Logger logger = LoggerFactory.getLogger(Activator.class);
-		Object sRef = context.getServiceReference(HttpService.class.getName());
+		ServiceReference sRef = context.getServiceReference(HttpService.class.getName());
 		if (sRef != null) {
-			HttpService httpService = (HttpService) sRef;
+			HttpService httpService = (HttpService) context.getService(sRef);
 
 			try {
 				httpService.unregister(servlet.getClass().getAnnotation(WebServlet.class).value()[0]);
