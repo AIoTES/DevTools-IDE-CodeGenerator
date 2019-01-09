@@ -103,7 +103,7 @@ public class XmlParser {
 		}else {
 			System.out.println("load from local filesystem");
 			this.isLocal=true;
-			log.warn("given URL ist valid, trying to interpret as filesystem");
+			log.warn("given URL isn't valid, trying to interpret as filesystem");
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
 				System.out.println("files source "+this.xmlSource.toString());
