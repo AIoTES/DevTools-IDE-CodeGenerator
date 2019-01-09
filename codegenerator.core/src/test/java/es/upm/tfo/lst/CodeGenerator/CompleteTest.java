@@ -51,6 +51,7 @@ public class CompleteTest {
 		this.genPro.setVariable( "cardinality", "2");
 		this.genPro.setVariable( "templateCount", "2");
 		this.genPro.setVariable( "ontologyCount", "88");
+		this.genPro.setLocalBaseLoaderPath(templateBasePath);
 		//creating output dir in test 
 		try{
 			File f = new File("target/completeTest/");
