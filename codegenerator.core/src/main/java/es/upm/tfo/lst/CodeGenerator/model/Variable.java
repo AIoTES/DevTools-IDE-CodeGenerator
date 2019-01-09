@@ -77,7 +77,7 @@ public class Variable {
 	
 	@Override
 	public String toString() {
-		return "name "+this.name+" required "+this.required+" defaultValue "+this.defaultValue;
+		return this.name;
 	}
 
 	@Override

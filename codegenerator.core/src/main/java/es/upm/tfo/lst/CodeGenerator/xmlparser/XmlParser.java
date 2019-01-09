@@ -74,28 +74,30 @@ public class XmlParser {
 
 	/**
 	 *generate XmlCoordinator object who represent XML file into java code. In this method will be generated all files contained in remote directory (URL)
+	 * if a URL is given, the method automatically download all template content to use 
 	 * @param xmlPath {@link String } path to XML file
 	 */
 	public void generateXMLCoordinator(String xmlPath){
+		
+		/*
+		 * recibe un string con la direcciob del arhivo xml
+		 * si es una URL valido usa el metodo readWebTemplate para descargar las templates 
+		 * */
 		boolean flag=false;
 		System.out.println("generate XML coordinator "+xmlPath);
-		
 		try{
-			flag=true;
 			this.xmlSource =  new URL(xmlPath);
-			
+			flag=true;
 		}catch(Exception a) {
-			System.out.println(a.getMessage());
+			System.out.println("couldnt interpret current path as URL "+a.getMessage());
 			flag=false;
 		}
 		if(flag) {
-			System.out.println("load from url");
-
-			System.out.println(this.xmlSource);
+			System.out.println("load from url from (xmlSource): "+this.xmlSource);
 			this.isLocal=false;
 			this.readWebTemplate(this.xmlSource);
-			
 			try {
+				this.xmlSource =  new File(this.templatesTempDir.getPath()).toURI().toURL();
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
 			} catch (MalformedURLException | URISyntaxException e) {
 				e.printStackTrace();
@@ -109,7 +111,6 @@ public class XmlParser {
 				System.out.println("files source "+this.xmlSource.toString());
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
 				System.out.println(templateBasePath);
-
 			} catch (Exception e2) {
 				log.fatal("giving up.", e2);
 				
@@ -121,11 +122,11 @@ public class XmlParser {
 	}
 
 	
-	public void generateXMLCoordinator(URL xmlPath){
-		this.xmlSource = xmlPath;
-		this.readXML();
-
-	}
+//	public void generateXMLCoordinator(URL xmlPath){
+//		this.xmlSource = xmlPath;
+//		this.readXML();
+//
+//	}
 	
 	
 	/**
@@ -166,8 +167,7 @@ public class XmlParser {
 	         this.javaXMLModel.setDescription( t.getFirstChild().getTextContent() );
 	         t = (Element)this.templateAuthor.item(0);
 	         this.author.setName(t.getElementsByTagName("author-name").item(0).getTextContent());
-	         this.author.setEmail(t.getElementsByTagName("author-email").item(0).getTextContent());
-	         this.author.setPhone(t.getElementsByTagName("author-phone").item(0).getTextContent());
+	         
 
 
 	         for(int y=0;y<this.nodeVariable.getLength();y++){
@@ -198,8 +198,8 @@ public class XmlParser {
 	         
 	         this.javaXMLModel.setAuthor(this.author);
 
-	         this.javaXMLModel.setBaseTemplatePath(this.getTemplateBasePath());
-
+	         this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+	         	
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
 			log.fatal("error" , a);
 			this.javaXMLModel = null;
@@ -211,52 +211,58 @@ public class XmlParser {
 		 return xmlSource.toURI().resolve("..").toURL();
 	 }
 
+	
+	/**
+	 * method to get web template and download it into temp folder
+	 * @param url
+	 */
 	private void readWebTemplate( URL url) {
+		System.out.println("reading template from web site");
 		String tmpDirStr = System.getProperty("java.io.tmpdir");
 		System.out.println(" tmpDirStr "+tmpDirStr);
 		try {
-		System.out.println("url parent path "+url.toURI().resolve("."));
+				System.out.println(" getParentTemplateDir url parent path "+url.toURI().resolve("."));
+				
+				URI aux;
+				aux=url.toURI().resolve(".");
+				doc = Jsoup.connect(aux.toString()).get();
+				
+				t =  doc.select("a[href*=.vm]");
 		
-		URI aux;
-		aux=url.toURI().resolve(".");
-		doc = Jsoup.connect(aux.toString()).get();
-		
-		t =  doc.select("a[href*=.vm]");
-
-		t.stream().forEach(f->{
-			try {
-				this.arrayOfNames.add(f.text());
-				this.arrayOfSites.add(new URL(url.toURI().resolve(".")+f.text()));
-			} catch (MalformedURLException | URISyntaxException e) {
-				e.printStackTrace();
-			}
-		});
-		
-		StringBuilder sb = new StringBuilder();
-		BufferedWriter bufferWriter=null;
- 	
-		for (URL x : arrayOfSites) {
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(x.openStream()));
-	        String inputLine="";
-	        while ((inputLine = in.readLine()) != null)
-	       	 	sb.append(inputLine+"\n");
-	        in.close();
-	        
-	        //templatesTempDir = File.createTempFile(this.arrayOfNames.get(this.arrayOfSites.indexOf(x)), null);
-	        templatesTempDir = new File(tmpDirStr);
-	        System.out.println("tempFiles "+templatesTempDir.getPath());
-	        inputLine="";
-	        File fileToWrite = new File(templatesTempDir.getPath()+"/"+this.arrayOfNames.get(this.arrayOfSites.indexOf(x)));
-	        
-	        System.out.println("fitetowrite "+fileToWrite.getPath());
-	        
-            bufferWriter= new BufferedWriter(new FileWriter(fileToWrite,true));
-            bufferWriter.write(sb.toString());
-            bufferWriter.write("\n");
-            bufferWriter.close();
-            
-		}
+				t.stream().forEach(f->{
+					try {
+						this.arrayOfNames.add(f.text());
+						this.arrayOfSites.add(new URL(url.toURI().resolve(".")+f.text()));
+					} catch (MalformedURLException | URISyntaxException e) {
+						e.printStackTrace();
+					}
+				});
+				
+				StringBuilder sb = new StringBuilder();
+				BufferedWriter bufferWriter=null;
+		 	
+				for (URL x : arrayOfSites) {
+					
+					BufferedReader in = new BufferedReader(new InputStreamReader(x.openStream()));
+			        String inputLine="";
+			        while ((inputLine = in.readLine()) != null)
+			       	 	sb.append(inputLine+"\n");
+			        in.close();
+			        
+			        //templatesTempDir = File.createTempFile(this.arrayOfNames.get(this.arrayOfSites.indexOf(x)), null);
+			        templatesTempDir = new File(tmpDirStr);
+			        System.out.println("tempFiles "+templatesTempDir.getPath());
+			        inputLine="";
+			        File fileToWrite = new File(templatesTempDir.getPath()+"/"+this.arrayOfNames.get(this.arrayOfSites.indexOf(x)));
+			        
+			        System.out.println("fitetowrite "+fileToWrite.getPath());
+			        
+		            bufferWriter= new BufferedWriter(new FileWriter(fileToWrite,true));
+		            bufferWriter.write(sb.toString());
+		            bufferWriter.write("\n");
+		            bufferWriter.close();
+		            
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -275,8 +281,8 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-	public String getTemplateBasePath() {
-		return templateBasePath.getPath();
-	}
+//	public String getTemplateBasePath() {
+//		return templateBasePath.getPath();
+//	}
 
 }
