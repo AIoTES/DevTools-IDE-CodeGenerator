@@ -16,13 +16,7 @@ import java.util.stream.Collectors;
 public class TemplateDataModel {
 	
 		private String name,version,description,baseTemplatePath;
-		
-
-
-		public String getBaseTemplatePath() {
-			return baseTemplatePath;
-		}
-
+	
 		private Author author;
 		private Map<String,Variable> arrayVars;
 		private List <MacroModel> macroList;
@@ -203,7 +197,14 @@ public class TemplateDataModel {
 			this.baseTemplatePath = baseTemplatePath;
 		}
 
-	
+		/**
+		 * return the path to load all template files
+		 * @return {@link String}
+		 */
+		public String getBaseTemplatePath() {
+			return baseTemplatePath;
+		}
+
 		
 		public  void printVariables() {
 			Set<String> aux= this.arrayVars.keySet();
