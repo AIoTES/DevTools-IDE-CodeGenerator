@@ -81,23 +81,25 @@ public class XmlParser {
 		System.out.println("generate XML coordinator "+xmlPath);
 		
 		try{
-			flag=true;
-			this.xmlSource =  new URL(xmlPath);
 			
+			this.xmlSource =  new URL(xmlPath);
+			flag=true;
 		}catch(Exception a) {
 			System.out.println(a.getMessage());
 			flag=false;
 		}
 		if(flag) {
-			System.out.println("load from url");
-
-			System.out.println(this.xmlSource);
+			System.out.println("load from url "+this.xmlSource);
 			this.isLocal=false;
 			this.readWebTemplate(this.xmlSource);
-			
+			this.readXML("remote");
+			//despues de generar todos los archivos necesarios para la template web, debo usar el directorio temp para poder cargar las tenplates desde el disco
 			try {
+				//template base path tiene el directorio padre...
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
+				System.out.println("this.templateBasePath= "+this.templateBasePath);
 			} catch (MalformedURLException | URISyntaxException e) {
+				this.templateBasePath=null;
 				e.printStackTrace();
 			}
 		}else {
@@ -107,7 +109,8 @@ public class XmlParser {
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
 				System.out.println("files source "+this.xmlSource.toString());
-				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();	
+				this.readXML("local");
 				System.out.println(templateBasePath);
 
 			} catch (Exception e2) {
@@ -117,15 +120,15 @@ public class XmlParser {
 		}
 		
 
-		this.readXML();
+		
 	}
 
 	
-	public void generateXMLCoordinator(URL xmlPath){
-		this.xmlSource = xmlPath;
-		this.readXML();
-
-	}
+//	public void generateXMLCoordinator(URL xmlPath){
+//		this.xmlSource = xmlPath;
+//		this.readXML();
+//
+//	}
 	
 	
 	/**
@@ -140,7 +143,7 @@ public class XmlParser {
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
 	 * @param xmlSource {@link String}  representing the location from XML file to load
 	 */
-	private void readXML()  {
+	private void readXML(String src)  {
 		
 		Element t;
 		this.author = new Author();
@@ -166,8 +169,7 @@ public class XmlParser {
 	         this.javaXMLModel.setDescription( t.getFirstChild().getTextContent() );
 	         t = (Element)this.templateAuthor.item(0);
 	         this.author.setName(t.getElementsByTagName("author-name").item(0).getTextContent());
-	         this.author.setEmail(t.getElementsByTagName("author-email").item(0).getTextContent());
-	         this.author.setPhone(t.getElementsByTagName("author-phone").item(0).getTextContent());
+	         
 
 
 	         for(int y=0;y<this.nodeVariable.getLength();y++){
@@ -198,8 +200,9 @@ public class XmlParser {
 	         
 	         this.javaXMLModel.setAuthor(this.author);
 
-	         this.javaXMLModel.setBaseTemplatePath(this.getTemplateBasePath());
-
+	         if (src.equals("local")) this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+	         System.out.println("this.javaXMLModel.setBaseTemplatePath= "+this.javaXMLModel.getBaseTemplatePath());
+	         if (src.equals("remote")) this.javaXMLModel.setBaseTemplatePath(this.templatesTempDir.getPath()+"\\");
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
 			log.fatal("error" , a);
 			this.javaXMLModel = null;
@@ -211,13 +214,19 @@ public class XmlParser {
 		 return xmlSource.toURI().resolve("..").toURL();
 	 }
 
+	
+	/**
+	 * generate local files from remote files
+	 * @param url
+	 */
 	private void readWebTemplate( URL url) {
+		
+		URI aux;
 		String tmpDirStr = System.getProperty("java.io.tmpdir");
 		System.out.println(" tmpDirStr "+tmpDirStr);
 		try {
 		System.out.println("url parent path "+url.toURI().resolve("."));
-		
-		URI aux;
+
 		aux=url.toURI().resolve(".");
 		doc = Jsoup.connect(aux.toString()).get();
 		
@@ -263,6 +272,10 @@ public class XmlParser {
 		
 	}
 	
+	public String getTemplateBasePath() {
+		return templateBasePath.getPath();
+	}
+
 	
 	/**
 	 * method to set the output to store temporary templates
@@ -275,8 +288,6 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-	public String getTemplateBasePath() {
-		return templateBasePath.getPath();
-	}
+	
 
 }
