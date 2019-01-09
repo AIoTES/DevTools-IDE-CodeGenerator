@@ -51,6 +51,7 @@ public class GenerateServlet extends HttpServlet {
 	private File tempFolder;
 	private String outputAlias;
 
+
 	/**
 	 *
 	 */
@@ -58,6 +59,7 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
 		if (req.getHeader(HttpHeaders.CONTENT_TYPE).contains("application/json")) {
 			// interpret JSon
 
@@ -83,7 +85,16 @@ public class GenerateServlet extends HttpServlet {
 						} else {
 							// array of object (multiple onts with recursive)
 							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recusrive").getAsBoolean());
+							//System.out.println("ont json "+ont.get("url").toString().replaceAll("\"",""));
+							System.out.println("ont json "+ont);
+							System.out.println("url "+ont.get("url").getAsString());
+							try {
+								System.out.println("recursive "+ont.get("recusrive").getAsBoolean());
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								System.out.println("error en recursive "+e.getLocalizedMessage());
+							}
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), false);
 						}
 					}
 				} else {
