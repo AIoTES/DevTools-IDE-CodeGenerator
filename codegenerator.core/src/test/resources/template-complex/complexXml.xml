@@ -78,24 +78,13 @@
 				<output>ontologyOutput</output>
 			 
 			</macro>
-			
-			 
+
 			<macro>
 				<template>project.vm</template>
 				<for>project</for>
 				<output>projectOutput</output>
 			</macro>
-			  
-			<macro>
-				<template>subclass.vm</template>
-				<for>subclass</for>
-				<output>subclassDirectory</output>
-			</macro>
-			<macro>
-				<template>superclass.vm</template>
-				<for>superclass</for>
-				<output>superclassDirectory</output>
-			</macro>			
+					
 			
 		</macros>
 </Template>
