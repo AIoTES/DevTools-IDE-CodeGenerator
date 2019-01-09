@@ -62,6 +62,7 @@ public class GenerateServlet extends HttpServlet {
 			// interpret JSon
 
 			 // { template: "", ontologies:[{url:"", recursive:""}], variables:{varname:varvalue} }
+			//{ template: "http://localhost/template/", ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl", recursive:"true"}], variables:{varname:varvalue} }
 			JsonParser jp = new JsonParser();
 			JsonElement sreq = jp.parse(req.getReader());
 			if (sreq instanceof JsonObject) {
