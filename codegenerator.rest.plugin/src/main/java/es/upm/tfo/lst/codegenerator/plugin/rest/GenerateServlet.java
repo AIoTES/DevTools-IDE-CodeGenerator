@@ -109,7 +109,8 @@ public class GenerateServlet extends HttpServlet {
 			// set Output
 			String out = Integer.toHexString(sreq.hashCode());
 			File outFile = new File(tempFolder, out);
-			Files.deleteIfExists(outFile.toPath());
+			//Files.deleteIfExists(outFile.toPath());
+			this.deleteFolder(outFile);
 			outFile.mkdirs();
 			gp.setOutputFolder(outFile.getAbsolutePath()+File.separatorChar);
 			// generate
@@ -143,6 +144,19 @@ public class GenerateServlet extends HttpServlet {
 //		req.getParameter(VAR);
 //	}
 
+	public  void deleteFolder(File folder) {
+	    File[] files = folder.listFiles();
+	    if(files!=null) { //some JVMs return null for empty dirs
+	        for(File f: files) {
+	            if(f.isDirectory()) {
+	                deleteFolder(f);
+	            } else {
+	                f.delete();
+	            }
+	        }
+	    }
+	    folder.delete();
+	}
 	public void setOutputDir(File outputDir, String outputAlias) {
 		tempFolder = outputDir;
 		this.outputAlias = outputAlias;
