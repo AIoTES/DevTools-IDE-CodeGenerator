@@ -27,9 +27,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.HttpHeaders;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,6 +45,7 @@ public class GenerateServlet extends HttpServlet {
 	private static final String ONT = "ontologies";
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
+	private static final String CONTENT_TYPE="Content-Type";
 	private File tempFolder;
 	private String outputAlias;
 
@@ -58,7 +56,11 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (req.getHeader(HttpHeaders.CONTENT_TYPE).contains("application/json")) {
+//		if(req.getHeader(CONTENT_TYPE)==null) {
+//			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+//			return;
+//		}
+		if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
 			// interpret JSon
 
 			 // { template: "", ontologies:[{url:"", recursive:""}], variables:{varname:varvalue} }
@@ -83,7 +85,7 @@ public class GenerateServlet extends HttpServlet {
 						} else {
 							// array of object (multiple onts with recursive)
 							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recusrive").getAsBoolean());
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
 						}
 					}
 				} else {
@@ -93,7 +95,7 @@ public class GenerateServlet extends HttpServlet {
 					} else {
 						// object (single ont with recursive parameter)
 						JsonObject ont = gc.get(ONT).getAsJsonObject();
-						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recusrive").getAsBoolean());
+						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
 					}
 				}
 
@@ -107,7 +109,7 @@ public class GenerateServlet extends HttpServlet {
 			File outFile = new File(tempFolder, out);
 			Files.deleteIfExists(outFile.toPath());
 			outFile.mkdirs();
-			gp.setOutputFolder(outFile.getAbsolutePath());
+			gp.setOutputFolder(outFile.getAbsolutePath()+File.separatorChar);
 			// generate
 			boolean result;
 			try {
@@ -121,7 +123,7 @@ public class GenerateServlet extends HttpServlet {
 				// response with Output reference
 				JsonObject outO = new JsonObject();
 				outO.addProperty("output", outputAlias + "/" + out);
-				resp.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().println(outO.toString());
 			}else {
 				resp.sendError(HttpServletResponse.SC_NO_CONTENT);
