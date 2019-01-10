@@ -102,6 +102,7 @@ public class OntologyTest {
 		assertNotNull(this.model);
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.existentOnlineOnt);
+		System.out.println(ontology.getOntologyID().getOntologyIRI().get().getShortForm().toString());
 		assertNotNull(this.ontology);
 	}
 	
