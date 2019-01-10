@@ -67,6 +67,44 @@ public class CompleteTest {
 		}
 
 	}
+	
+	@Test
+	public void webTemplateTest() {
+		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
+ 		 
+		this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
+		this.model = this.parser.getXmlCoordinatorDataModel();
+		//this.genPro = new GenerateProject(this.model);
+		this.genPro = new GenerateProject();
+		//set XML model to generate project 
+		this.genPro.setMainModel(this.model);
+		//set the ontology to project and recursive state
+		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+		//set diectory path to load all template needed files
+		//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
+		//set output directory
+		this.genPro.setOutputFolder("target/completeTest/");
+		//add value to variables
+		this.genPro.setVariable("outputBaseDir","/exampleFolder1");
+		this.genPro.setVariable( "cardinality", "2");
+		this.genPro.setVariable( "templateCount", "2");
+		this.genPro.setVariable( "ontologyCount", "88");
+		
+		//creating output dir in test 
+		try{
+			File f = new File("target/completeTest/");
+			f.mkdirs();
+		}catch(Exception a) {
+			a.printStackTrace();
+		}
+		//this.genPro.setLocalBaseLoaderPath(this.templateBasePath);
+		try{
+			assertTrue(genPro.process());
+		}catch(Exception a) {
+			a.printStackTrace();
+		}
+
+	}
 
 	@Test
 	public void webTemplateCompleteTest() {

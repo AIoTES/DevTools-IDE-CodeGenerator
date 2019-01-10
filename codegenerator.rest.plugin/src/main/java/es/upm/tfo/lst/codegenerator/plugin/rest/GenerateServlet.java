@@ -49,6 +49,7 @@ public class GenerateServlet extends HttpServlet {
 	private File tempFolder;
 	private String outputAlias;
 
+
 	/**
 	 *
 	 */
@@ -85,7 +86,8 @@ public class GenerateServlet extends HttpServlet {
 						} else {
 							// array of object (multiple onts with recursive)
 							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
+
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recusrive").getAsBoolean());
 						}
 					}
 				} else {
