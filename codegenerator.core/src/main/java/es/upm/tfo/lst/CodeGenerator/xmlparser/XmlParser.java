@@ -88,9 +88,6 @@ public class XmlParser {
 		try{
 			this.xmlSource =  new URL(xmlPath);
 			flag=true;
-			this.xmlSource =  new URL(xmlPath);
-			
-==== BASE ====
 		}catch(Exception a) {
 			System.out.println("couldnt interpret current path as URL "+a.getMessage());
 			flag=false;
@@ -102,9 +99,7 @@ public class XmlParser {
 			try {
 				this.xmlSource =  new File(this.templatesTempDir.getPath()).toURI().toURL();
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
-				System.out.println("this.templateBasePath= "+this.templateBasePath);
 			} catch (MalformedURLException | URISyntaxException e) {
-				this.templateBasePath=null;
 				e.printStackTrace();
 			}
 		}else {
@@ -114,8 +109,7 @@ public class XmlParser {
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
 				System.out.println("files source "+this.xmlSource.toString());
-				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();	
-				this.readXML("local");
+				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
 				System.out.println(templateBasePath);
 			} catch (Exception e2) {
 				log.fatal("giving up.", e2);
@@ -124,7 +118,7 @@ public class XmlParser {
 		}
 		
 
-		
+		this.readXML();
 	}
 
 	
@@ -147,7 +141,7 @@ public class XmlParser {
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
 	 * @param xmlSource {@link String}  representing the location from XML file to load
 	 */
-	private void readXML(String src)  {
+	private void readXML()  {
 		
 		Element t;
 		this.author = new Author();
@@ -204,10 +198,8 @@ public class XmlParser {
 	         
 	         this.javaXMLModel.setAuthor(this.author);
 
-==== BASE ====
-	         this.javaXMLModel.setBaseTemplatePath(this.getTemplateBasePath());
-
-==== BASE ====
+	         this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+	         	
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
 			log.fatal("error" , a);
 			this.javaXMLModel = null;
@@ -219,32 +211,23 @@ public class XmlParser {
 		 return xmlSource.toURI().resolve("..").toURL();
 	 }
 
-==== BASE ====
-==== BASE ====
+	
+	/**
+	 * method to get web template and download it into temp folder
+	 * @param url
+	 */
 	private void readWebTemplate( URL url) {
-==== BASE ====
-==== BASE ====
+		System.out.println("reading template from web site");
 		String tmpDirStr = System.getProperty("java.io.tmpdir");
 		System.out.println(" tmpDirStr "+tmpDirStr);
 		try {
-==== BASE ====
-		System.out.println("url parent path "+url.toURI().resolve("."));
-		
-		URI aux;
-		aux=url.toURI().resolve(".");
-		doc = Jsoup.connect(aux.toString()).get();
-		
-		t =  doc.select("a[href*=.vm]");
-
-		t.stream().forEach(f->{
-			try {
-				this.arrayOfNames.add(f.text());
-				this.arrayOfSites.add(new URL(url.toURI().resolve(".")+f.text()));
-			} catch (MalformedURLException | URISyntaxException e) {
-				e.printStackTrace();
-			}
-		});
-==== BASE ====
+				System.out.println(" getParentTemplateDir url parent path "+url.toURI().resolve("."));
+				
+				URI aux;
+				aux=url.toURI().resolve(".");
+				doc = Jsoup.connect(aux.toString()).get();
+				
+				t =  doc.select("a[href*=.vm]");
 		
 				t.stream().forEach(f->{
 					try {
@@ -286,10 +269,6 @@ public class XmlParser {
 		
 	}
 	
-	public String getTemplateBasePath() {
-		return templateBasePath.getPath();
-	}
-
 	
 	/**
 	 * method to set the output to store temporary templates
@@ -302,10 +281,8 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-==== BASE ====
-	public String getTemplateBasePath() {
-		return templateBasePath.getPath();
-	}
-==== BASE ====
+//	public String getTemplateBasePath() {
+//		return templateBasePath.getPath();
+//	}
 
 }
