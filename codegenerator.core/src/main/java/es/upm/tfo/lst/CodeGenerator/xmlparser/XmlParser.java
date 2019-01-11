@@ -114,16 +114,28 @@ public class XmlParser {
 			}
 		}
 		
-
-		this.readXML();
-		if(flag) {
-			log.debug("adding remote loader path to xml model "+this.templateBasePath);
-			this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+		if(this.xmlSource!=null) {
+			
+			this.readXML();
+			if(this.javaXMLModel != null) {
+				if(flag ) {
+					log.debug("adding remote loader path to xml model "+this.templateBasePath);
+					this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+				}else {
+					log.debug("adding local loader path to xml model "+this.templateBasePath.getPath());
+					this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+				}
+			}else {
+				log.fatal("given path cant be processed as a valid template");
+				return null;
+			}
+			
+			return this.javaXMLModel;
 		}else {
-			log.debug("adding local loader path to xml model "+this.templateBasePath.getPath());
-			this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+			log.fatal("given path cant be processed as a valid template");
+			return null;
 		}
-		return this.javaXMLModel;
+	
 	}
 	
 
