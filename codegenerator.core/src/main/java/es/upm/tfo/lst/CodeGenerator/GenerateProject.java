@@ -19,11 +19,13 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.apache.velocity.runtime.log.LogDisplayWrapper;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -156,7 +158,8 @@ public class GenerateProject {
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
 				log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
-				if( new File(this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName()).exists() ) {
+				
+				if(this.mainModel.isWebTemplate()) {
 					text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
@@ -182,11 +185,73 @@ public class GenerateProject {
 							flag = false;
 						};
 					}
-
 				}else {
-					flag=false;
-					log.fatal("cant find velocity macro in given XML: "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
+					
+					if( new File(this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName()).exists() ) {
+						text = this.processName(projectModel.getOutput(), this.context);
+						File outputFolder = new File(this.outputFolder+text);
+							if(!outputFolder.getParentFile().exists())
+								outputFolder.getParentFile().mkdir();
+						this.context= new VelocityContext(this.baseContext);
+						this.baseContext.put("ontologyCompleteList", this.ontologies2BProcesed);
+						if(!text.equals("")) {
+							template = vel_eng.getTemplate(projectModel.getTemplateName());
+							this.fr = new FileWriter(this.outputFolder+text,true);
+							template.merge(context,fr);
+							fr.close();
+						}else {
+							log.warn("output for project is empty and the program will not generate any output file to project");
+						}
+					    update(1);
+
+						for (OWLOntology ontology : this.ontologies2BProcesed) {
+							//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
+							this.reasoner = this.reasonerFactory.createReasoner(ontology);
+
+							this.baseContext.put("reasoner", this.reasoner);
+							if (! this.processOntology(ontology)) {
+								flag = false;
+							};
+						}
+
+					}else {
+						flag=false;
+						log.fatal("cant find velocity macro in given XML. Base path="+this.mainModel.getBaseTemplatePath()+"  template name="+projectModel.getTemplateName());
+					}
 				}
+				
+				
+//				if( new File(this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName()).exists() ) {
+//					text = this.processName(projectModel.getOutput(), this.context);
+//					File outputFolder = new File(this.outputFolder+text);
+//						if(!outputFolder.getParentFile().exists())
+//							outputFolder.getParentFile().mkdir();
+//					this.context= new VelocityContext(this.baseContext);
+//					this.baseContext.put("ontologyCompleteList", this.ontologies2BProcesed);
+//					if(!text.equals("")) {
+//						template = vel_eng.getTemplate(projectModel.getTemplateName());
+//						this.fr = new FileWriter(this.outputFolder+text,true);
+//						template.merge(context,fr);
+//						fr.close();
+//					}else {
+//						log.warn("output for project is empty and the program will not generate any output file to project");
+//					}
+//				    update(1);
+//
+//					for (OWLOntology ontology : this.ontologies2BProcesed) {
+//						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
+//						this.reasoner = this.reasonerFactory.createReasoner(ontology);
+//
+//						this.baseContext.put("reasoner", this.reasoner);
+//						if (! this.processOntology(ontology)) {
+//							flag = false;
+//						};
+//					}
+//
+//				}else {
+//					flag=false;
+//					log.fatal("cant find velocity macro in given XML. Base path="+this.mainModel.getBaseTemplatePath()+"  template name="+projectModel.getTemplateName());
+//				}
 			}
 		}else {
 			log.warn("doesn't exist macro to project");
@@ -221,7 +286,7 @@ public class GenerateProject {
 		if(!ontologyModelArray.isEmpty()) {
 			//this.context= new VelocityContext(this.baseContext);
 			for (MacroModel ontologyModel : ontologyModelArray) {
-				if(this.fileControl(this.mainModel.getBaseTemplatePath()+ontologyModel.getTemplateName())) {
+				if(this.mainModel.isWebTemplate()) {
 					//read xml output tag and parse to velocity
 					name = this.processName(ontologyModel.getOutput(), baseContext);
 					//control directory existance for result of velocity process of output
@@ -250,9 +315,71 @@ public class GenerateProject {
 
 					flag=true;
 				}else {
-					log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
-					flag=false;
+					if(this.fileControl(this.mainModel.getBaseTemplatePath()+ontologyModel.getTemplateName())) {
+						//read xml output tag and parse to velocity
+						name = this.processName(ontologyModel.getOutput(), baseContext);
+						//control directory existance for result of velocity process of output
+						File outputFolder = new File(this.outputFolder+name);
+						if(!outputFolder.getParentFile().exists())
+							outputFolder.getParentFile().mkdirs();
+						//merge base context to actual context
+						this.context= new VelocityContext(this.baseContext);
+
+						//this.context.put("ontology",ontology);
+						if(!name.equals("")) {
+							template = vel_eng.getTemplate(ontologyModel.getTemplateName());
+							this.fr = new FileWriter(this.outputFolder+name,true);
+							template.merge(context,fr);
+							fr.close();
+						}else {
+							log.warn("output for ontology is empty and the program will not generate any output file to ontology");
+						}
+						update(2);
+						//iterate over classes into actual ontology  and process each one
+						for(OWLClass c : ontology.getClassesInSignature()) {
+							if (!this.processClass(c,ontology)){
+								flag = false;
+							}
+						}
+
+						flag=true;
+					}else {
+						log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
+						flag=false;
+					}
 				}
+//				if(this.fileControl(this.mainModel.getBaseTemplatePath()+ontologyModel.getTemplateName())) {
+//					//read xml output tag and parse to velocity
+//					name = this.processName(ontologyModel.getOutput(), baseContext);
+//					//control directory existance for result of velocity process of output
+//					File outputFolder = new File(this.outputFolder+name);
+//					if(!outputFolder.getParentFile().exists())
+//						outputFolder.getParentFile().mkdirs();
+//					//merge base context to actual context
+//					this.context= new VelocityContext(this.baseContext);
+//
+//					//this.context.put("ontology",ontology);
+//					if(!name.equals("")) {
+//						template = vel_eng.getTemplate(ontologyModel.getTemplateName());
+//						this.fr = new FileWriter(this.outputFolder+name,true);
+//						template.merge(context,fr);
+//						fr.close();
+//					}else {
+//						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
+//					}
+//					update(2);
+//					//iterate over classes into actual ontology  and process each one
+//					for(OWLClass c : ontology.getClassesInSignature()) {
+//						if (!this.processClass(c,ontology)){
+//							flag = false;
+//						}
+//					}
+//
+//					flag=true;
+//				}else {
+//					log.fatal("velocity template for ontology doesn't exist "+ontologyModel.getTemplateName());
+//					flag=false;
+//				}
 			}
 		}else{
 			update(2);
@@ -282,8 +409,7 @@ public class GenerateProject {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
 				
-				c.getAnnotationPropertiesInSignature();
-				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+				if(this.mainModel.isWebTemplate()) {
 					this.context.put("ontology",ontology);
 					this.context.put("class",c);
 					directoryName=this.processName(macroModel.getOutput(),this.context);
@@ -305,9 +431,58 @@ public class GenerateProject {
 						}
 					}
 				}else {
-					log.fatal("inexistent template: "+macroModel.getTemplateName());
-					flag=false;
+					if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+						this.context.put("ontology",ontology);
+						this.context.put("class",c);
+						directoryName=this.processName(macroModel.getOutput(),this.context);
+						File outputFile = new File(this.outputFolder+directoryName);
+						if(!outputFile.getParentFile().exists())
+							outputFile.getParentFile().mkdirs();
+						if(!macroModel.getOutput().equals("")) {
+							template = vel_eng.getTemplate(macroModel.getTemplateName());
+							this.fr = new FileWriter(this.outputFolder+directoryName,true);
+							template.merge(context, fr);
+							fr.close();
+						}else {
+							log.warn("output for class is empty and the program will not generate any output file to class");
+						}
+						
+						for(OWLClass cls : ontology.getClassesInSignature() ) {
+							if(! this.processInstances(cls,ontology) ) {
+								flag=false;
+							}
+						}
+					}else {
+						log.fatal("inexistent template: "+macroModel.getTemplateName());
+						flag=false;
+					}
 				}
+
+//				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+//					this.context.put("ontology",ontology);
+//					this.context.put("class",c);
+//					directoryName=this.processName(macroModel.getOutput(),this.context);
+//					File outputFile = new File(this.outputFolder+directoryName);
+//					if(!outputFile.getParentFile().exists())
+//						outputFile.getParentFile().mkdirs();
+//					if(!macroModel.getOutput().equals("")) {
+//						template = vel_eng.getTemplate(macroModel.getTemplateName());
+//						this.fr = new FileWriter(this.outputFolder+directoryName,true);
+//						template.merge(context, fr);
+//						fr.close();
+//					}else {
+//						log.warn("output for class is empty and the program will not generate any output file to class");
+//					}
+//					
+//					for(OWLClass cls : ontology.getClassesInSignature() ) {
+//						if(! this.processInstances(cls,ontology) ) {
+//							flag=false;
+//						}
+//					}
+//				}else {
+//					log.fatal("inexistent template: "+macroModel.getTemplateName());
+//					flag=false;
+//				}
 		   }
 		}else{
 			update(3);
@@ -338,7 +513,9 @@ public class GenerateProject {
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
 		if(!instancesModelArray.isEmpty()) {
 			for (MacroModel macroModel : instancesModelArray) {
-				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+				
+				
+				if(this.mainModel.isWebTemplate()) {
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
 					//instances = reasoner.getInstances(c, true).getFlattened();
 					this.context= new VelocityContext(this.baseContext);
@@ -356,9 +533,50 @@ public class GenerateProject {
 					
 					state = this.processObjectProperties(c,instances,ontology);
 				}else {
-					log.fatal("template file not exists: "+macroModel.getTemplateName());
-					flag=false;
+					if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+						template = vel_eng.getTemplate(macroModel.getTemplateName());
+						//instances = reasoner.getInstances(c, true).getFlattened();
+						this.context= new VelocityContext(this.baseContext);
+						this.context.put("ontology",ontology);
+						this.context.put("class",c);
+						this.context.put("instances",instances);
+						name = this.processName(macroModel.getOutput(), this.context);
+						File outputFolder = new File(this.outputFolder+name);
+						if(!outputFolder.getParentFile().exists())
+							outputFolder.getParentFile().mkdirs();
+
+						this.fr = new FileWriter(this.outputFolder+name,true);
+						template.merge(context, fr);
+						fr.close();
+						
+						state = this.processObjectProperties(c,instances,ontology);
+					}else {
+						log.fatal("template file not exists: "+macroModel.getTemplateName());
+						flag=false;
+					}
 				}
+				
+//				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+//					template = vel_eng.getTemplate(macroModel.getTemplateName());
+//					//instances = reasoner.getInstances(c, true).getFlattened();
+//					this.context= new VelocityContext(this.baseContext);
+//					this.context.put("ontology",ontology);
+//					this.context.put("class",c);
+//					this.context.put("instances",instances);
+//					name = this.processName(macroModel.getOutput(), this.context);
+//					File outputFolder = new File(this.outputFolder+name);
+//					if(!outputFolder.getParentFile().exists())
+//						outputFolder.getParentFile().mkdirs();
+//
+//					this.fr = new FileWriter(this.outputFolder+name,true);
+//					template.merge(context, fr);
+//					fr.close();
+//					
+//					state = this.processObjectProperties(c,instances,ontology);
+//				}else {
+//					log.fatal("template file not exists: "+macroModel.getTemplateName());
+//					flag=false;
+//				}
 			}
 		}else{
 			
@@ -398,7 +616,8 @@ public class GenerateProject {
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
 
-				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+				
+				if(this.mainModel.isWebTemplate()) {
 
 					this.context= new VelocityContext(this.baseContext);
 					name = this.processName(macroModel.getOutput(), this.context);
@@ -420,9 +639,58 @@ public class GenerateProject {
 					}
 
 
-					}else {
-						flag=false;
-					}
+				}else {
+					if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+
+						this.context= new VelocityContext(this.baseContext);
+						name = this.processName(macroModel.getOutput(), this.context);
+						File outputFolder = new File(this.outputFolder+name);
+
+						if(!outputFolder.getParentFile().exists())
+							outputFolder.getParentFile().mkdirs();
+
+						this.context.put("class",c);
+						this.context.put("classesInstances",macroModel);
+						this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
+						this.context.put("propertyValues", aux);
+						update(5);
+						if(!macroModel.getOutput().equals("")){
+							this.fr = new FileWriter(this.outputFolder+name,true);
+						 	template = vel_eng.getTemplate(macroModel.getTemplateName());
+							template.merge(context, fr);
+							fr.close();
+						}
+
+
+						}else {
+							flag=false;
+						}
+				}
+//				if(this.fileControl(this.mainModel.getBaseTemplatePath()+macroModel.getTemplateName())) {
+//
+//					this.context= new VelocityContext(this.baseContext);
+//					name = this.processName(macroModel.getOutput(), this.context);
+//					File outputFolder = new File(this.outputFolder+name);
+//
+//					if(!outputFolder.getParentFile().exists())
+//						outputFolder.getParentFile().mkdirs();
+//
+//					this.context.put("class",c);
+//					this.context.put("classesInstances",macroModel);
+//					this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
+//					this.context.put("propertyValues", aux);
+//					update(5);
+//					if(!macroModel.getOutput().equals("")){
+//						this.fr = new FileWriter(this.outputFolder+name,true);
+//					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
+//						template.merge(context, fr);
+//						fr.close();
+//					}
+//
+//
+//					}else {
+//						flag=false;
+//					}
 			  }
 			}else{
 				//log.warn("output for class is empty and the program will not generate any output file to class");
@@ -471,8 +739,22 @@ public class GenerateProject {
 	    	this.baseContext.put(s,this.mainModel.getArrayVars().get(s));
 		}
 	    this.baseContext.put("variables", this.mainModel.getArrayVars());
-	  //¿add the base loader path?
-	    props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
+	    
+	    try{
+			URL source =  new URL(this.mainModel.getBaseTemplatePath());
+//			props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
+//			props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
+//			props.put("url.resource.loader.cache", "true");
+			
+		    props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
+	        props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
+	        props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
+	        props.setProperty("url.resource.loader.root", source.toString());
+		}catch(Exception a) {
+			log.warn("init velocity problems -> "+a.getMessage());
+			 props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
+		}
+
 	    vel_eng.init(props);
 
 	}
@@ -484,24 +766,7 @@ public class GenerateProject {
 		this.jarFullPath = jarFullPath;
 		//jar.resource.loader.path = jar:file:/myjarplace/myjar.jar, jar:file:/myjarplace/myjar2.jar
 	}
-	/**
-	 * Set the url to load remote velocity macros.
-	 * @param urlBasePath.
-	 */
-	public void setUrlBasePath(URL urlBasePath) {
-		this.urlBasePath = urlBasePath;
-		 props.put("url.resource.loader.root", this.urlBasePath);
 
-	}
-	/**
-	 * Set path to load velocity macros from local filesystem relative to selected XML
-	 * @param localBaseLoaderPath {@link String } path to load velocity templates from local file system.
-	 */
-	public void setLocalBaseLoaderPath(String localBaseLoaderPath) {
-		System.out.println("local base loader path "+localBaseLoaderPath);
-		this.localBaseLoaderPath=localBaseLoaderPath;
-		 props.put("file.resource.loader.path", this.localBaseLoaderPath);
-	}
 
 	/**
 	 *  Sets the output folder to generated files.
