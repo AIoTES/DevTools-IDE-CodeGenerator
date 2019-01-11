@@ -1,5 +1,6 @@
 package es.upm.tfo.lst.CodeGenerator.model;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,7 +206,17 @@ public class TemplateDataModel {
 			return baseTemplatePath;
 		}
 
-		
+		/**
+		 * @return Boolean value indicating id the template is or not web
+		 */
+		public boolean isWebTemplate() {
+			boolean flag = true;
+			try {
+				URL aux = new URL(this.baseTemplatePath);
+			}catch (Exception e) {
+				flag = false;			}
+			return flag;
+		}
 		public  void printVariables() {
 			Set<String> aux= this.arrayVars.keySet();
 			for (String t : aux) {
