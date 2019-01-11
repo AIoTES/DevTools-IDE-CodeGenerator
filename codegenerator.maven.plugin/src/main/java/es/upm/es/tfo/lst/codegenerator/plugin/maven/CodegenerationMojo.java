@@ -89,8 +89,8 @@ public class CodegenerationMojo
     
     	// set template & init project
 		XmlParser parser = new XmlParser();
-		parser.generateXMLCoordinator(xmlTemplate.getPath());
-		TemplateDataModel model = parser.getXmlCoordinatorDataModel();
+		TemplateDataModel model =parser.generateXMLCoordinator(xmlTemplate.getPath());
+		
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
 		}

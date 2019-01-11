@@ -147,8 +147,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			
 			public void actionPerformed(ActionEvent e) {
 				parser = new XmlParser();
-				parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
-				mainModel = parser.getXmlCoordinatorDataModel();
+				mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+				 
 				//parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
 					generateTable= new CodeGenerationVariableTable(mainModel);
@@ -188,11 +188,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
 					proj.setOutputFromUI(sourceTextField.getEditor().toString());
-					if(parser.isLocal())
-						//uso file para poder usar get parent file y obtener el directorio superior
-						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
-					else
-						proj.setLocalBaseLoaderPath("/tmp/");
+//					if(parser.isLocal())
+//						//uso file para poder usar get parent file y obtener el directorio superior
+//						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
+//					else
+//						proj.setLocalBaseLoaderPath("/tmp/");
 					
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";

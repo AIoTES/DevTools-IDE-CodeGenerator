@@ -72,8 +72,8 @@ public class GenerateServlet extends HttpServlet {
 				JsonObject gc = (JsonObject) sreq;
 				// set template & init project
 				XmlParser parser = new XmlParser();
-				parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
-				TemplateDataModel model = parser.getXmlCoordinatorDataModel();
+				TemplateDataModel model=parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+				 
 				GenerateProject gp = new GenerateProject(model);
 
 				// set ontologies
@@ -87,7 +87,7 @@ public class GenerateServlet extends HttpServlet {
 							// array of object (multiple onts with recursive)
 							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
 
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recusrive").getAsBoolean());
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
 						}
 					}
 				} else {
