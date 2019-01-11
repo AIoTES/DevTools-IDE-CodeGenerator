@@ -76,13 +76,11 @@ public class XmlParser {
 	 *generate XmlCoordinator object who represent XML file into java code. In this method will be generated all files contained in remote directory (URL)
 	 * if a URL is given, the method automatically download all template content to use 
 	 * @param xmlPath {@link String } path to XML file
+ 	 * @return {@link TemplateDataModel} object representing XML file in Java code
 	 */
-	public void generateXMLCoordinator(String xmlPath){
+	public TemplateDataModel generateXMLCoordinator(String xmlPath){
 		
-		/*
-		 * recibe un string con la direcciob del arhivo xml
-		 * si es una URL valido usa el metodo readWebTemplate para descargar las templates 
-		 * */
+		
 		boolean flag=false;
 		System.out.println("generate XML coordinator "+xmlPath);
 		try{
@@ -92,50 +90,43 @@ public class XmlParser {
 			System.out.println("couldnt interpret current path as URL "+a.getMessage());
 			flag=false;
 		}
+		
 		if(flag) {
-			System.out.println("load from url from (xmlSource): "+this.xmlSource);
+			log.debug("generating XML coordinator  from url= "+this.xmlSource);
 			this.isLocal=false;
-			this.readWebTemplate(this.xmlSource);
+			//this.readWebTemplate(this.xmlSource);
 			try {
-				this.xmlSource =  new File(this.templatesTempDir.getPath()).toURI().toURL();
+				//this.xmlSource =  new File(this.templatesTempDir.getPath()).toURI().toURL();
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
 			} catch (MalformedURLException | URISyntaxException e) {
-				e.printStackTrace();
+				log.fatal("problems reading URL",e);
 			}
 		}else {
-			System.out.println("load from local filesystem");
+			log.debug("generating XML coordinator  from local file system= "+xmlPath);
 			this.isLocal=true;
-			log.warn("given URL isn't valid, trying to interpret as filesystem");
+			log.warn("given URL isn't valid, trying to interpret as filesystem...given path="+xmlPath);
 			try {
 				this.xmlSource = new File(xmlPath).toURI().toURL();
-				System.out.println("files source "+this.xmlSource.toString());
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
-				System.out.println(templateBasePath);
 			} catch (Exception e2) {
-				log.fatal("giving up.", e2);
+				log.fatal("error processing xml from given path="+xmlPath, e2);
 				
 			}
 		}
 		
 
 		this.readXML();
-	}
-
-	
-//	public void generateXMLCoordinator(URL xmlPath){
-//		this.xmlSource = xmlPath;
-//		this.readXML();
-//
-//	}
-	
-	
-	/**
-	 *
-	 * @return {@link TemplateDataModel} object. Null if method {@link #generateXMLCoordinator(String)} isn't called
-	 */
-	public TemplateDataModel getXmlCoordinatorDataModel() {
+		if(flag) {
+			log.debug("adding remote loader path to xml model "+this.templateBasePath);
+			this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+		}else {
+			log.debug("adding local loader path to xml model "+this.templateBasePath.getPath());
+			this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+		}
 		return this.javaXMLModel;
 	}
+	
+
 
 	/**
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
@@ -150,6 +141,7 @@ public class XmlParser {
 			this.javaXMLModel = new TemplateDataModel();
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+	         log.debug("readXML "+xmlSource.getPath());
 	         Document doc = docBuilder.parse (xmlSource.openStream());
 	         this.nodeMacro = doc.getElementsByTagName("macro");
 	         this.nodeVariable = doc.getElementsByTagName("variable");
@@ -198,7 +190,7 @@ public class XmlParser {
 	         
 	         this.javaXMLModel.setAuthor(this.author);
 
-	         this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+	         //this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
 	         	
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
 			log.fatal("error" , a);
@@ -212,63 +204,7 @@ public class XmlParser {
 	 }
 
 	
-	/**
-	 * method to get web template and download it into temp folder
-	 * @param url
-	 */
-	private void readWebTemplate( URL url) {
-		System.out.println("reading template from web site");
-		String tmpDirStr = System.getProperty("java.io.tmpdir");
-		System.out.println(" tmpDirStr "+tmpDirStr);
-		try {
-				System.out.println(" getParentTemplateDir url parent path "+url.toURI().resolve("."));
-				
-				URI aux;
-				aux=url.toURI().resolve(".");
-				doc = Jsoup.connect(aux.toString()).get();
-				
-				t =  doc.select("a[href*=.vm]");
-		
-				t.stream().forEach(f->{
-					try {
-						this.arrayOfNames.add(f.text());
-						this.arrayOfSites.add(new URL(url.toURI().resolve(".")+f.text()));
-					} catch (MalformedURLException | URISyntaxException e) {
-						e.printStackTrace();
-					}
-				});
-				
-				StringBuilder sb = new StringBuilder();
-				BufferedWriter bufferWriter=null;
-		 	
-				for (URL x : arrayOfSites) {
-					
-					BufferedReader in = new BufferedReader(new InputStreamReader(x.openStream()));
-			        String inputLine="";
-			        while ((inputLine = in.readLine()) != null)
-			       	 	sb.append(inputLine+"\n");
-			        in.close();
-			        
-			        //templatesTempDir = File.createTempFile(this.arrayOfNames.get(this.arrayOfSites.indexOf(x)), null);
-			        templatesTempDir = new File(tmpDirStr);
-			        System.out.println("tempFiles "+templatesTempDir.getPath());
-			        inputLine="";
-			        File fileToWrite = new File(templatesTempDir.getPath()+"/"+this.arrayOfNames.get(this.arrayOfSites.indexOf(x)));
-			        
-			        System.out.println("fitetowrite "+fileToWrite.getPath());
-			        
-		            bufferWriter= new BufferedWriter(new FileWriter(fileToWrite,true));
-		            bufferWriter.write(sb.toString());
-		            bufferWriter.write("\n");
-		            bufferWriter.close();
-		            
-				}
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
+
 	
 	/**
 	 * method to set the output to store temporary templates
