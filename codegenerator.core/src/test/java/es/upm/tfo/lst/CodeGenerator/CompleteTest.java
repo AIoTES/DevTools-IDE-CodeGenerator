@@ -21,6 +21,7 @@ public class CompleteTest {
 	private OntologyLoader ontologyLoader=null;
 	//----constants
 	private final String templateBasePath="src/test/resources/template-complex/";
+	private final String webTemplatePath="http://localhost/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	@Before
 	public void init() {
@@ -34,9 +35,8 @@ public class CompleteTest {
 	public void localCompleteTest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
  		 
-		this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
-		this.model = this.parser.getXmlCoordinatorDataModel();
-		//this.genPro = new GenerateProject(this.model);
+		 this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+		
 		this.genPro = new GenerateProject();
 		//set XML model to generate project 
 		this.genPro.setMainModel(this.model);
@@ -51,6 +51,11 @@ public class CompleteTest {
 		this.genPro.setVariable( "cardinality", "2");
 		this.genPro.setVariable( "templateCount", "2");
 		this.genPro.setVariable( "ontologyCount", "88");
+		
+		
+		System.out.println("ont id"+this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl").getOntologyID());
+		
+		
 		//this.genPro.setLocalBaseLoaderPath(templateBasePath);
 		//creating output dir in test 
 		try{
@@ -72,8 +77,8 @@ public class CompleteTest {
 	public void webTemplateTest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
  		 
-		this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
-		this.model = this.parser.getXmlCoordinatorDataModel();
+		 this.model=this.parser.generateXMLCoordinator(webTemplatePath);
+		//this.model = this.parser.getXmlCoordinatorDataModel();
 		//this.genPro = new GenerateProject(this.model);
 		this.genPro = new GenerateProject();
 		//set XML model to generate project 
@@ -112,8 +117,8 @@ public class CompleteTest {
 		
 		 System.out.println("\n------------------------------online template--------------------------------------\n");
 
-		this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
-		this.model = this.parser.getXmlCoordinatorDataModel();
+		 this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
+		//this.model = this.parser.getXmlCoordinatorDataModel();
 		System.out.println("loader path: "+model.getBaseTemplatePath());
 		//this.genPro = new GenerateProject(this.model);
 		this.genPro = new GenerateProject();

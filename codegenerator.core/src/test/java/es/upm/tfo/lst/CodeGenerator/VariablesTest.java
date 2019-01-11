@@ -42,8 +42,8 @@ public class VariablesTest {
 	@Test
 	public void testMissingVariables() {
 		System.out.println("\n------------------------------missing variables--------------------------------------\n");
-		parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
-		this.model=parser.getXmlCoordinatorDataModel();
+		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
+		
 		this.genPro = new GenerateProject(this.model);
 
 		//adding variables
@@ -65,8 +65,7 @@ public class VariablesTest {
 	@Test
 	public void testInexistentVariables() {
 		 System.out.println("\n------------------------------inexistent variables--------------------------------------\n");
-		parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
-		this.model=parser.getXmlCoordinatorDataModel();
+		 this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
 		System.out.println(model!=null);
 		this.genPro = new GenerateProject(this.model);
 
@@ -93,8 +92,7 @@ public class VariablesTest {
 	@Test
 	public void testCorrectVariables() {
 		 System.out.println("\n------------------------------Correct variables--------------------------------------\n");
-		this.parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
-		this.model=parser.getXmlCoordinatorDataModel();
+		 this.model= this.parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
 		this.genPro = new GenerateProject(this.model);
 
 

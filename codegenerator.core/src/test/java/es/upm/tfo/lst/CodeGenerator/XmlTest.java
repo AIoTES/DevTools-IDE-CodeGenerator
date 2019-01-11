@@ -40,8 +40,7 @@ public class XmlTest {
 		
 		System.out.println("\n------------------------------bad schema XML --------------------------------------\n");
 		System.out.println(this.basePath+"template-XMLbadSchema/badSchema.xml");
-		parser.generateXMLCoordinator(this.basePath+"template-XMLbadSchema/badSchema.xml");
-		this.model=parser.getXmlCoordinatorDataModel();
+		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLbadSchema/badSchema.xml");
 		assertNull(this.model);
 	}
 	
@@ -51,8 +50,7 @@ public class XmlTest {
 	@Test
 	public void testInexistentXML() {
 		System.out.println("\n------------------------------inexistent XML--------------------------------------\n");
-		parser.generateXMLCoordinator(this.basePath+"template-XMLinexistent");
-		this.model=parser.getXmlCoordinatorDataModel();
+		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLinexistent");
 		assertNull(this.model);
 	}
 	
@@ -62,8 +60,7 @@ public class XmlTest {
 	@Test
 	public void testWorkingXML() {
 		System.out.println("\n------------------------------working XML--------------------------------------\n");
-		parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
-		this.model=parser.getXmlCoordinatorDataModel();
+		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
 		assertNotNull(this.model);
 	}
 	

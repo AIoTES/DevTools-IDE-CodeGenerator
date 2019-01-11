@@ -59,8 +59,7 @@ public class VelocityMacroTest {
 		}catch(Exception a) {
 
 		}
-		this.parser.generateXMLCoordinator(this.templatesWithErrors+"workingXML.xml");
-		this.model = this.parser.getXmlCoordinatorDataModel();
+		this.model= this.parser.generateXMLCoordinator(this.templatesWithErrors+"workingXML.xml");
 		this.genPro = new GenerateProject(this.model);
 		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		this.genPro.addOntology(this.ontology,false);
@@ -81,7 +80,7 @@ public class VelocityMacroTest {
 			//a.printStackTrace();
 		}
 
-		genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
+		//genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
 		genPro.setOutputFolder(out);
 
 		try {
