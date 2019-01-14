@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.upm.tfo.lst.codegenerator.plugin.rest;
 
@@ -8,6 +8,7 @@ import java.io.File;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -26,9 +27,9 @@ import org.slf4j.LoggerFactory;
 public class Activator implements BundleActivator, ServiceListener {
 
 	private BundleContext context;
-	
+
 	private volatile LoggerFactory loggerFactory;
-	
+
 	private GenerateServlet servlet;
 
 	private File outputDir;
@@ -50,7 +51,7 @@ public class Activator implements BundleActivator, ServiceListener {
 	        outputDir = context.getBundle().getDataFile("output");
 	        servlet.setOutputDir(outputDir, outputAlias);
 	        register();
-	        context.addServiceListener(this, 
+	        context.addServiceListener(this,
 					"(" + Constants.OBJECTCLASS + "=" + HttpService.class.getName() + ")");
 	}
 
@@ -62,7 +63,7 @@ public class Activator implements BundleActivator, ServiceListener {
 		unregister();
 	}
 
-	
+
 	public boolean register() {
 		Logger logger = LoggerFactory.getLogger(Activator.class);
 		 ServiceReference sRef = context.getServiceReference(HttpService.class.getName());
@@ -71,8 +72,9 @@ public class Activator implements BundleActivator, ServiceListener {
 
 			try {
 				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet, null, null);
-				// TODO register defaultservlet (http://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/servlet/DefaultServlet.html) 
+				// TODO register defaultservlet (http://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/servlet/DefaultServlet.html)
 				// for serving static content results on outputAlias
+				httpService.registerServlet(outputAlias, new DefaultServlet(), initparams, new OutputHTTPContext(outputDir));
 			} catch (ServletException e) {
 				logger.error("Exception while registering Servlet.", e);
 				return false;
@@ -117,6 +119,6 @@ public class Activator implements BundleActivator, ServiceListener {
 		if (event.getType() == ServiceEvent.UNREGISTERING) {
 			unregister();
 		}
-		
+
 	}
 }
