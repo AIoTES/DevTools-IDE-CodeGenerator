@@ -39,6 +39,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
+import es.upm.tfo.lst.CodeGenerator.model.ReasonerWrapper;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import uk.ac.manchester.cs.jfact.JFactFactory;
@@ -66,7 +67,7 @@ public class GenerateProject {
 	public interface ProgessCallbackPublisher {
 		void updateProgress(int done, int total);
 	}
-
+	private ReasonerWrapper wrapper=null;
 	private TemplateDataModel mainModel=null;
 	private VelocityContext context,baseContext;
 	private VelocityEngine vel_eng;
@@ -115,6 +116,7 @@ public class GenerateProject {
 		this.props=defaultVelocityProperties();
 		this.reasonerFactory = new JFactFactory();
 		this.variables= new HashMap<String,Variable>();
+		this.wrapper = new ReasonerWrapper();
 
 	}
 
@@ -122,8 +124,8 @@ public class GenerateProject {
 	 * Initialize the process to generate code
 	 * before use this method, check if main ontology is loaded correctly and you have  all macros to process each element of the ontology, otherwise
 	 * the program will not continue and send an error notification
-	 *
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
+	 * @throws Exception if some problem occur in the process
 	 */
 	public boolean process(){
 		boolean flag=false;
@@ -179,7 +181,7 @@ public class GenerateProject {
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 						this.reasoner = this.reasonerFactory.createReasoner(ontology);
-
+						this.wrapper.setReasoner(this.reasoner);
 						this.baseContext.put("reasoner", this.reasoner);
 						if (! this.processOntology(ontology)) {
 							flag = false;
@@ -207,8 +209,9 @@ public class GenerateProject {
 						for (OWLOntology ontology : this.ontologies2BProcesed) {
 							//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 							this.reasoner = this.reasonerFactory.createReasoner(ontology);
+							this.wrapper.setReasoner(this.reasoner);
 
-							this.baseContext.put("reasoner", this.reasoner);
+							this.baseContext.put("reasoner", this.wrapper);
 							if (! this.processOntology(ontology)) {
 								flag = false;
 							};
