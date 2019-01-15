@@ -1,10 +1,10 @@
 #parse ("./includes/ontologyMacro.vm")
 #parse ("./includes/variablesMacro.vm")
 
-ontology name: $ontology.getOntologyID().getOntologyIRI()
-using a internal template variable to get name of ontology: $ontologyName
+ontology ID: $ontology.getOntologyID()
 ontology class count: $ontology.getClassesInSignature().size()
-variables given in XML using velocity macro to iterate over collection of variables
-reasoner $reasoner.getReasoner().getRootOntology()
-#vars ($variables)
+variables given in XML
+#vars()
+reasoner name $reasoner.getReasoner()
+project output from user interface->  $output
 

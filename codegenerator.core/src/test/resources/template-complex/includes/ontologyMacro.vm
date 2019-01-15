@@ -1,5 +1,5 @@
-#macro(ontology $ontologyArray)
-#foreach( $ont in $ontologyArray )
-
+#macro(ontology $allOntologies)
+#foreach( $ont in $allOntologies )
+    text displayed for each ontology to be processed
 #end
 #end

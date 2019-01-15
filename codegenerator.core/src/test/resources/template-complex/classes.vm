@@ -1,3 +1,9 @@
+#parse ("./includes/variablesMacro.vm")
+reasoner name
+    $reasoner.getReasoner()
+variables from XML coordinator 
+    #vars ()
 ontology IRI $ontology.getOntologyID().getOntologyIRI()
 class simple name: $class.getIRI().getShortForm()
 classs complete name: $class
+project output from user interface->  $output

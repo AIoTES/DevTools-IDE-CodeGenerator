@@ -11,19 +11,20 @@
 			<author-email>buhid</author-email>	
 			<author-phone>123523</author-phone>
 		</template-author>
-			<variables>
+
+		<variables>
 			<variable>
 				<name>outputBaseDir</name>
-				<default>""</default>
+				<default></default>
 				<required>false</required>	
-				<description>"variable to set ontology count"</description>					
+				<description>"variable to set outputBaseDir"</description>					
 			</variable>
 		
 			<variable>
-				<name>cardinality</name>
-				<default>0</default>
+				<name>targetOS</name>
+				<default>Linux</default>
 				<required>false</required>
-				<description>"variable to set ontology count"</description>					
+				<description>"variable containing target operating system"</description>					
 			
 			</variable>
 			
@@ -31,7 +32,7 @@
 				<name>templateCount</name>
 				<default>0</default>
 				<required>false</required>
-				<description>"variable to set ontology count"</description>						
+				<description>"variable to set template count"</description>						
 			</variable>
 		
 			

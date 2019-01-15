@@ -1,5 +1,7 @@
-#macro(vars $varsArray)
-#foreach( $v in $varsArray )
-name: $v.getName()| default-value: $v.getDefaultValue() | required: $v.getRequired()
-#end
+#macro(vars)
+  var-name $outputBaseDir - var-value $outputBaseDir.getDefaultValue()
+  var-name $targetOS    -   var-value $targetOS.getDefaultValue()
+  var-name $templateCount - var-value $templateCount.getDefaultValue()
+  var-name $ontologyCount - var-value $ontologyCount.getDefaultValue()
+ 
 #end

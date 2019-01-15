@@ -1,17 +1,16 @@
 #parse ("./includes/ontologyMacro.vm")
 #parse ("./includes/variablesMacro.vm")
-main ontology
-$ontology
-main ontology count of axioms
-$ontology.getAxiomCount()
 all ontologies
-#ontology($ontologyCompleteList)
-variables
-#vars ($variables)
+#ontology($allOntologies)
+variables using imported velocity template
+#vars ()
 -----------------------
 separated variables
-##(String name,String description, boolean required, String defaultValue
-$cardinality.getName() | $cardinality.getDescription() | $cardinality.isRequired()
+
 $templateCount.getName() | $templateCount.getDescription() | $templateCount.isRequired()
 $ontologyCount.getName() | $ontologyCount.getDescription() | $ontologyCount.isRequired()
 $outputBaseDir.getName() | $outputBaseDir.getDescription() | $outputBaseDir.isRequired()
+
+---------------------
+
+project output from user interface->  $output

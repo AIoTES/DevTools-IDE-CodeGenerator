@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,10 +75,10 @@ public class GenerateProject {
 	private FileWriter fr;
 	private Template template;
 	private OWLReasonerFactory reasonerFactory;
-	private OWLReasoner reasoner;
+	private OWLReasoner reasoner=null;
 	private Map<String, Variable> variables;
-	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null,outputFromUI=null;
-	
+	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
+	private String text="";
 
 	private URL urlBasePath=null;
 	private Properties props;
@@ -113,6 +114,7 @@ public class GenerateProject {
 	 * variables array will be empty
 	 */
 	public GenerateProject() {
+		this.reasonerFactory = new JFactFactory();
 		this.props=defaultVelocityProperties();
 		this.reasonerFactory = new JFactFactory();
 		this.variables= new HashMap<String,Variable>();
@@ -122,7 +124,7 @@ public class GenerateProject {
 
 	/**
 	 * Initialize the process to generate code
-	 * before use this method, check if main ontology is loaded correctly and you have  all macros to process each element of the ontology, otherwise
+	 * before use this method, check if main ontology is loaded correctly, otherwise
 	 * the program will not continue and send an error notification
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception if some problem occur in the process
@@ -134,7 +136,10 @@ public class GenerateProject {
 			try {
 				this.initVelocity();
 				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
-				this.baseContext.put("output", this.outputFromUI);
+				this.baseContext.put("output", this.outputFolder);
+				this.baseContext.put("date",new Date());
+				this.baseContext.put("object",Object.class);
+				this.addVariablesToBaseContext();
 				flag =  this.processProject();
 			}catch(Exception a){
 				flag=false;
@@ -155,19 +160,19 @@ public class GenerateProject {
 	 */
 	private boolean processProject()throws Exception {
 		boolean flag=true;
-		String text="";
+		//String text="";
+		//get all macros for project
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
-				log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
-				
-					text = this.processName(projectModel.getOutput(), this.context);
+				//log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
+					this.text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
 							outputFolder.getParentFile().mkdir();
 					this.context= new VelocityContext(this.baseContext);
-					this.baseContext.put("ontologyCompleteList", this.ontologies2BProcesed);
-					if(!text.equals("")) {
+					//this.baseContext.put("ontologyCompleteList", this.ontologies2BProcesed);
+					if(!this.text.equals("")) {
 						template = vel_eng.getTemplate(projectModel.getTemplateName());
 						this.fr = new FileWriter(this.outputFolder+text,true);
 						template.merge(context,fr);
@@ -178,10 +183,10 @@ public class GenerateProject {
 				    update(1);
 
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
-						//este reasoner se para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
+						//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 						this.reasoner = this.reasonerFactory.createReasoner(ontology);
 						this.wrapper.setReasoner(this.reasoner);
-						this.baseContext.put("reasoner", this.reasoner);
+						this.baseContext.put("reasoner", this.wrapper);
 						if (! this.processOntology(ontology)) {
 							flag = false;
 						};
@@ -189,12 +194,13 @@ public class GenerateProject {
 
 			}
 		}else {
-			log.warn("doesn't exist macro to project");
+			log.warn("doesn't exist macro to project..goint to process macros for ontologies");
+			
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
 				//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
-				//System.out.println(this.reasoner);
-				this.baseContext.put("reasoner", this.reasoner);
+				this.wrapper.setReasoner(this.reasoner);
+				this.baseContext.put("reasoner", this.wrapper);
 				if (! this.processOntology(ontology)) {
 					flag = false;
 				};
@@ -211,29 +217,30 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private boolean processOntology(OWLOntology ontology) throws Exception{
+		//local variables
+		this.text="";
 		boolean flag=true,state=true;
 		List<MacroModel> ontologyModelArray = this.mainModel.getOntologyMacro();
-		String name="";
-
+		
+		//adding to base context the actual ontology
 		this.baseContext.put("ontology", ontology);
-		//this.context= new VelocityContext(this.baseContext);
-
+	
+		//do work for any macro for ontology
 		if(!ontologyModelArray.isEmpty()) {
 			//this.context= new VelocityContext(this.baseContext);
 			for (MacroModel ontologyModel : ontologyModelArray) {
 					//read xml output tag and parse to velocity
-					name = this.processName(ontologyModel.getOutput(), baseContext);
+					this.text = this.processName(ontologyModel.getOutput(), baseContext);
 					//control directory existance for result of velocity process of output
-					File outputFolder = new File(this.outputFolder+name);
+					File outputFolder = new File(this.outputFolder+this.text);
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
 					//merge base context to actual context
 					this.context= new VelocityContext(this.baseContext);
-
 					//this.context.put("ontology",ontology);
-					if(!name.equals("")) {
+					if(!this.text.equals("")) {
 						template = vel_eng.getTemplate(ontologyModel.getTemplateName());
-						this.fr = new FileWriter(this.outputFolder+name,true);
+						this.fr = new FileWriter(this.outputFolder+this.text,true);
 						template.merge(context,fr);
 						fr.close();
 					}else {
@@ -272,21 +279,23 @@ public class GenerateProject {
 	 */
 	private boolean processClass(OWLClass c,OWLOntology ontology) throws Exception  {
 		boolean flag=true;
-		String directoryName="";
+		this.text="";
 		List<MacroModel> classModelArray = this.mainModel.getClassMacro();
+		//this.baseContext.put("ontology",ontology);
+		this.baseContext.put("class",c);
 		if(!classModelArray.isEmpty()) {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
 				
-					this.context.put("ontology",ontology);
-					this.context.put("class",c);
-					directoryName=this.processName(macroModel.getOutput(),this.context);
-					File outputFile = new File(this.outputFolder+directoryName);
+//					this.context.put("ontology",ontology);
+//					this.context.put("class",c);
+					this.text =this.processName(macroModel.getOutput(),this.context);
+					File outputFile = new File(this.outputFolder+this.text);
 					if(!outputFile.getParentFile().exists())
 						outputFile.getParentFile().mkdirs();
 					if(!macroModel.getOutput().equals("")) {
 						template = vel_eng.getTemplate(macroModel.getTemplateName());
-						this.fr = new FileWriter(this.outputFolder+directoryName,true);
+						this.fr = new FileWriter(this.outputFolder+this.text,true);
 						template.merge(context, fr);
 						fr.close();
 					}else {
@@ -320,27 +329,28 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private boolean processInstances(OWLClass c,OWLOntology ontology) throws Exception{
-		String name;
 		boolean flag=true,state=true;
+		this.text ="";
 		Set<OWLNamedIndividual> instances = new HashSet<>();
 		//ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace("\\.","");
 		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacro();
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
+		this.baseContext.put("instances",instances);
 		if(!instancesModelArray.isEmpty()) {
 			for (MacroModel macroModel : instancesModelArray) {
 
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
 					//instances = reasoner.getInstances(c, true).getFlattened();
 					this.context= new VelocityContext(this.baseContext);
-					this.context.put("ontology",ontology);
-					this.context.put("class",c);
-					this.context.put("instances",instances);
-					name = this.processName(macroModel.getOutput(), this.context);
-					File outputFolder = new File(this.outputFolder+name);
+//					this.context.put("ontology",ontology);
+//					this.context.put("class",c);
+					//this.context.put("instances",instances);
+					this.text = this.processName(macroModel.getOutput(), this.context);
+					File outputFolder = new File(this.outputFolder+this.text);
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
 
-					this.fr = new FileWriter(this.outputFolder+name,true);
+					this.fr = new FileWriter(this.outputFolder+this.text,true);
 					template.merge(context, fr);
 					fr.close();
 					
@@ -369,45 +379,44 @@ public class GenerateProject {
 	 * */
 	private boolean processObjectProperties(OWLClass c,Set<OWLNamedIndividual> instances,OWLOntology ontology  ) throws Exception{
 		boolean flag = true,state = true;
+		this.text ="";
 		//System.out.println("processPropertyValues");
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
-		String name;
+		//String name;
 		//Set< NodeSet<OWLNamedIndividual> > aux = new HashSet<>();
-//
-//		Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
-//		for (OWLNamedIndividual ind : instances) {
-//			for (OWLObjectProperty owlObjectProperty : op) {
-//				aux.add(this.reasoner.getObjectPropertyValues(ind, owlObjectProperty));
-//
-//			}
-//		}
+		//
+		//Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
+		//for (OWLNamedIndividual ind : instances) {
+		//	for (OWLObjectProperty owlObjectProperty : op) {
+		//		aux.add(this.reasoner.getObjectPropertyValues(ind, owlObjectProperty));
+		//
+		//			}
+		//		}
 
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
 				
 					this.context= new VelocityContext(this.baseContext);
-					name = this.processName(macroModel.getOutput(), this.context);
-					File outputFolder = new File(this.outputFolder+name);
+					this.text = this.processName(macroModel.getOutput(), this.context);
+					File outputFolder = new File(this.outputFolder+this.text);
 
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
 
-					this.context.put("class",c);
-					this.context.put("classesInstances",instances);
-					this.context.put("ontology", ontology);
+					//this.context.put("class",c);
+					//this.context.put("classesInstances",instances);
+					//this.context.put("ontology", ontology);
 					//to access superclasses must use reasoner into context from wrapper class
 					//this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
 					//this.context.put("propertyValues", aux);
 					update(5);
 					if(!macroModel.getOutput().equals("")){
-						this.fr = new FileWriter(this.outputFolder+name,true);
+						this.fr = new FileWriter(this.outputFolder+this.text ,true);
 					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
 						template.merge(context, fr);
 						fr.close();
 					}
-
-
-				
+	
 			  }
 			}else{
 				log.warn("macros for ObjectProperties isn't exist");
@@ -455,7 +464,7 @@ public class GenerateProject {
 			//this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
 	    	this.baseContext.put(s,this.mainModel.getArrayVars().get(s));
 		}
-	    this.baseContext.put("variables", this.mainModel.getArrayVars());
+	    //this.baseContext.put("variables", this.mainModel.getArrayVars());
 	    
 	    try{
 			URL source =  new URL(this.mainModel.getBaseTemplatePath());
@@ -637,10 +646,16 @@ public class GenerateProject {
 	public void setMainModel(TemplateDataModel mainModel) {
 		this.mainModel = mainModel;
 	}
+	
+	/**
+	 * method to add each variable defined into XML coordinator to velocity context
+	 */
+	private void addVariablesToBaseContext() {
+		log.debug("adding variables into base context");
+		this.variables.keySet().stream().forEach(t ->this.baseContext.put(t, this.variables.get(t)));
 
-	public void setOutputFromUI(String outputFromUI) {
-		this.outputFromUI = outputFromUI;
 	}
+
 	private void update(int done) {
 		if(GenConf!=null) {
 			GenConf.updateProgress(4, done);

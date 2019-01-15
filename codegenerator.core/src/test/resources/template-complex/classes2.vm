@@ -5,3 +5,8 @@ ontology IRI: $ontology.getOntologyID().getOntologyIRI()
 class simple name: $varName
 classs complete name: $class
 class anotation count: $class.getAnnotationPropertiesInSignature().size()
+XML variables 
+    #vars()
+reasoner object name
+    $reasoner.getReasoner()    
+project output from user interface->  $output

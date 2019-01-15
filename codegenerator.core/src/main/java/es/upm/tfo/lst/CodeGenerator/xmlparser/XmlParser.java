@@ -73,10 +73,10 @@ public class XmlParser {
 		}
 
 	/**
-	 *generate XmlCoordinator object who represent XML file into java code. In this method will be generated all files contained in remote directory (URL)
-	 * if a URL is given, the method automatically download all template content to use 
-	 * @param xmlPath {@link String } path to XML file
- 	 * @return {@link TemplateDataModel} object representing XML file in Java code
+	 *generate XmlCoordinator object who represent XML file into java code. 
+	 * 
+	 * @param xmlPath {@link String } path to XML file. This String value can be a website or path to local file
+ 	 * @return {@link TemplateDataModel} object representing XML file in Java code, or null if some problem occur in the process
 	 */
 	public TemplateDataModel generateXMLCoordinator(String xmlPath){
 		

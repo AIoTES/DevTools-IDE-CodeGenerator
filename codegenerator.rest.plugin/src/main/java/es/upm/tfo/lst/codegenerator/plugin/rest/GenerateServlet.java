@@ -15,13 +15,17 @@
  ******************************************************************************/
 package es.upm.tfo.lst.codegenerator.plugin.rest;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,14 +44,20 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  * @author amedrano
  *
  */
-@WebServlet (value="/GenerateCode", name="CodeGenerator")
+//@WebServlet (value="/GenerateCode", name="CodeGenerator")
+@WebServlet("/FirstServlet")
 public class GenerateServlet extends HttpServlet {
+	
+	public GenerateServlet(String outDir) {
+		
+		this.outDir = outDir;
+	}
 	private static final String ONT = "ontologies";
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
 	private static final String CONTENT_TYPE="Content-Type";
 	private File tempFolder;
-	private String outputAlias;
+	private String outputAlias,outDir;
 
 
 	/**
@@ -74,8 +84,8 @@ public class GenerateServlet extends HttpServlet {
 				XmlParser parser = new XmlParser();
 				TemplateDataModel model=parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
 				 
-				GenerateProject gp = new GenerateProject(model);
-
+				GenerateProject gp = new GenerateProject();
+				gp.setMainModel(model);
 				// set ontologies
 				OntologyLoader ontologyLoader = new OntologyLoader();
 				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
@@ -128,6 +138,7 @@ public class GenerateServlet extends HttpServlet {
 				outO.addProperty("output", outputAlias + "/" + out);
 				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().println(outO.toString());
+				
 			}else {
 				resp.sendError(HttpServletResponse.SC_NO_CONTENT);
 			}
@@ -137,12 +148,53 @@ public class GenerateServlet extends HttpServlet {
 		}
 	}
 	
-//	@Override
-//	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		req.getParameter(ONT);
-//		req.getParameter(TEMPLATE);
-//		req.getParameter(VAR);
-//	}
+	@Override
+	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("...GET request..");
+		String requestContent="";
+		System.out.println("request URI "+req.getRequestURI());
+			//resp.sendRedirect("https://www.google.com/");	
+			//RequestDispatcher view = req.getRequestDispatcher("/");
+			// don't add your web-app name to the path
+			
+			//view.forward(req, resp);
+			//		req.getParameter(ONT);
+			//		req.getParameter(TEMPLATE);
+			//		req.getParameter(VAR);
+			//		 resp.setContentType("text/html");
+			//		 resp.getWriter().println("First Servlet on Jetty - Java Code Geeks");
+			//		 
+			//		System.out.println("output alias "+this.outputAlias);
+				System.out.println("context path "+this.getServletContext().getContextPath());
+			//
+		requestContent = req.getRequestURI().replace("/FirstServlet", "");
+		System.out.println("requestContent "+requestContent);
+		try {
+			File f = new File(requestContent);
+			System.out.println("file "+f.getAbsolutePath());
+			if(f.isDirectory()) {
+			
+				System.out.println("directory");
+			}
+			if(f.isFile()){
+				System.out.println("not directory");
+				System.out.println("outDir "+this.outDir);
+				BufferedReader reader = new BufferedReader(new FileReader(f));
+				StringBuilder stringBuilder = new StringBuilder();
+				String line = null;
+				String ls = System.getProperty("line.separator");
+				while ((line = reader.readLine()) != null) {
+					stringBuilder.append(line);
+					stringBuilder.append(ls);
+				}
+				 resp.getWriter().println(stringBuilder.toString());
+			}
+		}catch (Exception e) {
+			System.out.println("error "+e.getMessage());
+		}
+		
+		
+	}
 
 	public  void deleteFolder(File folder) {
 	    File[] files = folder.listFiles();

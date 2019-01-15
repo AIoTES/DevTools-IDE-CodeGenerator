@@ -47,8 +47,9 @@ public class Activator implements BundleActivator, ServiceListener {
 	        {
 	            loggerFactory = (LoggerFactory) context.getService(ref);
 	        }
-	        servlet = new GenerateServlet();
 	        outputDir = context.getBundle().getDataFile("output");
+	        servlet = new GenerateServlet(outputDir.getAbsolutePath());
+	        
 	        servlet.setOutputDir(outputDir, outputAlias);
 	        register();
 	        context.addServiceListener(this,
@@ -72,9 +73,10 @@ public class Activator implements BundleActivator, ServiceListener {
 
 			try {
 				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet, null, null);
+				//httpService.registerServlet("/", servlet, null, null);
 				// TODO register defaultservlet (http://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/servlet/DefaultServlet.html)
 				// for serving static content results on outputAlias
-				httpService.registerServlet(outputAlias, new DefaultServlet(), initparams, new OutputHTTPContext(outputDir));
+				//httpService.registerServlet(outputAlias, new DefaultServlet(), null, new OutputHTTPContext(outputDir));
 			} catch (ServletException e) {
 				logger.error("Exception while registering Servlet.", e);
 				return false;

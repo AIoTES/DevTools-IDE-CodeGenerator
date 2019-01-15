@@ -26,45 +26,37 @@ public class CompleteTest {
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
-		parser = new XmlParser();
-		ontologyLoader = new OntologyLoader();
+		this.parser = new XmlParser();
+		this.ontologyLoader = new OntologyLoader();
+		this.genPro = new GenerateProject();
 	}
 	
 
 	@Test
 	public void localCompleteTest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
- 		 
-		 this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
-		
-		this.genPro = new GenerateProject();
+		 
+		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+		this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 		//set XML model to generate project 
 		this.genPro.setMainModel(this.model);
 		//set the ontology to project and recursive state
 		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-		//set diectory path to load all template needed files
-		//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 		//set output directory
 		this.genPro.setOutputFolder("target/completeTest/");
 		//add value to variables
-		this.genPro.setVariable("outputBaseDir","/exampleFolder1");
+		this.genPro.setVariable("targetOperatingSystem","Linux");
 		this.genPro.setVariable( "cardinality", "2");
 		this.genPro.setVariable( "templateCount", "2");
 		this.genPro.setVariable( "ontologyCount", "88");
-		
-		
-		System.out.println("ont id"+this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl").getOntologyID());
-		
-		
-		//this.genPro.setLocalBaseLoaderPath(templateBasePath);
-		//creating output dir in test 
+	
 		try{
 			File f = new File("target/completeTest/");
 			f.mkdirs();
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
-		//this.genPro.setLocalBaseLoaderPath(this.templateBasePath);
+
 		try{
 			assertTrue(genPro.process());
 		}catch(Exception a) {

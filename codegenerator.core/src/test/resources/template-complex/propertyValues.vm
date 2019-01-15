@@ -1,2 +1,2 @@
-variables size $variables.size()
-props size $propertyValues.size()
+empty template...TODO: work with reasoner inside tempate using
+$reasoner.getReasoner()
