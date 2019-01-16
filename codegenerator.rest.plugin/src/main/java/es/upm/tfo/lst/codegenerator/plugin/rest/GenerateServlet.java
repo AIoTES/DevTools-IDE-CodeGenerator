@@ -20,17 +20,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sound.midi.Soundbank;
+
+import org.apache.http.impl.io.SocketInputBuffer;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -153,46 +159,36 @@ public class GenerateServlet extends HttpServlet {
 		System.out.println("...GET request..");
 		String requestContent="";
 		System.out.println("request URI "+req.getRequestURI());
-			//resp.sendRedirect("https://www.google.com/");	
-			//RequestDispatcher view = req.getRequestDispatcher("/");
-			// don't add your web-app name to the path
-			
-			//view.forward(req, resp);
-			//		req.getParameter(ONT);
-			//		req.getParameter(TEMPLATE);
-			//		req.getParameter(VAR);
-			//		 resp.setContentType("text/html");
-			//		 resp.getWriter().println("First Servlet on Jetty - Java Code Geeks");
-			//		 
-			//		System.out.println("output alias "+this.outputAlias);
-				System.out.println("context path "+this.getServletContext().getContextPath());
-			//
-		requestContent = req.getRequestURI().replace("/FirstServlet", "");
-		System.out.println("requestContent "+requestContent);
-		try {
-			File f = new File(requestContent);
-			System.out.println("file "+f.getAbsolutePath());
-			if(f.isDirectory()) {
-			
-				System.out.println("directory");
-			}
-			if(f.isFile()){
-				System.out.println("not directory");
-				System.out.println("outDir "+this.outDir);
-				BufferedReader reader = new BufferedReader(new FileReader(f));
-				StringBuilder stringBuilder = new StringBuilder();
-				String line = null;
-				String ls = System.getProperty("line.separator");
-				while ((line = reader.readLine()) != null) {
-					stringBuilder.append(line);
-					stringBuilder.append(ls);
-				}
-				 resp.getWriter().println(stringBuilder.toString());
-			}
-		}catch (Exception e) {
-			System.out.println("error "+e.getMessage());
-		}
+		String tempLocation="";
+				requestContent = req.getRequestURI().replace("/FirstServlet", "");
+				System.out.println("requestContent "+requestContent);
+				System.out.println("outDir "+this.outDir+"\\"+requestContent);
 		
+				try {
+					File f = new File(this.outDir+"\\"+requestContent+"\\"+tempLocation);
+//					File f = new File(this.outDir);
+//					tempLocation=f.list()[0];
+//					System.out.println("FILE CONTENT "+tempLocation);
+//					
+					if(f.isFile()){
+//						f = new File(this.outDir+"\\"+requestContent+"\\"+tempLocation);
+						System.out.println("complete dir "+f.getAbsolutePath());
+						BufferedReader reader = new BufferedReader(new FileReader(f));
+						StringBuilder stringBuilder = new StringBuilder();
+						String line = null;
+						String ls = System.getProperty("line.separator");
+						while ((line = reader.readLine()) != null) {
+							stringBuilder.append(line);
+							stringBuilder.append(ls);
+						}
+						 resp.getWriter().println(stringBuilder.toString());
+					}else{
+						 resp.getWriter().println("given file name or file path is not valid,please check it");
+						 }
+				}catch (Exception e) {
+					System.out.println("error "+e.getMessage());
+				} 
+
 		
 	}
 

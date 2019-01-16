@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema
+	xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.example.org/prueba2" 
+	xmlns:ts="http://www.example.org/prueba2">
+
+
+
+<element name="Template">
+    	<complexType>
+    		<sequence >
+    			<element name="template-name" type="string" maxOccurs="1" minOccurs="1"></element>
+    			<element name="template-version" type="string" maxOccurs="1" minOccurs="1"></element>
+    			<element name="template-description" type="string"></element>
+    			<element name="template-author" type="ts:author"></element>
+    			<element name="variables" maxOccurs="1" minOccurs="1">
+    				<complexType>
+    					<sequence>
+    						<element  name="variable" type="ts:project-var" maxOccurs="unbounded" minOccurs="1"></element>
+    					</sequence>
+    				</complexType>
+    			</element>
+    			<element  name="macros" maxOccurs="1" minOccurs="1">
+    				<complexType>
+					<sequence>
+						<element name="macro" type="ts:macro"  maxOccurs="unbounded" minOccurs="1"></element>    					 
+					</sequence>	
+    				</complexType>
+    			</element>
+
+    		</sequence>
+    	</complexType>
+    </element>
+    
+
+
+<complexType name="author">
+	<sequence>
+		<element name="author-name" type="string" />
+		<element name="author-email" type="string"/>
+		<element name="author-phone" type="string"/>
+	</sequence>
+</complexType>    
+
+
+
+<complexType name="project-var">
+	
+	 <sequence>
+		<element name="name" type="string"></element>
+		<element name="value" type="string" default="string"></element>
+		<element name="required" type="ts:boolean">
+		<element name="description" type="string">
+		</element>
+	</sequence>	 
+</complexType>
+
+<complexType name="macro">
+	<sequence>
+		<element name="tempalate" type="string"></element>
+		<element name="for" type="ts:target"></element>	
+        <element name="output" type="string"></element>
+        </sequence>
+
+</complexType>
+
+
+
+
+
+<simpleType name="boolean">
+	<restriction base="string">
+					<enumeration value="true"></enumeration>
+					<enumeration value="false"></enumeration>	
+				</restriction>
+</simpleType>
+
+<simpleType name="target">
+	<restriction base="string">
+		<enumeration value="ontology"></enumeration>
+		<enumeration value="class"></enumeration>
+		<enumeration value="instance"></enumeration>
+		<enumeration value="enumeration"></enumeration>
+		
+	</restriction>	
+	
+</simpleType>
+
+
+<xs:complexType name="Developer">
+
+	<xs:annotation>
+		<xs:documentation source="version">3.0.0+</xs:documentation>
+		<xs:documentation source="description">Information about one of the committers on this project.</xs:documentation>
+	</xs:annotation>
+	
+	<xs:all>
+	<xs:element minOccurs="0" name="id" type="xs:string">
+	
+		<xs:annotation>
+			<xs:documentation source="version">3.0.0+</xs:documentation>
+			<xs:documentation source="description">The unique ID of the developer in the SCM.</xs:documentation>
+		</xs:annotation>
+		
+	</xs:element>
+	
+	<xs:element minOccurs="0" name="name" type="xs:string">
+		<xs:annotation>
+			<xs:documentation source="version">3.0.0+</xs:documentation>
+			<xs:documentation source="description">The full name of the contributor.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+		
+	<xs:element minOccurs="0" name="email" type="xs:string">
+			<xs:annotation>
+				<xs:documentation source="version">3.0.0+</xs:documentation>
+				<xs:documentation source="description">The email address of the contributor.</xs:documentation>
+			</xs:annotation>
+	</xs:element>
+	
+	<xs:element minOccurs="0" name="url" type="xs:string">
+		<xs:annotation>
+			<xs:documentation source="version">3.0.0+</xs:documentation>
+			<xs:documentation source="description">The URL for the homepage of the contributor.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element minOccurs="0" name="organization" type="xs:string">
+	
+		<xs:annotation>
+			<xs:documentation source="version">3.0.0+</xs:documentation>
+			<xs:documentation source="description">The organization to which the contributor belongs.</xs:documentation>
+		</xs:annotation>
+	
+	</xs:element>
+		<xs:element minOccurs="0" name="organizationUrl" type="xs:string">
+			<xs:annotation>
+				<xs:documentation source="version">3.0.0+</xs:documentation>
+				<xs:documentation source="description">The URL of the organization.</xs:documentation>
+				</xs:annotation>
+		</xs:element>
+		
+		<xs:element minOccurs="0" name="roles">
+			<xs:annotation>
+				<xs:documentation source="version">3.0.0+</xs:documentation>
+				<xs:documentation source="description">
+				
+				The roles the contributor plays in the project. Each role is described by a
+				<code>role</code> element, the body of which is a role name. This can also be used to
+				describe the contribution.
+				
+			  </xs:documentation>
+			  </xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="role" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+		</xs:element>
+		
+		<xs:element minOccurs="0" name="timezone" type="xs:string">
+				<xs:annotation>
+						<xs:documentation source="version">3.0.0+</xs:documentation>
+						<xs:documentation source="description">
+
+						The timezone the contributor is in. Typically, this is a number in the range
+						<a href="http://en.wikipedia.org/wiki/UTC%E2%88%9212:00">-12</a> to <a href="http://en.wikipedia.org/wiki/UTC%2B14:00">+14</a>
+						or a valid time zone id like "America/Montreal" (UTC-05:00) or "Europe/Paris" (UTC+01:00).
+
+						</xs:documentation>
+
+				</xs:annotation>
+		</xs:element>
+		
+		
+		<xs:element minOccurs="0" name="properties">
+				<xs:annotation>
+					<xs:documentation source="version">3.0.0+</xs:documentation>
+					<xs:documentation source="description">Properties about the contributor, such as an instant messenger handle.</xs:documentation>
+				</xs:annotation>
+
+				<xs:complexType>
+					<xs:sequence>
+						<xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+					</xs:sequence>
+				</xs:complexType>
+		</xs:element>
+			  
+	</xs:all>
+</xs:complexType>
+</schema>
