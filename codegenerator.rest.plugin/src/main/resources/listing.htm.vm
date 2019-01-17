@@ -1,0 +1,24 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of $path</title>
+ </head>
+ <body>
+<h1>Index of $path</h1>
+  <table>
+   <tr><th valign="top"><img src="http://www.apache.org/icons/blank.gif" alt="[ICO]"></th><th>Name</th><th>Last modified</a></th><th>Size</th></tr>
+   <tr><th colspan="4"><hr></th></tr>
+<tr><td valign="top"><img src="http://www.apache.org/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="$path.getParent">Parent Directory</a></td><td>&nbsp;</td><td align="right">&nbsp; </td></tr>
+#foreach ($f in $file.getFiles)
+#if($f.isDirectory)
+<tr><td valign="top"><img src="http://www.apache.org/icons/folder.gif" alt="[DIR]"></td><td><a href="$f.name">$f.name</a></td><td align="right">$f.getModifiedDate  </td><td align="right">  - </td></tr>
+#else
+<tr><td valign="top"><img src="http://www.apache.org/icons/unknown.gif" alt="[   ]"></td><td><a href="$f.name">$f.name</a></td><td align="right">$f.getModifiedDate  </td><td align="right">$f.getSize</td></tr>
+#end
+#end
+   <tr><th colspan="4"><hr></th></tr>
+</table>
+<address>Code Generator Tool</address>
+</body></html>
+
