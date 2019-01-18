@@ -1,5 +1,6 @@
 package es.upm.tfo.lst.CodeGenerator;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -7,6 +8,9 @@ import java.io.File;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -23,6 +27,10 @@ public class CompleteTest {
 	private final String templateBasePath="src/test/resources/template-complex/";
 	private final String webTemplatePath="http://localhost/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
+	private final String sql="src/test/resources/template/SQL/sql.vm";
+	private final String sqlCoordinator="src/test/resources/SQL/coordinator.xml";
+	private final String sqlOutput="src/test/resources/SQL/output/";
+	private final String baseOutput="target/completeTest/";
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
@@ -49,9 +57,13 @@ public class CompleteTest {
 		this.genPro.setVariable( "cardinality", "2");
 		this.genPro.setVariable( "templateCount", "2");
 		this.genPro.setVariable( "ontologyCount", "88");
+		
 	
+	
+		
 		try{
-			File f = new File("target/completeTest/");
+			File f = new File(baseOutput);
+			//File f = new File(baseOutput+"SQL/");
 			f.mkdirs();
 		}catch(Exception a) {
 			a.printStackTrace();
@@ -109,10 +121,7 @@ public class CompleteTest {
 		
 		 System.out.println("\n------------------------------online template--------------------------------------\n");
 
-		 this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
-		//this.model = this.parser.getXmlCoordinatorDataModel();
-		System.out.println("loader path: "+model.getBaseTemplatePath());
-		//this.genPro = new GenerateProject(this.model);
+		this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
 		this.genPro = new GenerateProject();
 		//set XML model to generate project 
 		this.genPro.setMainModel(this.model);
@@ -129,7 +138,6 @@ public class CompleteTest {
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
-		//this.genPro.setLocalBaseLoaderPath(this.templateBasePath);
 		try{
 			assertTrue(genPro.process());
 		}catch(Exception a) {
@@ -137,4 +145,5 @@ public class CompleteTest {
 		}
 
 	}
+
 }

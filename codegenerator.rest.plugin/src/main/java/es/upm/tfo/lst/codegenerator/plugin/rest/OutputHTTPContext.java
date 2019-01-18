@@ -17,13 +17,17 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.HttpServletResponse;import org.eclipse.jetty.io.Buffer;
+import org.eclipse.jetty.util.resource.Resource;
 import org.osgi.service.http.HttpContext;
+
+
 
 /**
  * @author amedrano
@@ -31,14 +35,13 @@ import org.osgi.service.http.HttpContext;
  */
 public class OutputHTTPContext implements HttpContext {
 
-	private File outputDir;
-
-	/**
-	 *
-	 */
 	public OutputHTTPContext(File outputDir) {
+		
 		this.outputDir = outputDir;
 	}
+
+	private File outputDir;
+
 
 	/* (non-Javadoc)
 	 * @see org.osgi.service.http.HttpContext#handleSecurity(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -54,8 +57,10 @@ public class OutputHTTPContext implements HttpContext {
 	@Override
 	public URL getResource(String name) {
 		try {
-			return new File(outputDir, name).toURI().toURL();
+			URL t = new File(outputDir, name).toURI().toURL();
+			return t;
 		} catch (MalformedURLException e) {
+			System.out.println("MalformedURLException");
 			e.printStackTrace();
 			return null;
 		}
@@ -70,4 +75,5 @@ public class OutputHTTPContext implements HttpContext {
 		return null;
 	}
 
+	
 }

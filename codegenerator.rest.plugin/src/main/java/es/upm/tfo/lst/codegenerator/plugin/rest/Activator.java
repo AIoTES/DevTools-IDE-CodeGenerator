@@ -72,7 +72,7 @@ public class Activator implements BundleActivator, ServiceListener {
 			HttpService httpService = (HttpService) context.getService(sRef);
 
 			try {
-				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet, null, null);
+				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet, null, new OutputHTTPContext(outputDir));
 				//httpService.registerServlet("/", servlet, null, null);
 				// TODO register defaultservlet (http://www.eclipse.org/jetty/javadoc/9.4.12.v20180830/org/eclipse/jetty/servlet/DefaultServlet.html)
 				// for serving static content results on outputAlias

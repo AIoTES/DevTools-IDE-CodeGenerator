@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +22,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.apache.velocity.runtime.log.LogDisplayWrapper;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
@@ -31,7 +29,6 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -140,6 +137,14 @@ public class GenerateProject {
 				this.baseContext.put("date",new Date());
 				this.baseContext.put("object",Object.class);
 				this.addVariablesToBaseContext();
+				
+				if (this.mainModel.getProjectMacro().isEmpty()) log.warn("doesn't exist macro to project");
+				if (this.mainModel.getOntologyMacro().isEmpty()) log.warn("doesn't exist macro to ontology");
+				if (this.mainModel.getClassMacro().isEmpty()) log.warn("doesn't exist macro to class");
+				if (this.mainModel.getInstanceMacro().isEmpty()) log.warn("doesn't exist macro to instances");
+				if (this.mainModel.getObjectProperties().isEmpty()) log.warn("doesn't exist macro to object properties");
+
+				
 				flag =  this.processProject();
 			}catch(Exception a){
 				flag=false;
@@ -194,7 +199,7 @@ public class GenerateProject {
 
 			}
 		}else {
-			log.warn("doesn't exist macro to project..goint to process macros for ontologies");
+			//log.warn("doesn't exist macro to project..goint to process macros for ontologies");
 			
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
 				//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
@@ -259,7 +264,7 @@ public class GenerateProject {
 			}
 		}else{
 			update(2);
-			log.warn("ontology macro for ontology isn't exists");
+			//log.warn("ontology macro for ontology isn't exists");
 			for(OWLClass c : ontology.getClassesInSignature()) {
 				if (!this.processClass(c,ontology)){
 					flag = false;
@@ -286,7 +291,7 @@ public class GenerateProject {
 		if(!classModelArray.isEmpty()) {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
-				
+					
 //					this.context.put("ontology",ontology);
 //					this.context.put("class",c);
 					this.text =this.processName(macroModel.getOutput(),this.context);
@@ -419,7 +424,7 @@ public class GenerateProject {
 	
 			  }
 			}else{
-				log.warn("macros for ObjectProperties isn't exist");
+				//log.warn("macros for ObjectProperties isn't exist");
 				flag=false;
 
 			}

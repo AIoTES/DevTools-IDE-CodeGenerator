@@ -1,9 +1,0 @@
-#***
-template based in https://github.com/protegeproject/code-generation/tree/master/src/main/resources
-to generate the same output using CodeGenerator
-*#
-#macro ( generate-tables  $ontology)
-    #foreach( $ontIRI in $ontology )
-    create talbe $ontIRI ( _id integer primary key autoincrement )
-#end
-#end

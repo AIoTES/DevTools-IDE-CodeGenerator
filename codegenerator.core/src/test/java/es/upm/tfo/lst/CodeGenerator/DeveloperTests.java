@@ -15,9 +15,26 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import static org.junit.Assert.assertFalse;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.junit.Before;
 import org.junit.Test;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+
+import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
+import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
+import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 
 /**
  * @author amedrano
@@ -25,6 +42,25 @@ import org.semanticweb.owlapi.model.OWLOntology;
  */
 public class DeveloperTests {
 
+	private  XmlParser parser=null;
+	private TemplateDataModel model=null;
+	private GenerateProject genPro=null;
+	private OntologyLoader ontologyLoader=null;
+	//----constants
+	private final String templateBasePath="src/test/resources/template-complex/";
+	private final String webTemplatePath="http://localhost/template/complexXml.xml";
+	private final String ontologyBasePath="src/test/resources/ontologies/";
+	private final String sql="src/test/resources/template/SQL/sql.vm";
+	private final String sqlCoordinator="src/test/resources/SQL/coordinator.xml";
+	private final String sqlOutput="src/test/resources/SQL/output/";
+	private final String baseOutput="target/completeTest/";
+	@Before
+	public void init() {
+		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
+		this.parser = new XmlParser();
+		this.ontologyLoader = new OntologyLoader();
+		this.genPro = new GenerateProject();
+	}
 	@Test
 	public void classAccessExample() {
 		OWLClass cls;
@@ -33,6 +69,43 @@ public class DeveloperTests {
 	@Test
 	public void ontologyAccessExample() {
 		OWLOntology ontology;
-		//ontology.getOntologyID().getOntologyIRI().get().getFragment().toLowerCase();
+		OWLClass c;
+		OWLNamedIndividual v;
+		
 	}
+
+	@Test
+	public void sqltest() {
+		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
+		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+		 Set <OWLDataProperty> m=new HashSet<>();
+		 
+		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+			 //m.add( g.getDataPropertiesInSignature().iterator().next());
+			System.out.println(g);
+		}
+		
+		for (OWLDataProperty b : m) {
+			System.out.println(b);
+		}
+		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+		this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
+		//set XML model to generate project 
+		this.genPro.setMainModel(this.model);
+		//set the ontology to project and recursive state
+		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+		//set output directory
+		this.genPro.setOutputFolder(this.sqlOutput);
+		//add value to variables		
+		
+
+		try{
+			assertFalse(genPro.process());
+		}catch(Exception a) {
+			a.printStackTrace();
+		}
+
+	}
+
+
 }

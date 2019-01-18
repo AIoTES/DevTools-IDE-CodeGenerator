@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="Imports Wizard Entry" name="http://purl.obolibrary.org/obo/aeo/releases/2014-12-05/aeo.owl" uri="http://ontologies.berkeleybop.org/aeo.owl"/>
+    <uri id="Imports Wizard Entry" name="http://purl.obolibrary.org/obo/apollo_sv/v4.1.1./apollo_sv.owl" uri="https://raw.githubusercontent.com/ApolloDev/apollo-sv/master/src/ontology/apollo-sv.owl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1544611215595" name="http://www.co-ode.org/ontologies/pizza/pizza.owl" uri="pizza.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1544611215595" name="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41" uri="Inconsistent-factory.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1544611215595" name="duplicate:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="universidad.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1544611215595" name="duplicate:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="universidad-inconsistentImports.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1544611215595" name="shadowed:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="ontologyFileMissingImports/universidad.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1547647257928" name="http://www.co-ode.org/ontologies/pizza/pizza.owl" uri="pizza.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1547647257928" name="http://www.semanticweb.org/edu/ontologies/2018/10/untitled-ontology-41" uri="Inconsistent-factory.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1547647257928" name="duplicate:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="universidad-inconsistentImports.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1547647257928" name="duplicate:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="universidad.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1547647257928" name="shadowed:http://www.semanticweb.org/edu/ontologies/2018/8/universidad" uri="ontologyFileMissingImports/universidad.owl"/>
     </group>
 </catalog>
