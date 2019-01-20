@@ -68,14 +68,11 @@ public class CompleteTest {
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
-
-		try{
-			assertTrue(genPro.process());
-		}catch(Exception a) {
-			a.printStackTrace();
+		genPro.process();
+		assertTrue(genPro.getErrors().isEmpty());
 		}
 
-	}
+	
 	
 	@Test
 	public void webTemplateTest() {
@@ -106,12 +103,9 @@ public class CompleteTest {
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
-		//this.genPro.setLocalBaseLoaderPath(this.templateBasePath);
-		try{
-			assertTrue(genPro.process());
-		}catch(Exception a) {
-			a.printStackTrace();
-		}
+		 
+		this.genPro.process();
+		assertTrue(genPro.getErrors().isEmpty());
 
 	}
 
@@ -138,11 +132,8 @@ public class CompleteTest {
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
-		try{
-			assertTrue(genPro.process());
-		}catch(Exception a) {
-			a.printStackTrace();
-		}
+		assertTrue(genPro.getErrors().isEmpty());
+		
 
 	}
 

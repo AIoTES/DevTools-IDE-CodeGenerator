@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,7 +77,7 @@ public class GenerateProject {
 	private Map<String, Variable> variables;
 	private  String jarFullPath=null,localBaseLoaderPath=null,outputFolder=null;
 	private String text="";
-
+	private List<Exception> arrayOfExceptions=null;
 	private URL urlBasePath=null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
@@ -84,7 +85,18 @@ public class GenerateProject {
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process;
 	public  ProgessCallbackPublisher GenConf;
-
+	
+	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
+		this.mainModel = model;
+		this.reasonerFactory = new JFactFactory();
+		this.props = velocityProperties;
+		this.variables= new HashMap<String,Variable>();
+		if(this.mainModel!=null) 
+			this.variables = this.mainModel.getArrayVars();
+		this.wrapper = new ReasonerWrapper();
+		this.arrayOfExceptions = new ArrayList<>();
+	}
+	
 	/**
 	 * The class constructor initialize the {@link OWLReasonerFactory}, {@link Properties} and some needed objects to use in velocity macro
 	 *
@@ -93,29 +105,21 @@ public class GenerateProject {
 	 */
 	public GenerateProject(TemplateDataModel model) {
 		this(model,defaultVelocityProperties());
-		this.mainModel = model;
-		this.variables = this.mainModel.getArrayVars();
+		//this.mainModel = model;
+		//this.variables = this.mainModel.getArrayVars();
 	}
-	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
-		this.mainModel = model;
-		this.reasonerFactory = new JFactFactory();
-		this.props = velocityProperties;
-		this.variables= new HashMap<String,Variable>();
-		this.variables = this.mainModel.getArrayVars();
 
-	}
-	
-	
 	/**
 	 * if user initialize project without parsing the XmlTemplateModel, user must set it later
 	 * variables array will be empty
 	 */
 	public GenerateProject() {
-		this.reasonerFactory = new JFactFactory();
-		this.props=defaultVelocityProperties();
-		this.reasonerFactory = new JFactFactory();
-		this.variables= new HashMap<String,Variable>();
-		this.wrapper = new ReasonerWrapper();
+		this(null,defaultVelocityProperties());
+//		this.reasonerFactory = new JFactFactory();
+//		this.props=defaultVelocityProperties();
+//		this.reasonerFactory = new JFactFactory();
+//		this.variables= new HashMap<String,Variable>();
+//		this.wrapper = new ReasonerWrapper();
 
 	}
 
@@ -126,7 +130,7 @@ public class GenerateProject {
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception if some problem occur in the process
 	 */
-	public boolean process(){
+	public void process(){
 		boolean flag=false;
 		total2Process = 4; // TODO calculate
 		if(this.control()) {
@@ -145,17 +149,19 @@ public class GenerateProject {
 				if (this.mainModel.getObjectProperties().isEmpty()) log.warn("doesn't exist macro to object properties");
 
 				
-				flag =  this.processProject();
+				 this.processProject();
 			}catch(Exception a){
-				flag=false;
+				//flag=false;
+				this.arrayOfExceptions.add(a);
 				log.fatal("error",a);
 				
 			}
-		}else {
-			flag = false;
 		}
+//		else {
+//			flag = false;
+//		}
 
-		return flag;
+		
 	}
 
 	/**
@@ -163,28 +169,35 @@ public class GenerateProject {
 	 * @return @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception
 	 */
-	private boolean processProject()throws Exception {
-		boolean flag=true;
-		//String text="";
-		//get all macros for project
+	private void processProject() throws Exception {
+		
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacro();
 		if(!projectModelArray.isEmpty()) {
+			
 			for (MacroModel projectModel : projectModelArray) {
-				//log.debug("path to load template from model "+this.mainModel.getBaseTemplatePath()+projectModel.getTemplateName());
+				
 					this.text = this.processName(projectModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+text);
 						if(!outputFolder.getParentFile().exists())
 							outputFolder.getParentFile().mkdir();
 					this.context= new VelocityContext(this.baseContext);
-					//this.baseContext.put("ontologyCompleteList", this.ontologies2BProcesed);
+
 					if(!this.text.equals("")) {
 						template = vel_eng.getTemplate(projectModel.getTemplateName());
-						this.fr = new FileWriter(this.outputFolder+text,true);
-						template.merge(context,fr);
-						fr.close();
-					}else {
-						log.warn("output for project is empty and the program will not generate any output file to project");
+						//throws IOE
+						try {
+							this.fr = new FileWriter(this.outputFolder+text,true);
+							template.merge(context,fr);
+							fr.close();
+						}catch (Exception e) {
+							this.arrayOfExceptions.add(e);
+							log.fatal("cant merge velocity template with velocity context",e);
+							throw e;	
+						}
 					}
+//					else {
+//						log.warn("output for project is empty and the program will not generate any output file to project");
+//					}
 				    update(1);
 
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
@@ -192,28 +205,19 @@ public class GenerateProject {
 						this.reasoner = this.reasonerFactory.createReasoner(ontology);
 						this.wrapper.setReasoner(this.reasoner);
 						this.baseContext.put("reasoner", this.wrapper);
-						if (! this.processOntology(ontology)) {
-							flag = false;
-						};
+						this.processOntology(ontology);
 					}
-
 			}
-		}else {
-			//log.warn("doesn't exist macro to project..goint to process macros for ontologies");
-			
+		}else {	
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
-				//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
 				this.baseContext.put("reasoner", this.wrapper);
-				if (! this.processOntology(ontology)) {
-					flag = false;
-				};
+				this.processOntology(ontology);
 			}
 
 		}
 
-		return flag;
 	}
 	/**
 	 * Process all macros for ontology
@@ -221,7 +225,7 @@ public class GenerateProject {
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception
 	 */
-	private boolean processOntology(OWLOntology ontology) throws Exception{
+	private void processOntology(OWLOntology ontology) throws Exception{
 		//local variables
 		this.text="";
 		boolean flag=true,state=true;
@@ -245,34 +249,34 @@ public class GenerateProject {
 					//this.context.put("ontology",ontology);
 					if(!this.text.equals("")) {
 						template = vel_eng.getTemplate(ontologyModel.getTemplateName());
-						this.fr = new FileWriter(this.outputFolder+this.text,true);
-						template.merge(context,fr);
-						fr.close();
-					}else {
-						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
+						//throws IOE
+						try {
+							this.fr = new FileWriter(this.outputFolder+this.text,true);
+							template.merge(context,fr);
+							fr.close();
+						}catch (Exception e) {
+							this.arrayOfExceptions.add(e);
+							log.fatal("cant merge velocity template with velocity context",e);
+							throw e; 
+						}
+						
 					}
+//					else {
+//						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
+//					}
 					update(2);
 					//iterate over classes into actual ontology  and process each one
 					for(OWLClass c : ontology.getClassesInSignature()) {
-						if (!this.processClass(c,ontology)){
-							flag = false;
-						}
+						this.processClass(c,ontology);
 					}
-
-					flag=true;
-
 			}
 		}else{
 			update(2);
-			//log.warn("ontology macro for ontology isn't exists");
 			for(OWLClass c : ontology.getClassesInSignature()) {
-				if (!this.processClass(c,ontology)){
-					flag = false;
-				}
-
+				this.processClass(c,ontology);
 			}
 		}
-		return flag && state;
+		
 	}
 
 	/**
@@ -282,48 +286,48 @@ public class GenerateProject {
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception
 	 */
-	private boolean processClass(OWLClass c,OWLOntology ontology) throws Exception  {
+	private void processClass(OWLClass c,OWLOntology ontology)  throws Exception{
 		boolean flag=true;
 		this.text="";
 		List<MacroModel> classModelArray = this.mainModel.getClassMacro();
-		//this.baseContext.put("ontology",ontology);
 		this.baseContext.put("class",c);
 		if(!classModelArray.isEmpty()) {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
-					
-//					this.context.put("ontology",ontology);
-//					this.context.put("class",c);
 					this.text =this.processName(macroModel.getOutput(),this.context);
 					File outputFile = new File(this.outputFolder+this.text);
 					if(!outputFile.getParentFile().exists())
 						outputFile.getParentFile().mkdirs();
 					if(!macroModel.getOutput().equals("")) {
 						template = vel_eng.getTemplate(macroModel.getTemplateName());
-						this.fr = new FileWriter(this.outputFolder+this.text,true);
-						template.merge(context, fr);
-						fr.close();
-					}else {
-						log.warn("output for class is empty and the program will not generate any output file to class");
+						//throw IOE
+						try {
+							this.fr = new FileWriter(this.outputFolder+this.text,true);
+							template.merge(context, fr);
+							fr.close();
+						} catch (Exception e) {
+							this.arrayOfExceptions.add(e);
+							log.fatal("cant merge velocity template with velocity context",e);
+							throw e;
+						}	
 					}
+//					else {
+//						log.warn("output for class is empty and the program will not generate any output file to class");
+//					}
 					
 					for(OWLClass cls : ontology.getClassesInSignature() ) {
-						if(! this.processInstances(cls,ontology) ) {
-							flag=false;
-						}
+						this.processInstances(cls,ontology);
 					}
 		   }
 		}else{
 			update(3);
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
-				if(this.processInstances(cls,ontology)==false ) {
-					flag=false;
-				}
+				this.processInstances(cls,ontology);
 			}
 
 		}
 		update(3);
-		return flag;
+		
 	}
 
 	/**
@@ -333,8 +337,7 @@ public class GenerateProject {
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception
 	 */
-	private boolean processInstances(OWLClass c,OWLOntology ontology) throws Exception{
-		boolean flag=true,state=true;
+	private void processInstances(OWLClass c,OWLOntology ontology) throws Exception {
 		this.text ="";
 		Set<OWLNamedIndividual> instances = new HashSet<>();
 		//ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace("\\.","");
@@ -345,31 +348,33 @@ public class GenerateProject {
 			for (MacroModel macroModel : instancesModelArray) {
 
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
-					//instances = reasoner.getInstances(c, true).getFlattened();
 					this.context= new VelocityContext(this.baseContext);
-//					this.context.put("ontology",ontology);
-//					this.context.put("class",c);
-					//this.context.put("instances",instances);
 					this.text = this.processName(macroModel.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder+this.text);
 					if(!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
-
-					this.fr = new FileWriter(this.outputFolder+this.text,true);
-					template.merge(context, fr);
-					fr.close();
+					//throws IOE
+					try {
+						this.fr = new FileWriter(this.outputFolder+this.text,true);
+						template.merge(context, fr);
+						fr.close();
+						
+					} catch (Exception e) {
+						this.arrayOfExceptions.add(e);
+						log.fatal("cant merge velocity template with velocity context",e);
+						throw e;
+					}
 					
-					state = this.processObjectProperties(c,instances,ontology);
+					this.processObjectProperties(c,instances,ontology);
 				
 			}
 		}else{
 			
 			//log.warn("output for instances is empty and the program will not generate any output file to instances");
-			state = this.processObjectProperties(c,instances,ontology);
+			this.processObjectProperties(c,instances,ontology);
 
 		}
 		update(4);
-		return flag && state;
 	}
 	/**
 	 * Method to get Object Properties of  class instances.
@@ -382,22 +387,11 @@ public class GenerateProject {
 	/*
 	 * este metodo cuenta mas clases tenga la ontologia mas grande se hace el Set principal
 	 * */
-	private boolean processObjectProperties(OWLClass c,Set<OWLNamedIndividual> instances,OWLOntology ontology  ) throws Exception{
-		boolean flag = true,state = true;
+	private void processObjectProperties(OWLClass c,Set<OWLNamedIndividual> instances,OWLOntology ontology  ) throws Exception{
+		
 		this.text ="";
 		//System.out.println("processPropertyValues");
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
-		//String name;
-		//Set< NodeSet<OWLNamedIndividual> > aux = new HashSet<>();
-		//
-		//Set<OWLObjectProperty> op = ontology.getObjectPropertiesInSignature();
-		//for (OWLNamedIndividual ind : instances) {
-		//	for (OWLObjectProperty owlObjectProperty : op) {
-		//		aux.add(this.reasoner.getObjectPropertyValues(ind, owlObjectProperty));
-		//
-		//			}
-		//		}
-
 		if(!propertyModelArray.isEmpty()) {
 			for (MacroModel macroModel : propertyModelArray) {
 				
@@ -416,22 +410,25 @@ public class GenerateProject {
 					//this.context.put("propertyValues", aux);
 					update(5);
 					if(!macroModel.getOutput().equals("")){
-						this.fr = new FileWriter(this.outputFolder+this.text ,true);
-					 	template = vel_eng.getTemplate(macroModel.getTemplateName());
-						template.merge(context, fr);
-						fr.close();
+						try {
+							this.fr = new FileWriter(this.outputFolder+this.text ,true);
+						 	template = vel_eng.getTemplate(macroModel.getTemplateName());
+							template.merge(context, fr);
+							fr.close();
+						} catch (Exception e) {
+							this.arrayOfExceptions.add(e);
+							log.fatal("cant merge velocity template with velocity context",e);
+							throw e;
+						}			
+					
 					}
 	
 			  }
-			}else{
-				//log.warn("macros for ObjectProperties isn't exist");
-				flag=false;
-
 			}
 
 
 		update(5);
-		return flag;
+		
 	}
 
 
@@ -666,5 +663,8 @@ public class GenerateProject {
 			GenConf.updateProgress(4, done);
 		}
 	}
-
+	
+	public List<Exception> getErrors(){
+		return this.arrayOfExceptions;
+	}
 }
