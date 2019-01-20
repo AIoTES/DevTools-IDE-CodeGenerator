@@ -18,9 +18,13 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
@@ -81,6 +85,7 @@ public class GenerateServlet extends HttpServlet {
 	private final String HTMLtemplate="listing.htm.vm";
 	private final String baseTemplatePath="/";
 	private String servletName="/GenerateCode";
+	
 	public GenerateServlet(String outDir) {
 		this.outDir = outDir;
 		this.vel_eng = new VelocityEngine();
@@ -182,98 +187,55 @@ public class GenerateServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String line,req_data;
+		String line,req_data,aux;
 		URL urlToFile;
-		StringBuilder stringBuilder= new StringBuilder();
-		//urlToFile=this.getServletContext().getResource("ac330991/projectOutput");
 		req_data=req.getRequestURI().replaceAll(servletName, "");
-		System.out.println("req_data "+req_data);
-		urlToFile=this.getServletContext().getResource(req_data);
-		System.out.println("urlToFile "+urlToFile);
-		try {
+		urlToFile=this.getServletContext().getResource(req_data);		
 			
+		try {
 			File t = new File( urlToFile.getFile());
 			if(t.isFile()) {
-				System.out.println("file exists? "+t.exists());
-				BufferedReader reader = new BufferedReader(new FileReader(t));
-
-				while ((line = reader.readLine()) != null) {
-					stringBuilder.append(line);
-					stringBuilder.append( System.getProperty("line.separator"));
-				}
-				resp.getWriter().write(stringBuilder.toString());				
-			}else {
-				File t1[] = t.listFiles(); 
 				
-				resp.getWriter().write("dir getted");
+				BufferedReader br = null;
+				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
+				StringBuilder sb = new StringBuilder();
+
+				while ((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+				resp.getWriter().write(sb.toString());	
+			}else {
+				BufferedReader br = null;
+				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
+				StringBuilder sb = new StringBuilder();
+
+				while ((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+				System.out.println("file exists? "+t.exists());
+				RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
+				StringReader reader = new StringReader(sb.toString());
+				StringWriter stringWriter = new StringWriter();
+				Template template = new Template();
+				template.setRuntimeServices(runtimeServices);
+				VelocityContext context = new VelocityContext();
+				context.put("path",t.getAbsolutePath());
+				template.setData(runtimeServices.parse(reader,HTMLtemplate));
+				template.initDocument();
+				template.merge(context,stringWriter );
+				resp.getWriter().write(stringWriter.toString());	
+				stringWriter.close();
+				
 			}
 		
+			
 		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-		
-	//	this.doPost(req, resp);
-//		System.out.println("...GET request..");
-//		String requestContent="";
-//		String writer_content="";
-//		System.out.println("request URI "+req.getRequestURI());
-//		String tempLocation="";
-//				requestContent = req.getRequestURI().replace("/FirstServlet", "");
-//				System.out.println("requestContent "+requestContent);
-//				System.out.println("outDir "+this.outDir+"\\"+requestContent);
-//				System.out.println("servlet context "+this.getServletConfig().getServletContext().toString());
-//				try {
-//					File f = new File(this.outDir+"\\"+requestContent+"\\"+tempLocation);
-//					this.vel_eng.init();
-//					this.velocityContext.put("path", Paths.get(requestContent.substring(requestContent.indexOf("/"))));
-					//this.velocityContext.put("file", f);
-					//this.template=vel_eng.getTemplate(this.HTMLtemplate);
-//					this.template = new Template();
-					//GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate);
-					//this.template.merge(this.velocityContext, resp.getWriter() );
-					
-				
-//					if(f.isFile()){
-						
-						
-//						StringWriter fw = new StringWriter();
-//						StringResourceRepository rep= StringResourceLoader.getRepository();
-//						//VelocityEngine ve = new VelocityEngine();
-//						Template te = new Template();
-//						RuntimeServices rs=RuntimeSingleton.getRuntimeServices();
-//						StringReader sr = new StringReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate).toString());
-//						SimpleNode sn = rs.parse(sr,"s");
-//						rep = new StringResourceRepositoryImpl();
-//						StringResourceLoader.setRepository(StringResourceLoader.REPOSITORY_NAME_DEFAULT, rep);
-//						te.setRuntimeServices(rs);
-//					    te.setData(sn);
-//					    te.initDocument();
-//						te.merge(velocityContext, fw);
-//						resp.getWriter().write(fw.toString());
-//						fw.close();
-						//f = new File(this.outDir+"\\"+requestContent+"\\"+tempLocation);
-//						System.out.println("complete dir "+f.getAbsolutePath());
-//						BufferedReader reader = new BufferedReader(new FileReader(f));
-//						StringBuilder stringBuilder = new StringBuilder();
-//						String line = null;
-//						String ls = System.getProperty("line.separator");
-//						while ((line = reader.readLine()) != null) {
-//							stringBuilder.append(line);
-//							stringBuilder.append(ls);
-//						}
-//						 resp.getWriter().println(stringBuilder.toString());
-//					}else{
-//						 resp.getWriter().println("given file name or file path is not valid,please check it");
-//						 }
-//				}catch (Exception e) {
-//					e.printStackTrace();
-//				} 
 
+		}
+			
+	
 		
-	}
+			} 
 
 	public  void deleteFolder(File folder) {
 	    File[] files = folder.listFiles();
