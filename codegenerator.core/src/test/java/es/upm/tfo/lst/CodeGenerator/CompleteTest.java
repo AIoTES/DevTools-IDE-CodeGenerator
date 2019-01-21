@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.velocity.runtime.log.Log;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -43,32 +44,28 @@ public class CompleteTest {
 	@Test
 	public void localCompleteTest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
-		 
-		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-		this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
-		//set XML model to generate project 
-		this.genPro.setMainModel(this.model);
-		//set the ontology to project and recursive state
-		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-		//set output directory
-		this.genPro.setOutputFolder("target/completeTest/");
-		//add value to variables
-		this.genPro.setVariable("targetOperatingSystem","Linux");
-		this.genPro.setVariable( "cardinality", "2");
-		this.genPro.setVariable( "templateCount", "2");
-		this.genPro.setVariable( "ontologyCount", "88");
-		
-	
-	
-		
-		try{
-			File f = new File(baseOutput);
-			//File f = new File(baseOutput+"SQL/");
-			f.mkdirs();
-		}catch(Exception a) {
-			a.printStackTrace();
+		 try {
+			//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+				//set XML model to generate project 
+				this.genPro.setMainModel(this.model);
+				//set the ontology to project and recursive state
+				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+				//set output directory
+				this.genPro.setOutputFolder("target/completeTest/");
+				//add value to variables
+				this.genPro.setVariable("targetOperatingSystem","Linux");
+				this.genPro.setVariable( "cardinality", "2");
+				this.genPro.setVariable( "templateCount", "2");
+				this.genPro.setVariable( "ontologyCount", "88");
+				File f = new File(baseOutput);
+				f.mkdirs();
+				genPro.process();
+		} catch (Exception e) {
+			genPro.addError(e);
+			//System.out.println(e.getMessage());
 		}
-		genPro.process();
+		
 		assertTrue(genPro.getErrors().isEmpty());
 		}
 
@@ -78,57 +75,60 @@ public class CompleteTest {
 	public void webTemplateTest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
  		 
-		 this.model=this.parser.generateXMLCoordinator(webTemplatePath);
-		//this.model = this.parser.getXmlCoordinatorDataModel();
-		//this.genPro = new GenerateProject(this.model);
-		this.genPro = new GenerateProject();
-		//set XML model to generate project 
-		this.genPro.setMainModel(this.model);
-		//set the ontology to project and recursive state
-		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-		//set diectory path to load all template needed files
-		//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
-		//set output directory
-		this.genPro.setOutputFolder("target/completeTest/");
-		//add value to variables
-		this.genPro.setVariable("outputBaseDir","/exampleFolder1");
-		this.genPro.setVariable( "cardinality", "2");
-		this.genPro.setVariable( "templateCount", "2");
-		this.genPro.setVariable( "ontologyCount", "88");
-		
+	
 		//creating output dir in test 
 		try{
+			 this.model=this.parser.generateXMLCoordinator(webTemplatePath);
+				//this.model = this.parser.getXmlCoordinatorDataModel();
+				//this.genPro = new GenerateProject(this.model);
+				this.genPro = new GenerateProject();
+				//set XML model to generate project 
+				this.genPro.setMainModel(this.model);
+				//set the ontology to project and recursive state
+				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+				//set diectory path to load all template needed files
+				//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
+				//set output directory
+				this.genPro.setOutputFolder("target/completeTest/");
+				//add value to variables
+				this.genPro.setVariable("outputBaseDir","/exampleFolder1");
+				this.genPro.setVariable( "cardinality", "2");
+				this.genPro.setVariable( "templateCount", "2");
+				this.genPro.setVariable( "ontologyCount", "88");
+
 			File f = new File("target/completeTest/");
 			f.mkdirs();
+			this.genPro.process();
+
 		}catch(Exception a) {
 			a.printStackTrace();
 		}
 		 
-		this.genPro.process();
 		assertTrue(genPro.getErrors().isEmpty());
 
 	}
 
 	@Test
 	public void webTemplateCompleteTest() {
-		//http://localhost/template/complexXml.xml
 		
 		 System.out.println("\n------------------------------online template--------------------------------------\n");
 
-		this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
-		this.genPro = new GenerateProject();
-		//set XML model to generate project 
-		this.genPro.setMainModel(this.model);
-		//set the ontology to project and recursive state
-		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-		//set diectory path to load all template needed files
-		//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
-		//set output directory
-		this.genPro.setOutputFolder("target/completeTest/");
-		//creating output dir in test 
 		try{
+			this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
+			this.genPro = new GenerateProject();
+			//set XML model to generate project 
+			this.genPro.setMainModel(this.model);
+			//set the ontology to project and recursive state
+			this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+			//set diectory path to load all template needed files
+			//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
+			//set output directory
+			this.genPro.setOutputFolder("target/completeTest/");
+			//creating output dir in test 
 			File f = new File("target/completeTest/remoteCompleteTest");
 			f.mkdirs();
+			this.genPro.process();
+
 		}catch(Exception a) {
 			a.printStackTrace();
 		}

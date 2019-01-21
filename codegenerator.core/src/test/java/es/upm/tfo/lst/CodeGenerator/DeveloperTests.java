@@ -80,30 +80,45 @@ public class DeveloperTests {
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		 Set <OWLDataProperty> m=new HashSet<>();
 		 
-		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-			 //m.add( g.getDataPropertiesInSignature().iterator().next());
-			System.out.println(g);
+//		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+//			 //m.add( g.getDataPropertiesInSignature().iterator().next());
+//			System.out.println(g);
+//		}
+//		
+//		for (OWLDataProperty b : m) {
+//			System.out.println(b);
+//		}
+		 
+		 try {
+				//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+				this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
+				//set XML model to generate project 
+				this.genPro.setMainModel(this.model);
+				//set the ontology to project and recursive state
+				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+				//set output directory
+				this.genPro.setOutputFolder(this.sqlOutput);
+				//add value to variables		
+				
+				genPro.process();
+				assertFalse(genPro.getErrors().isEmpty());
+				
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		
-		for (OWLDataProperty b : m) {
-			System.out.println(b);
-		}
-		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-		this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
-		//set XML model to generate project 
-		this.genPro.setMainModel(this.model);
-		//set the ontology to project and recursive state
-		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-		//set output directory
-		this.genPro.setOutputFolder(this.sqlOutput);
-		//add value to variables		
-		
-
-		try{
-			assertFalse(genPro.process());
-		}catch(Exception a) {
-			a.printStackTrace();
-		}
+//		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+//		this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
+//		//set XML model to generate project 
+//		this.genPro.setMainModel(this.model);
+//		//set the ontology to project and recursive state
+//		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+//		//set output directory
+//		this.genPro.setOutputFolder(this.sqlOutput);
+//		//add value to variables		
+//		
+//		genPro.process();
+//		assertFalse(genPro.getErrors().isEmpty());
+//		
 
 	}
 

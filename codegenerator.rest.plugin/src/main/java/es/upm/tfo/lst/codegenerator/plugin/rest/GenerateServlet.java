@@ -85,12 +85,12 @@ public class GenerateServlet extends HttpServlet {
 	private final String HTMLtemplate="listing.htm.vm";
 	private final String baseTemplatePath="/";
 	private String servletName="/GenerateCode";
-	
+	private JsonObject outO = null;
 	public GenerateServlet(String outDir) {
 		this.outDir = outDir;
 		this.vel_eng = new VelocityEngine();
 		this.velocityContext = new VelocityContext();
-		
+		outO = new JsonObject();
 	}
 
 	
@@ -117,7 +117,13 @@ public class GenerateServlet extends HttpServlet {
 						JsonObject gc = (JsonObject) sreq;
 						// set template & init project
 						XmlParser parser = new XmlParser();
-						TemplateDataModel model=parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+						TemplateDataModel model=null;
+						try {
+							model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+						} catch (Exception e) {
+							resp.getWriter().println(e.getMessage());
+							//e.printStackTrace();
+						}
 						 
 						GenerateProject gp = new GenerateProject();
 						gp.setMainModel(model);
@@ -159,28 +165,19 @@ public class GenerateServlet extends HttpServlet {
 					outFile.mkdirs();
 					gp.setOutputFolder(outFile.getAbsolutePath()+File.separatorChar);
 					// generate
-					boolean result;
 					try {
-						 result = gp.process();
+						gp.process();
 					} catch (Exception e) {
-						e.printStackTrace(resp.getWriter());
-						result = false;
+						resp.getWriter().println(e.getMessage());
+
 					}
-		
-					if (result) {
-						// response with Output reference
-						JsonObject outO = new JsonObject();
-						outO.addProperty("output", outputAlias + "/" + out);
-						resp.addHeader(CONTENT_TYPE, "application/json");
-						resp.getWriter().println(outO.toString());
-						
-					}else {
-						resp.sendError(HttpServletResponse.SC_NO_CONTENT);
+					boolean result;
+
+					outO.addProperty("output", outputAlias + "/" + out);
+					resp.addHeader(CONTENT_TYPE, "application/json");
+					resp.getWriter().println(outO.toString());
 					}
-					}else {
-						resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-					}
-				}
+			}
 		}
 
 	

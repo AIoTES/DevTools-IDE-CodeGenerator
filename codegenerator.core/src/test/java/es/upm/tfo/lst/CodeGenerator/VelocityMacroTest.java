@@ -2,6 +2,7 @@ package es.upm.tfo.lst.CodeGenerator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -59,36 +60,61 @@ public class VelocityMacroTest {
 		}catch(Exception a) {
 
 		}
-		this.model= this.parser.generateXMLCoordinator(this.templatesWithErrors+"workingXML.xml");
-		this.genPro = new GenerateProject(this.model);
-		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
-		this.genPro.addOntology(this.ontology,false);
-		//adding variables
-		genPro.setVariable("outputBaseDir","/exampleFolder");//required
-		genPro.setVariable("cardinality","/exampleFolder");//optional
-		genPro.setVariable("templateCount","/exampleFolder");//optional
-		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
-
-		String out="target/ontology-test";
+//		this.model= this.parser.generateXMLCoordinator(this.templatesWithErrors+"workingXML.xml");
 		try {
-			File f = new File(out);
-			if(!f.exists()) {
-				boolean g = f.mkdirs();
-				System.out.println(g);
+			this.model= this.parser.generateXMLCoordinator(this.templatesWithErrors+"workingXML.xml");
+			this.genPro = new GenerateProject(this.model);
+			this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+			this.genPro.addOntology(this.ontology,false);
+			//adding variables
+			genPro.setVariable("outputBaseDir","/exampleFolder");//required
+			genPro.setVariable("cardinality","/exampleFolder");//optional
+			genPro.setVariable("templateCount","/exampleFolder");//optional
+			genPro.setVariable( "ontologyCount","/exampleFolder");//optional
+
+			String out="target/ontology-test";
+			try {
+				File f = new File(out);
+				if(!f.exists()) {
+					boolean g = f.mkdirs();
+					System.out.println(g);
+				}
+			}catch(Exception a){
+				//a.printStackTrace();
 			}
-		}catch(Exception a){
-			//a.printStackTrace();
+
+			//genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
+			genPro.setOutputFolder(out);
+			genPro.process();
+			assertTrue(this.genPro.getErrors().isEmpty());
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-
-		//genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
-		genPro.setOutputFolder(out);
-
-		try {
-			assertFalse(genPro.process());
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-
+//		this.genPro = new GenerateProject(this.model);
+//		this.ontology = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+//		this.genPro.addOntology(this.ontology,false);
+//		//adding variables
+//		genPro.setVariable("outputBaseDir","/exampleFolder");//required
+//		genPro.setVariable("cardinality","/exampleFolder");//optional
+//		genPro.setVariable("templateCount","/exampleFolder");//optional
+//		genPro.setVariable( "ontologyCount","/exampleFolder");//optional
+//
+//		String out="target/ontology-test";
+//		try {
+//			File f = new File(out);
+//			if(!f.exists()) {
+//				boolean g = f.mkdirs();
+//				System.out.println(g);
+//			}
+//		}catch(Exception a){
+//			//a.printStackTrace();
+//		}
+//
+//		//genPro.setLocalBaseLoaderPath(this.templatesWithErrors);
+//		genPro.setOutputFolder(out);
+//		genPro.process();
+//		assertTrue(this.genPro.getErrors().isEmpty());
+	
 
 	}
 

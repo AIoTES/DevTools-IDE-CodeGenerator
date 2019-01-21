@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -78,7 +79,7 @@ public class XmlParser {
 	 * @param xmlPath {@link String } path to XML file. This String value can be a website or path to local file
  	 * @return {@link TemplateDataModel} object representing XML file in Java code, or null if some problem occur in the process
 	 */
-	public TemplateDataModel generateXMLCoordinator(String xmlPath){
+	public TemplateDataModel generateXMLCoordinator( String xmlPath) throws Exception{
 		
 		
 		boolean flag=false;
@@ -138,13 +139,11 @@ public class XmlParser {
 	
 	}
 	
-
-
 	/**
 	 * generate from XML file an {@link TemplateDataModel} object representing XML file into Java code
 	 * @param xmlSource {@link String}  representing the location from XML file to load
 	 */
-	private void readXML()  {
+	private void readXML() throws Exception {
 		
 		Element t;
 		this.author = new Author();
@@ -154,6 +153,7 @@ public class XmlParser {
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	         log.debug("readXML "+xmlSource.getPath());
+	         //if any error of read template occurs...the following line throws an error IOE
 	         Document doc = docBuilder.parse (xmlSource.openStream());
 	         this.nodeMacro = doc.getElementsByTagName("macro");
 	         this.nodeVariable = doc.getElementsByTagName("variable");
@@ -201,12 +201,11 @@ public class XmlParser {
 	         this.javaXMLModel.setVars(this.variableList);
 	         
 	         this.javaXMLModel.setAuthor(this.author);
-
-	         //this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
 	         	
 		}catch ( ParserConfigurationException | IOException | SAXException a) {
-			log.fatal("error" , a);
+			log.fatal("Culdn't read given XML file" , a);
 			this.javaXMLModel = null;
+			throw a;
 		}
 
 	}
@@ -215,9 +214,6 @@ public class XmlParser {
 		 return xmlSource.toURI().resolve("..").toURL();
 	 }
 
-	
-
-	
 	/**
 	 * method to set the output to store temporary templates
 	 * @param output

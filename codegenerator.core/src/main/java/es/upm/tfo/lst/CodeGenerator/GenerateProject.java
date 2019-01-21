@@ -16,6 +16,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -130,8 +132,7 @@ public class GenerateProject {
 	 * @return boolean value.True if the process is sucessfull.False if any problem occur.
 	 * @throws Exception if some problem occur in the process
 	 */
-	public void process(){
-		boolean flag=false;
+	public void process()  throws Exception {
 		total2Process = 4; // TODO calculate
 		if(this.control()) {
 			try {
@@ -148,18 +149,14 @@ public class GenerateProject {
 				if (this.mainModel.getInstanceMacro().isEmpty()) log.warn("doesn't exist macro to instances");
 				if (this.mainModel.getObjectProperties().isEmpty()) log.warn("doesn't exist macro to object properties");
 
-				
-				 this.processProject();
+				this.processProject();
 			}catch(Exception a){
-				//flag=false;
+				log.fatal("fatal error ",a);
 				this.arrayOfExceptions.add(a);
-				log.fatal("error",a);
-				
+				throw a ;
 			}
 		}
-//		else {
-//			flag = false;
-//		}
+
 
 		
 	}
@@ -190,8 +187,8 @@ public class GenerateProject {
 							template.merge(context,fr);
 							fr.close();
 						}catch (Exception e) {
-							this.arrayOfExceptions.add(e);
 							log.fatal("cant merge velocity template with velocity context",e);
+							this.arrayOfExceptions.add(e);
 							throw e;	
 						}
 					}
@@ -479,7 +476,7 @@ public class GenerateProject {
 	        props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
 	        props.setProperty("url.resource.loader.root", source.toString());
 		}catch(Exception a) {
-			log.warn("init velocity problems -> "+a.getMessage());
+			log.warn(a);
 			 props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
 		}
 
@@ -504,16 +501,7 @@ public class GenerateProject {
 		this.outputFolder=outputFolder;
 	}
 
-	/**
-	 * control if sources loader path is set
-	 * @return
-	 */
-	private boolean templateBaseLoaderSourceControl() {
-		if(this.localBaseLoaderPath == null) {
-			return false;
-		}
-		return true;
-	}
+
 
 	/**
 	 * all of controls before ejecute project:
@@ -531,15 +519,16 @@ public class GenerateProject {
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
 				flag=true;
-				if(this.templateBaseLoaderSourceControl()) {
+				if(this.localBaseLoaderPath == null) {
 
 						flag=true;
 				}
 			}else {
-				log.fatal("please be shure if method generateXMLCoordinator() is called from XmlParser object");
+				
+				log.fatal("Seems the Xml Parser object is not set, please check it Editar");
 			}
 		}else {
-			log.fatal("main ontology couldnt be added");
+			log.fatal("Main ontology couldn't be loaded");
 		}
 		return flag;
 	}
@@ -645,7 +634,7 @@ public class GenerateProject {
 	public TemplateDataModel getMainModel() {
 		return mainModel;
 	}
-	public void setMainModel(TemplateDataModel mainModel) {
+	public void setMainModel(  TemplateDataModel mainModel) {
 		this.mainModel = mainModel;
 	}
 	
@@ -667,4 +656,9 @@ public class GenerateProject {
 	public List<Exception> getErrors(){
 		return this.arrayOfExceptions;
 	}
+	
+	public void addError(Exception a) {
+		this.arrayOfExceptions.add(a);
+	}
+
 }

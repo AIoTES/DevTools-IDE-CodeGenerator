@@ -147,7 +147,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			
 			public void actionPerformed(ActionEvent e) {
 				parser = new XmlParser();
-				mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+				try {
+					mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Seems some problems occurs at the time to load given xml located in "+sourceTextField.getEditor().getItem().toString());
+					e1.printStackTrace();
+				}
 				 
 				//parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
@@ -155,7 +160,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					variableTable.setModel(generateTable);
 					variableTable.repaint();
 				}else {
-					JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
+					//JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
 					parser = new XmlParser();
 				}
 	
@@ -391,7 +396,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				System.out.println("doInBackground...");
 				try {
 					while(flag==null) {
-						flag=proj.process();	
+						//flag=proj.process();
+						proj.process();
 					}
 
 				} catch (Exception e1) {

@@ -89,7 +89,13 @@ public class CodegenerationMojo
     
     	// set template & init project
 		XmlParser parser = new XmlParser();
-		TemplateDataModel model =parser.generateXMLCoordinator(xmlTemplate.getPath());
+		TemplateDataModel model=null;
+		try {
+			model = parser.generateXMLCoordinator(xmlTemplate.getPath());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
@@ -162,15 +168,16 @@ public class CodegenerationMojo
         // generate
         boolean result;
         try {
-        	result = gp.process();
+        	//result = gp.process();
+        	 gp.process();
         } catch (Exception e) {
         	getLog().debug(e);
         	throw new MojoExecutionException("unable to generate code.");
         }
 
-        if (!result) {
-        	throw new MojoExecutionException("Code generation was not successuful.");
-        }
+//        if (!result) {
+//        	throw new MojoExecutionException("Code generation was not successuful.");
+//        }
         getLog().info("generation completed.");
         
         

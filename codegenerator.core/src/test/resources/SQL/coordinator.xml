@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Template
+		xmlns="http://www.example.org/prueba2" 
+		xmlns:x="http://www.w3.org/2001/XMLSchema-instance" 
+		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
+		<template-name>SQLCoordinator</template-name>
+		<template-version>1</template-version>
+		<template-description>base xml coordinator for geneate a sql script for classes</template-description>
+		<template-author>
+			<author-name>eduardo</author-name>
+			<author-email>buhid</author-email>	
+			<author-phone>123523</author-phone>
+		</template-author>
+	
+		<macros>
+			<macro>
+				<template>sql.vm</template>
+				<for>class</for>
+				<output>classes.txt</output>
+			</macro>			
+		</macros>
+</Template>
+
