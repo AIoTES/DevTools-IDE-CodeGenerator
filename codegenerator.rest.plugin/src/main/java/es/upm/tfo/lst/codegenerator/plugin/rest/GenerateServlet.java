@@ -193,15 +193,19 @@ public class GenerateServlet extends HttpServlet {
 			File t = new File( urlToFile.getFile());
 			if(t.isFile()) {
 				
+				System.out.println("file");
 				BufferedReader br = null;
-				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
+				br = new BufferedReader(new FileReader(t));
 				StringBuilder sb = new StringBuilder();
 
 				while ((line = br.readLine()) != null) {
 					sb.append(line);
 				}
 				resp.getWriter().write(sb.toString());	
-			}else {
+			}
+			
+			if(t.isDirectory()){
+				System.out.println("directory");
 				BufferedReader br = null;
 				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
 				StringBuilder sb = new StringBuilder();
@@ -209,6 +213,7 @@ public class GenerateServlet extends HttpServlet {
 				while ((line = br.readLine()) != null) {
 					sb.append(line);
 				}
+				
 				System.out.println("file exists? "+t.exists());
 				RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
 				StringReader reader = new StringReader(sb.toString());
@@ -217,6 +222,8 @@ public class GenerateServlet extends HttpServlet {
 				template.setRuntimeServices(runtimeServices);
 				VelocityContext context = new VelocityContext();
 				context.put("path",t.getAbsolutePath());
+				context.put("file", t);
+				context.put("dirContent", t.listFiles());
 				template.setData(runtimeServices.parse(reader,HTMLtemplate));
 				template.initDocument();
 				template.merge(context,stringWriter );
