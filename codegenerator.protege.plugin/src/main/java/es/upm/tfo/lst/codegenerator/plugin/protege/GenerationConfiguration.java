@@ -41,7 +41,10 @@ import javax.swing.table.TableModel;
 import org.osgi.framework.BundleContext;
 import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.model.library.folder.SAXParseCompletedException;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -73,7 +76,10 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
     private int progress;
     private ProgressBar pb;
     private String xmlParentDir=null;
-   
+    //---------messages
+    
+    private final String MISSINGTAG="Seems in the xml coodinator some fields is missing";
+    private final String SINTAXERROR="Seems in the xml coodinator are error in xml sintax";
 	/**
 	 * Create the frame.
 	 */
@@ -150,7 +156,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				try {
 					mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, "Seems some problems occurs at the time to load given xml located in "+sourceTextField.getEditor().getItem().toString());
+					String message="";
+					if(e1 instanceof NullPointerException)
+						message = MISSINGTAG;
+					else
+						message=SINTAXERROR;
+							
+					JOptionPane.showMessageDialog(null, message);
 					e1.printStackTrace();
 				}
 				 
@@ -182,6 +194,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		btnGenerate.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
 					System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");

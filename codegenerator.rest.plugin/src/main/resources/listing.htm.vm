@@ -9,22 +9,23 @@
   <table>
    <tr><th valign="top"><img src="http://www.apache.org/icons/blank.gif" alt="[ICO]"></th><th>Name</th><th>Last modified</a></th><th>Size</th></tr>
    <tr><th colspan="4"><hr></th></tr>
+#if($BACK)
 <tr>
     <td valign="top"><img src="http://www.apache.org/icons/back.gif" alt="[PARENTDIR]"></td>
     <td><a href="../">Parent Directory</a></td><td>&nbsp;</td>
     <td   >&nbsp;</td>
 </tr>
-
+#end
 
 #foreach ($f in $dirContent)
 #if($f.isFile())
 <tr>
     <td valign="top"><img src="http://www.apache.org/icons/unknown.gif" alt="[file]"></td><td><a href="./$f.getName()">${f.getName()}</a></td>
-    <td   >$f.lastModified() </td><td   >$f.length</td>
+    <td   >$f.lastModified() </td><td   >${f.length()}</td>
 </tr>
 #else
 <tr>
-    <td valign="top"><img src="http://www.apache.org/icons/folder.gif" alt="[DIR]"></td><td><a href="./$f.getName()">${f.getName()}</a></td>
+    <td valign="top"><img src="http://www.apache.org/icons/folder.gif" alt="[DIR]"></td><td><a href="./$f.getName()/">${f.getName()}</a></td>
     <td   >$f.lastModified()  </td><td   >  - </td>
 </tr>
 #end

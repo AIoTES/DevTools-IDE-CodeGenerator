@@ -224,6 +224,7 @@ public class GenerateServlet extends HttpServlet {
 				context.put("path",t.getAbsolutePath());
 				context.put("file", t);
 				context.put("dirContent", t.listFiles());
+				context.put("BACK", req_data.split("/").length >3);
 				template.setData(runtimeServices.parse(reader,HTMLtemplate));
 				template.initDocument();
 				template.merge(context,stringWriter );

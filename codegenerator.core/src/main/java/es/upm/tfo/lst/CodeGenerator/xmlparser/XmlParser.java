@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -29,7 +30,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
-import es.upm.tfo.lst.CodeGenerator.model.Author;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
@@ -48,7 +48,6 @@ public class XmlParser {
 	private Map<String,Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
-	private Author author;
 	private URL templateBasePath=null;
 	
 	//---------------
@@ -146,45 +145,53 @@ public class XmlParser {
 	private void readXML() throws Exception {
 		
 		Element t;
-		this.author = new Author();
+		
 		try {
-
+				
 			this.javaXMLModel = new TemplateDataModel();
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	         log.debug("readXML "+xmlSource.getPath());
 	         //if any error of read template occurs...the following line throws an error IOE
 	         Document doc = docBuilder.parse (xmlSource.openStream());
+	       
+	         try {
+	        	 this.nodeVariable = doc.getElementsByTagName("variable");
+		         this.templateAuthor = doc.getElementsByTagName("template-author");
+		         this.templateName = doc.getElementsByTagName("template-name");
+		         this.templateVersion = doc.getElementsByTagName("template-version");
+		         this.templateDescription = doc.getElementsByTagName("template-description");
+
+		         t = (Element)this.templateName.item(0);
+
+		         this.javaXMLModel.setName( t.getFirstChild().getTextContent());
+		         t = (Element)this.templateVersion.item(0);
+		         this.javaXMLModel.setVersion( t.getFirstChild().getTextContent());
+		         t = (Element)this.templateDescription.item(0);
+		         this.javaXMLModel.setDescription( t.getFirstChild().getTextContent() );
+		         //xml tags not obligatory
+	        	 t = (Element)this.templateAuthor.item(0);
+
+
+
+		         for(int y=0;y<this.nodeVariable.getLength();y++){
+		             	Element b = (Element)this.nodeVariable.item(y);
+		             	this.variableList.put(
+		             			b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
+		             			b.getElementsByTagName("name").item(0).getTextContent(),
+		             			b.getElementsByTagName("description").item(0).getTextContent(),
+		             			b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
+		             			b.getElementsByTagName("default").item(0).getTextContent()));
+
+		         }
+		         
+		         this.javaXMLModel.setVars(this.variableList);
+
+			} catch (Exception e) {
+				log.warn("some optionals tags into XML coordinator file isn't set");
+			}
+	         log.debug("going to process macro models");	         
 	         this.nodeMacro = doc.getElementsByTagName("macro");
-	         this.nodeVariable = doc.getElementsByTagName("variable");
-	         this.templateAuthor = doc.getElementsByTagName("template-author");
-	         this.templateName = doc.getElementsByTagName("template-name");
-	         this.templateVersion = doc.getElementsByTagName("template-version");
-	         this.templateDescription = doc.getElementsByTagName("template-description");
-
-	         t = (Element)this.templateName.item(0);
-
-	         this.javaXMLModel.setName( t.getFirstChild().getTextContent());
-	         t = (Element)this.templateVersion.item(0);
-	         this.javaXMLModel.setVersion( t.getFirstChild().getTextContent());
-	         t = (Element)this.templateDescription.item(0);
-	         this.javaXMLModel.setDescription( t.getFirstChild().getTextContent() );
-	         t = (Element)this.templateAuthor.item(0);
-	         this.author.setName(t.getElementsByTagName("author-name").item(0).getTextContent());
-	         
-
-
-	         for(int y=0;y<this.nodeVariable.getLength();y++){
-	             	Element b = (Element)this.nodeVariable.item(y);
-	             	this.variableList.put(
-	             			b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
-	             			b.getElementsByTagName("name").item(0).getTextContent(),
-	             			b.getElementsByTagName("description").item(0).getTextContent(),
-	             			b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
-	             			b.getElementsByTagName("default").item(0).getTextContent()));
-
-	         }
-
 	         for(int y=0;y<this.nodeMacro.getLength();y++){
 
 	          	Element b = (Element)this.nodeMacro.item(y);
@@ -197,12 +204,12 @@ public class XmlParser {
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);
+	         System.out.println(this.macroList.size());
 	         //modify definition of array of variables
-	         this.javaXMLModel.setVars(this.variableList);
-	         
-	         this.javaXMLModel.setAuthor(this.author);
+
 	         	
-		}catch ( ParserConfigurationException | IOException | SAXException a) {
+		}catch (NullPointerException | ParserConfigurationException | IOException | SAXException a ) {
+//		}catch (Exception a ) {
 			log.fatal("Culdn't read given XML file" , a);
 			this.javaXMLModel = null;
 			throw a;
@@ -225,8 +232,5 @@ public class XmlParser {
 		this.fileToWrite = fileToWrite;
 	}
 
-//	public String getTemplateBasePath() {
-//		return templateBasePath.getPath();
-//	}
 
 }

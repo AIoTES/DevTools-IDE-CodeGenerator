@@ -10,7 +10,7 @@
 	<version>0.0.1-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
-
+ 
   <artifactId>codegenerator.core</artifactId>
   <url>http://maven.apache.org</url>
 

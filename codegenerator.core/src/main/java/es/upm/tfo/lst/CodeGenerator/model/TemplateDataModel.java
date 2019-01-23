@@ -18,9 +18,14 @@ public class TemplateDataModel {
 	
 		private String name,version,description,baseTemplatePath;
 	
-		private Author author;
 		private Map<String,Variable> arrayVars;
 		private List <MacroModel> macroList;
+		
+		
+		public TemplateDataModel() {
+			this.arrayVars = new HashMap<>();
+		}
+		
 		public String getName() {
 			return name;
 		}
@@ -40,12 +45,7 @@ public class TemplateDataModel {
 		public void setDescription(String desription) {
 			this.description = desription;
 		}
-		public Author getAuthor() {
-			return author;
-		}
-		public void setAuthor(Author author) {
-			this.author = author;
-		}
+
 
 
 		/**
@@ -243,13 +243,8 @@ public class TemplateDataModel {
 						"\n template description="+
 					this.description+
 						"\n variables count="+
-					this.macroList.size()+
-						"\n author name="+
-					this.author.getName()+
-						"\n author phone="+
-					this.author.getPhone()+
-						"\n author email="+
-					this.author.getEmail();
+					this.macroList.size();
+
 		}
 
 }
