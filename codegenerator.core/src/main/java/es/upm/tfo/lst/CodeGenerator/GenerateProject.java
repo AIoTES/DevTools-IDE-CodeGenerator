@@ -16,11 +16,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
@@ -44,6 +43,7 @@ import es.upm.tfo.lst.CodeGenerator.model.ReasonerWrapper;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.model.Variable;
 import uk.ac.manchester.cs.jfact.JFactFactory;
+
 /**
  * Main class whos read {@link OWLOntology} and XML, and generate code.
  * In this class the tool has all the methods to read ontologies and explore all of it aspects to generate code.
@@ -140,7 +140,7 @@ public class GenerateProject {
 				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date",new Date());
-				this.baseContext.put("object",Object.class);
+				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
 				this.addVariablesToBaseContext();
 				
 				if (this.mainModel.getProjectMacro().isEmpty()) log.warn("doesn't exist macro to project");
