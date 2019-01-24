@@ -100,14 +100,10 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		if(req.getHeader(CONTENT_TYPE)==null) {
-//			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-//			return;
-//		}
-		
+
 		
 				if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
-					// interpret JSon
+				
 		
 					 // { template: "", ontologies:[{url:"", recursive:""}], variables:{varname:varvalue} }
 					//{ template: "http://localhost/template/", ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl", recursive:"true"}], variables:{varname:varvalue} }
@@ -173,7 +169,7 @@ public class GenerateServlet extends HttpServlet {
 					}
 					boolean result;
 
-					outO.addProperty("output", outputAlias + "/" + out);
+					outO.addProperty("output", outputAlias);
 					resp.addHeader(CONTENT_TYPE, "application/json");
 					resp.getWriter().println(outO.toString());
 					}
@@ -193,7 +189,7 @@ public class GenerateServlet extends HttpServlet {
 			File t = new File( urlToFile.getFile());
 			if(t.isFile()) {
 				
-				System.out.println("file");
+//				System.out.println("file");
 				BufferedReader br = null;
 				br = new BufferedReader(new FileReader(t));
 				StringBuilder sb = new StringBuilder();
@@ -205,7 +201,7 @@ public class GenerateServlet extends HttpServlet {
 			}
 			
 			if(t.isDirectory()){
-				System.out.println("directory");
+//				System.out.println("directory");
 				BufferedReader br = null;
 				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
 				StringBuilder sb = new StringBuilder();
@@ -214,7 +210,7 @@ public class GenerateServlet extends HttpServlet {
 					sb.append(line);
 				}
 				
-				System.out.println("file exists? "+t.exists());
+//				System.out.println("file exists? "+t.exists());
 				RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
 				StringReader reader = new StringReader(sb.toString());
 				StringWriter stringWriter = new StringWriter();

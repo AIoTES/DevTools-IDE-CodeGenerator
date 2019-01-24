@@ -33,7 +33,7 @@ public class Activator implements BundleActivator, ServiceListener {
 	private GenerateServlet servlet;
 
 	private File outputDir;
-	private String outputAlias = "/generated";
+	private String outputAlias = "/GenerateCode";
 
 
 	/* (non-Javadoc)
