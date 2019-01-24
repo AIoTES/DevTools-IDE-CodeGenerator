@@ -16,7 +16,7 @@
 			<macro>
 				<template>sql.vm</template>
 				<for>class</for>
-				<output>classes.txt</output>
+				<output>/${class.getIRI().getShortForm()}.txt</output>
 			</macro>			
 		</macros>
 </Template>

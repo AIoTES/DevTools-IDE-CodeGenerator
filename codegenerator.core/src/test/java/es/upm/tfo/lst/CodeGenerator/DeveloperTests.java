@@ -16,6 +16,7 @@
 package es.upm.tfo.lst.CodeGenerator;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,10 +32,13 @@ import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
+import uk.ac.manchester.cs.jfact.JFactFactory;
 
 /**
  * @author amedrano
@@ -77,18 +81,29 @@ public class DeveloperTests {
 	@Test
 	public void sqltest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
+		 OWLReasonerFactory reasonerFactory= new JFactFactory();
+;
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		 Set <OWLDataProperty> m=new HashSet<>();
+
+		 OWLReasoner reasoner = reasonerFactory.createReasoner(t);
+		 for (OWLClass g  : t.getClassesInSignature()) {
+			 	System.out.println(reasoner.getInstances(g, true).getNodes());
+			 	for(OWLNamedIndividual ni : reasoner.getInstances(g, true).getFlattened()) {
+			 		//System.out.println(ni);
+			 	}
+			 	
+		 }
+//		
 		 
 //		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-//			 //m.add( g.getDataPropertiesInSignature().iterator().next());
-//			System.out.println(g);
+//			System.out.println("OWLDataPropertyDomainAxiom "+g.getProperty());
 //		}
-//		
+		
 //		for (OWLDataProperty b : m) {
 //			System.out.println(b);
 //		}
-		 
+//		 
 		 try {
 				//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
 				this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
@@ -101,24 +116,12 @@ public class DeveloperTests {
 				//add value to variables		
 				
 				genPro.process();
-				assertFalse(genPro.getErrors().isEmpty());
+				assertTrue(genPro.getErrors().isEmpty());
 				
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-//		//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-//		this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
-//		//set XML model to generate project 
-//		this.genPro.setMainModel(this.model);
-//		//set the ontology to project and recursive state
-//		this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-//		//set output directory
-//		this.genPro.setOutputFolder(this.sqlOutput);
-//		//add value to variables		
-//		
-//		genPro.process();
-//		assertFalse(genPro.getErrors().isEmpty());
-//		
+	
 
 	}
 

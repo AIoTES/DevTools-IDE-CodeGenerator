@@ -1,25 +1,6 @@
 ##code generated to map an ontology to SQL database.
-#set($Object='')
-#set($AxiomType=$Object.class.forName('org.semanticweb.owlapi.model.AxiomType'))
-#set($instances=$reasoner.getReasoner().getInstances($class, true).getFlattened() )
-#set($objProps=$ontology.getObjectPropertiesInSignature())
-##set($dpd=$ontology.getAxioms($AxiomType.DATA_PROPERTY_DOMAIN))
-create table ($class.getIRI()) 
-class name: $class.getIRI().getShortForm()
-object properties in signature
-#foreach( $q in $objProps )
-    $q.getIRI()
-#end
-reasoner: instances
-
-#foreach( $g in $instances )
-    $g.toString()
-#end
-data properties in signature size: ${class.getDataPropertiesInSignature().size()}
-#set($Object='')
-#set($AxiomType=$Object.class.forName('org.semanticweb.owlapi.model.AxiomType'))
-
-$ontology.getAxioms($AxiomType.DATA_PROPERTY_ASSERTION)
-#foreach($example in $ontology.getAxioms($AxiomType.DATA_PROPERTY_ASSERTION) )
-	jajaja $example.toString()
-#end
+#set($OWLreasoner = $reasoner.getReasoner())
+--create table
+create table $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() varchar (254) #end ))
+--inserts
+insert into $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() #end  ) values ()
