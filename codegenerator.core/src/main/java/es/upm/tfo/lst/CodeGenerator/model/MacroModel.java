@@ -56,19 +56,27 @@ public class MacroModel {
 		return templateFor;
 	}
 	
-	
 	/**
-	 * 
+	 * This method add into the model all the given imports given in xml. The first parameter is the alias, and the second is the full package of the needed class
+	 * @param packageName: The complete package name including the class to be added. The class will be accessible under class name into velocity macro file
+	 */
+	public void setImport(String packageName) {
+		//TODO: detect special characters
+		this.imports.put(packageName.substring(packageName.lastIndexOf(".")), packageName);
+	}
+	/**
+	 * This method add into the model all the given imports given in xml. The first parameter is the alias, and the second is the full package of the nedeed class  
 	 * @param packageName: The complete package name including the class to be added
 	 * @param alias: Alias to refer the class into velocity templates. If it is setted null, empty or have invalid character, the program will use the class name provided into packageName variable
 	 */
 	public void setImport(String packageName, String alias) {
 		//TODO: detect special characters
 		if(alias.equals("") | alias==null) {
-			this.imports.put(alias, packageName.substring(packageName.lastIndexOf(".")));
+			this.setImport(packageName);
 		}else
 			this.imports.put(alias, packageName);
 	}
+
 	
 	private boolean stringControl(String toctrl) {
 		
