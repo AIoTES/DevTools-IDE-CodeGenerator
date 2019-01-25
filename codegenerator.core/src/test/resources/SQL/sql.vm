@@ -4,3 +4,14 @@
 create table $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() varchar (254) #end ))
 --inserts
 insert into $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() #end  ) values ()
+
+
+
+
+
+			 	#foreach( $ni in $reasoner.getReasoner().getInstances($class, true).getFlattened() ) 
+			 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	#end
