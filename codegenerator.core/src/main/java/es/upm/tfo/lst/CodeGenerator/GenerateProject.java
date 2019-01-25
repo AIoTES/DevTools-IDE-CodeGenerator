@@ -66,7 +66,7 @@ public class GenerateProject {
 
 
 	public interface ProgessCallbackPublisher {
-		void updateProgress(int done, int total);
+		void updateProgress(int done);
 	}
 	private ReasonerWrapper wrapper=null;
 	private TemplateDataModel mainModel=null;
@@ -266,7 +266,7 @@ public class GenerateProject {
 					}
 			}
 		}else{
-			update(2);
+			//update(2);
 			for(OWLClass c : ontology.getClassesInSignature()) {
 				this.processClass(c,ontology);
 			}
@@ -282,6 +282,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processClass(OWLClass c,OWLOntology ontology)  throws Exception{
+		int i=0;
 		boolean flag=true;
 		this.text="";
 		List<MacroModel> classModelArray = this.mainModel.getClassMacro();
@@ -315,13 +316,13 @@ public class GenerateProject {
 					}
 		   }
 		}else{
-			update(1);
+			update(i++);
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
 				this.processInstances(cls,ontology);
 			}
 
 		}
-		update(3);
+		//update(3);
 		
 	}
 
@@ -403,7 +404,7 @@ public class GenerateProject {
 					//to access superclasses must use reasoner into context from wrapper class
 					//this.context.put("superClasses", this.reasoner.getSuperClasses(c, true).getFlattened());
 					//this.context.put("propertyValues", aux);
-					update(5);
+					//update(5);
 					if(!macroModel.getOutput().equals("")){
 						try {
 							this.fr = new FileWriter(this.outputFolder+this.text ,true);
@@ -498,7 +499,6 @@ public class GenerateProject {
 	public void setOutputFolder(String outputFolder) {
 		this.outputFolder=outputFolder;
 	}
-
 
 
 	/**
@@ -647,7 +647,7 @@ public class GenerateProject {
 
 	private void update(int done) {
 		if(GenConf!=null) {
-			GenConf.updateProgress(this.total2Process, done);
+			GenConf.updateProgress( done);
 		}
 	}
 	
@@ -667,6 +667,10 @@ public class GenerateProject {
 		for (OWLOntology o : this.ontologies2BProcesed) {
 			this.total2Process+= o.getClassesInSignature().size();
 		}
-		System.out.println(this.total2Process);
+		System.out.println("total of classes to process "+this.total2Process);
+	}
+
+	public int getTotal2Process() {
+		return total2Process;
 	}
 }

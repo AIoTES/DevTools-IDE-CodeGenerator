@@ -55,25 +55,34 @@
 	</sequence>	 
 </complexType>
 
+
+
 <complexType name="macro">
 	<sequence>
 		<element name="tempalate" type="string"></element>
 		<element name="for" type="ts:target"></element>	
         <element name="output" type="string"></element>
-        </sequence>
+        <element name="imports" type="ts:import" minOccurs="0" maxOccurs="unbounded"></element>
+     </sequence>
+</complexType>
+
+
+<complexType name="import">
+	<sequence>
+		<element name="package" type="string"></element>
+		<element name="alias" type="string"></element>
+     </sequence>
 
 </complexType>
 
 
 
-
-
-<simpleType name="boolean">
-	<restriction base="string">
-					<enumeration value="true"></enumeration>
-					<enumeration value="false"></enumeration>	
-				</restriction>
-</simpleType>
+	<simpleType name="boolean">
+		<restriction base="string">
+			<enumeration value="true"></enumeration>
+			<enumeration value="false"></enumeration>	
+		</restriction>
+	</simpleType>
 
 <simpleType name="target">
 	<restriction base="string">
@@ -85,6 +94,8 @@
 	</restriction>	
 	
 </simpleType>
+
+
 
 
 <complexType name="Developer">

@@ -391,7 +391,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	}
 	private void asyncProcess() {	 
 		 
-		pb = new ProgressBar();
+		pb = new ProgressBar(this.proj.getTotal2Process());
 		swingWorker = new SwingWorker<Integer, Void>(){
 			
 		
@@ -481,7 +481,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 
 	@Override
-	public void updateProgress(int done, int total) {
-		this.pb.progressBar.setValue(total);
+	public void updateProgress(int done) {
+		System.out.println("done "+done);
+		this.pb.progressBar.setValue(done);
 	}
 }

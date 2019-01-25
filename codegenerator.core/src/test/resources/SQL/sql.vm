@@ -1,5 +1,5 @@
 ##code generated to map an ontology to SQL database.
-#set($OWLreasoner = $reasoner.getReasoner())
+#set($OWLreasoner = $reasoner.getReasoner())##
 --create table
 create table $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() varchar (254) #end ))
 --inserts

@@ -77,7 +77,7 @@ public class DeveloperTests {
 		OWLNamedIndividual v;
 		
 	}
-
+//OWLDataProperty
 	@Test
 	public void sqltest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
@@ -88,23 +88,25 @@ public class DeveloperTests {
 
 		 OWLReasoner reasoner = reasonerFactory.createReasoner(t);
 		 for (OWLClass g  : t.getClassesInSignature()) {
+			 	//reasoner.getDataPropertyValues(ind, pe)
 			 	//System.out.println(reasoner.getInstances(g, true).getNodes());
 			 	for(OWLNamedIndividual ni : reasoner.getInstances(g, true).getFlattened()) {
-			 		System.out.println(ni.getIRI().getFragment());
 			 		
-			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
-			 		
-			 			System.out.println("-->"+ax.getDataPropertiesInSignature());
-			 		    System.out.println("prop "+ax.getProperty());
-			 		}
+			 		//System.out.println(reasoner.getDataPropertyValues(ni, g.getDataPropertiesInSignature()));
+					//System.out.println(ni.getIRI().getFragment());
+					//System.out.println(ni.getObjectPropertiesInSignature());
 			 	}
-			 	
-		 }
-//		
+		//for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+					 		
+		//System.out.println("-->"+ax.getDataPropertiesInSignature());
+		// System.out.println("prop "+ax.getProperty());
+		//}
+			 	}
+
 		 
-//		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-//			System.out.println("OWLDataPropertyDomainAxiom "+g.getProperty());
-//		}
+		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+			System.out.println("OWLDataPropertyDomainAxiom "+g.getProperty());
+		}
 		
 //		for (OWLDataProperty b : m) {
 //			System.out.println(b);

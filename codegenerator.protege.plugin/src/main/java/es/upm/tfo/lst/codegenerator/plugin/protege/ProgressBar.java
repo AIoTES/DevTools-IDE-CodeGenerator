@@ -24,7 +24,7 @@ public class ProgressBar extends JFrame{
 	/**
 	 * Create the frame.
 	 */
-	public ProgressBar() {
+	public ProgressBar(int max) {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 463, 199);
@@ -34,7 +34,7 @@ public class ProgressBar extends JFrame{
 
 		progressBar = new JProgressBar();
 		progressBar.setMinimum(0);
-        progressBar.setMaximum(5);
+        progressBar.setMaximum(max);
 		progressBar.setStringPainted(true);
 		
 		JLabel lblGeneratingCode = new JLabel("Generating code");
