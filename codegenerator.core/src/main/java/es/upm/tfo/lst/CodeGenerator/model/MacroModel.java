@@ -77,8 +77,14 @@ public class MacroModel {
 			this.imports.put(alias, packageName);
 	}
 
-	
-	private boolean stringControl(String toctrl) {
+	/**
+	 * @return {@link Map}< {@link String}, {@link String}> of impors 
+	 */
+	public Map<String, String> getImports() {
+		return imports;
+	}
+
+	private boolean stringControl(String to_ctrl) {
 		
 		return false;
 	}
