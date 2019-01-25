@@ -82,15 +82,21 @@ public class DeveloperTests {
 	public void sqltest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
-;
+
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		 Set <OWLDataProperty> m=new HashSet<>();
 
 		 OWLReasoner reasoner = reasonerFactory.createReasoner(t);
 		 for (OWLClass g  : t.getClassesInSignature()) {
-			 	System.out.println(reasoner.getInstances(g, true).getNodes());
+			 	//System.out.println(reasoner.getInstances(g, true).getNodes());
 			 	for(OWLNamedIndividual ni : reasoner.getInstances(g, true).getFlattened()) {
-			 		//System.out.println(ni);
+			 		System.out.println(ni.getIRI().getFragment());
+			 		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		
+			 			System.out.println("-->"+ax.getDataPropertiesInSignature());
+			 		    System.out.println("prop "+ax.getProperty());
+			 		}
 			 	}
 			 	
 		 }
