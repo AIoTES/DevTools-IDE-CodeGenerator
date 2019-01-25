@@ -482,7 +482,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 	@Override
 	public void updateProgress(int done, int total) {
-		this.progress = total;
 		this.pb.progressBar.setValue(total);
 	}
 }

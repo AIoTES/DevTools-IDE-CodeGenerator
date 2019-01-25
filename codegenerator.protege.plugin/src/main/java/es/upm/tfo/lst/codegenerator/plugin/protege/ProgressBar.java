@@ -16,6 +16,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
 public class ProgressBar extends JFrame{
+	private int maxValue=0;
 
 	private JPanel contentPane;
 	public JProgressBar progressBar;
@@ -58,6 +59,7 @@ public class ProgressBar extends JFrame{
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+	
 
 
 
