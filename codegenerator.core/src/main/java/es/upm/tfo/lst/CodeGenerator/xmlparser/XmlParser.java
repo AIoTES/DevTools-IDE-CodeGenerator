@@ -204,10 +204,7 @@ public class XmlParser {
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);
-	         System.out.println(this.macroList.size());
-	         //modify definition of array of variables
-
-	         	
+         	
 		}catch (NullPointerException | ParserConfigurationException | IOException | SAXException a ) {
 //		}catch (Exception a ) {
 			log.fatal("Culdn't read given XML file" , a);
