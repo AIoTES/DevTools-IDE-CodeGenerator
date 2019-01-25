@@ -85,7 +85,7 @@ public class GenerateProject {
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
 	//private List<ProgessCallback> progressCallbacs = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
-	private int total2Process;
+	private int total2Process=0;
 	public  ProgessCallbackPublisher GenConf;
 	
 	public GenerateProject(TemplateDataModel model, Properties velocityProperties) {
@@ -133,8 +133,8 @@ public class GenerateProject {
 	 * @throws Exception if some problem occur in the process
 	 */
 	public void process()  throws Exception {
-		total2Process = 4; // TODO calculate
-		if(this.control()) {
+		this.calculateTotal();
+		if( this.control() ) {
 			try {
 				this.initVelocity();
 				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
@@ -192,10 +192,8 @@ public class GenerateProject {
 							throw e;	
 						}
 					}
-//					else {
-//						log.warn("output for project is empty and the program will not generate any output file to project");
-//					}
-				    update(1);
+
+				    //update(1);
 
 					for (OWLOntology ontology : this.ontologies2BProcesed) {
 						//este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a cambiar de ontologia
@@ -261,7 +259,7 @@ public class GenerateProject {
 //					else {
 //						log.warn("output for ontology is empty and the program will not generate any output file to ontology");
 //					}
-					update(2);
+					//update(2);
 					//iterate over classes into actual ontology  and process each one
 					for(OWLClass c : ontology.getClassesInSignature()) {
 						this.processClass(c,ontology);
@@ -317,7 +315,7 @@ public class GenerateProject {
 					}
 		   }
 		}else{
-			update(3);
+			update(1);
 			for(OWLClass cls : ontology.getClassesInSignature() ) {
 				this.processInstances(cls,ontology);
 			}
@@ -371,7 +369,7 @@ public class GenerateProject {
 			this.processObjectProperties(c,instances,ontology);
 
 		}
-		update(4);
+		//update(4);
 	}
 	/**
 	 * Method to get Object Properties of  class instances.
@@ -424,7 +422,7 @@ public class GenerateProject {
 			}
 
 
-		update(5);
+		//update(5);
 		
 	}
 
@@ -520,9 +518,9 @@ public class GenerateProject {
 			if(this.mainModel!=null) {
 				flag=true;
 				if(this.localBaseLoaderPath == null) {
-
 						flag=true;
 				}
+				
 			}else {
 				
 				log.fatal("Seems the Xml Parser object is not set, please check it Editar");
@@ -649,10 +647,14 @@ public class GenerateProject {
 
 	private void update(int done) {
 		if(GenConf!=null) {
-			GenConf.updateProgress(4, done);
+			GenConf.updateProgress(this.total2Process, done);
 		}
 	}
 	
+	/**
+	 * Method to obtain a {@link List} of  the thrown exceptions
+	 * @return {@link List}<{@link Exception}}> containing all thrown exceptions
+	 */
 	public List<Exception> getErrors(){
 		return this.arrayOfExceptions;
 	}
@@ -661,4 +663,10 @@ public class GenerateProject {
 		this.arrayOfExceptions.add(a);
 	}
 
+	private void calculateTotal() {
+		for (OWLOntology o : this.ontologies2BProcesed) {
+			this.total2Process+= o.getClassesInSignature().size();
+		}
+		System.out.println(this.total2Process);
+	}
 }
