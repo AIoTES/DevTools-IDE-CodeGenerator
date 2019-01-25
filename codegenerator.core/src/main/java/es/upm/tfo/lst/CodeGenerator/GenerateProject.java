@@ -141,6 +141,13 @@ public class GenerateProject {
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date",new Date());
 				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
+				//add to base context all imports into xml
+				for (MacroModel model : this.mainModel.getMacroList()) {
+					 for (String key : model.getImports().keySet()) {
+						 this.baseContext.put(key,model.getImports().get(key));
+					}
+				}
+				
 				this.addVariablesToBaseContext();
 				
 				if (this.mainModel.getProjectMacro().isEmpty()) log.warn("doesn't exist macro to project");
@@ -491,7 +498,6 @@ public class GenerateProject {
 		//jar.resource.loader.path = jar:file:/myjarplace/myjar.jar, jar:file:/myjarplace/myjar2.jar
 	}
 
-
 	/**
 	 *  Sets the output folder to generated files.
 	 * @param outputFolder path to output folder. If the folder not exists, the plugin creates it into given path.
@@ -499,7 +505,6 @@ public class GenerateProject {
 	public void setOutputFolder(String outputFolder) {
 		this.outputFolder=outputFolder;
 	}
-
 
 	/**
 	 * all of controls before ejecute project:
