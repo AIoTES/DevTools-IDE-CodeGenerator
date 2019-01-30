@@ -528,7 +528,7 @@ public class GenerateProject {
 					if(this.mainModel.getMacroList().size()!=0) {
 						flag=true;
 					}else {
-						log.fatal("Seems in the XML coordinator, the macro tag is empty or not exist. Plesase ckeck it");
+						log.fatal("Seems in the XML coordinator, the macro tag is empty or not exist. Please check it");
 						this.arrayOfExceptions.add(new XmlCoordinatorException("Seems in the XML coordinator the maro tag is empty or not exist. Plesase ckeck it") );
 					}
 						
@@ -539,7 +539,7 @@ public class GenerateProject {
 				
 			}else {
 				log.fatal("Seems the Xml Parser object is not set, please check it");
-				this.arrayOfExceptions.add(new XmlCoordinatorException("Seems the directory to load templates is not set. Please check if the Xml coordinator is loaded correctly") );
+				this.arrayOfExceptions.add(new XmlCoordinatorException("Seems the Xml Parser object is not set, please check it") );
 			}
 		}else {
 			log.fatal("Main ontology couldn't be loaded");
