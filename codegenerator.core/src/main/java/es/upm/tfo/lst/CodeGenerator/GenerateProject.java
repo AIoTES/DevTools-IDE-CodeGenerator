@@ -37,6 +37,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
+import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
+import es.upm.tfo.lst.CodeGenerator.exception.XmlCoordinatorException;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
 import es.upm.tfo.lst.CodeGenerator.model.Project;
 import es.upm.tfo.lst.CodeGenerator.model.ReasonerWrapper;
@@ -521,17 +523,27 @@ public class GenerateProject {
 		boolean flag=false;
 		if(this.ontologies2BProcesed.size() > 0 ) {
 			if(this.mainModel!=null) {
-				flag=true;
-				if(this.localBaseLoaderPath == null) {
+				
+				if( !(this.mainModel.getBaseTemplatePath().equals(""))  || !(this.mainModel.getBaseTemplatePath()==null)) {
+					if(this.mainModel.getMacroList().size()!=0) {
 						flag=true;
+					}else {
+						log.fatal("Seems in the XML coordinator, the macro tag is empty or not exist. Plesase ckeck it");
+						this.arrayOfExceptions.add(new XmlCoordinatorException("Seems in the XML coordinator the maro tag is empty or not exist. Plesase ckeck it") );
+					}
+						
+				}else {
+					log.fatal("Seems the directory to load templates is not set. Please check if the Xml coordinator file is loaded correctly");
+					this.arrayOfExceptions.add(new Exception("Seems the directory to load templates is not set. Please check if the Xml coordinator is loaded correctly") );
 				}
 				
 			}else {
-				
-				log.fatal("Seems the Xml Parser object is not set, please check it Editar");
+				log.fatal("Seems the Xml Parser object is not set, please check it");
+				this.arrayOfExceptions.add(new XmlCoordinatorException("Seems the directory to load templates is not set. Please check if the Xml coordinator is loaded correctly") );
 			}
 		}else {
 			log.fatal("Main ontology couldn't be loaded");
+			this.arrayOfExceptions.add(new OntologyException("Main ontology couldn't be loaded") );
 		}
 		return flag;
 	}
