@@ -76,6 +76,7 @@ public class DeveloperTests {
 		OWLClass c;
 		OWLNamedIndividual v;
 		
+		
 	}
 //OWLDataProperty
 	@Test
@@ -83,7 +84,8 @@ public class DeveloperTests {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
 
-		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"pizza.owl");
+		 //System.out.println("lastindex "+t.getOntologyID().getOntologyIRI().get().getNamespace());
 		 Set <OWLDataProperty> m=new HashSet<>();
 
 		 OWLReasoner reasoner = reasonerFactory.createReasoner(t);
@@ -133,5 +135,5 @@ public class DeveloperTests {
 
 	}
 
-
+	
 }
