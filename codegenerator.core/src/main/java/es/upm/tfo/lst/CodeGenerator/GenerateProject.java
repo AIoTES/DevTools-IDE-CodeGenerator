@@ -3,6 +3,7 @@ package es.upm.tfo.lst.CodeGenerator;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -521,12 +522,18 @@ public class GenerateProject {
 	 */
 	private boolean control() {
 		boolean flag=false;
-		if(this.ontologies2BProcesed.size() > 0 ) {
+		if(this.ontologies2BProcesed.size() > 0) {
 			if(this.mainModel!=null) {
 				
 				if( !(this.mainModel.getBaseTemplatePath().equals(""))  || !(this.mainModel.getBaseTemplatePath()==null)) {
 					if(this.mainModel.getMacroList().size()!=0) {
-						flag=true;
+						if(this.outputFolder!=null) {
+							flag=true;	
+						}else {
+							log.fatal("The output directory to store generated files is not set. Please check it");
+							this.arrayOfExceptions.add(new IOException("The output directory to store generated files is not set. Please check it") );
+						}
+						
 					}else {
 						log.fatal("Seems in the XML coordinator, the macro tag is empty or not exist. Please check it");
 						this.arrayOfExceptions.add(new XmlCoordinatorException("Seems in the XML coordinator the maro tag is empty or not exist. Plesase ckeck it") );
@@ -534,7 +541,7 @@ public class GenerateProject {
 						
 				}else {
 					log.fatal("Seems the directory to load templates is not set. Please check if the Xml coordinator file is loaded correctly");
-					this.arrayOfExceptions.add(new Exception("Seems the directory to load templates is not set. Please check if the Xml coordinator is loaded correctly") );
+					this.arrayOfExceptions.add(new IOException("Seems the directory to load templates is not set. Please check if the Xml coordinator is loaded correctly") );
 				}
 				
 			}else {
