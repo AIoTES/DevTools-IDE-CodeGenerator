@@ -680,6 +680,7 @@ public class GenerateProject {
 	 * @return {@link List}<{@link Exception}}> containing all thrown exceptions
 	 */
 	public List<Exception> getErrors(){
+		//retorna los errores que suceden dentro de process(). los demas errores se procesan en el try-cath exterior
 		return this.arrayOfExceptions;
 	}
 	

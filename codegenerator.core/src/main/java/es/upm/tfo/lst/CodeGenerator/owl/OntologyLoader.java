@@ -80,7 +80,7 @@ public class OntologyLoader {
 						}
 						return ont;
 					}else {
-						log.fatal("problems to load ontology from: "+this.ontologyFile.getAbsolutePath());
+						log.fatal("problems to load ontology from: "+this.ontologyFile.getPath()+". Seems ontology doesn't exist");
 					}
 		
 				}

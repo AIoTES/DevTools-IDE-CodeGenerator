@@ -1,11 +1,9 @@
 package es.upm.tfo.lst.CodeGenerator.xmlparser;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,19 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.MacroModel;
@@ -110,7 +104,7 @@ public class XmlParser {
 				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();		
 			} catch (Exception e2) {
 				log.fatal("error processing xml from given path="+xmlPath, e2);
-				
+				throw e2;
 			}
 		}
 		
@@ -152,7 +146,10 @@ public class XmlParser {
 			 DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	         log.debug("readXML "+xmlSource.getPath());
-	         //if any error of read template occurs...the following line throws an error IOE
+	         
+	         //IOException - If any IO errors occur.
+	         //SAXException - If any parse errors occur.
+	         //IllegalArgumentException - When is is null
 	         Document doc = docBuilder.parse (xmlSource.openStream());
 	       
 	         try {
@@ -205,11 +202,19 @@ public class XmlParser {
 
 	         this.javaXMLModel.setMacroList(this.macroList);
          	
-		}catch (NullPointerException | ParserConfigurationException | IOException | SAXException a ) {
-//		}catch (Exception a ) {
-			log.fatal("Culdn't read given XML file" , a);
-			this.javaXMLModel = null;
-			throw a;
+		//}catch (NullPointerException | ParserConfigurationException | IOException | SAXException a ) {
+	}catch (Exception a ) {
+		if(a instanceof ConnectException)
+			log.fatal("Culdn't read given XML file. Seems the XML url is not responding",a);
+		if( a instanceof SAXParseException)
+			log.fatal("Culdn't read given XML file. Seems the XML have syntax errors",a);
+		if(a instanceof FileNotFoundException)
+			log.fatal("Culdn't read given XML file. Seems the XML file doesn't exist",a);
+		if(a instanceof NullPointerException)
+			log.fatal("Culdn't read given XML file. Seems the XML file is null",a);
+		
+		this.javaXMLModel = null;
+		throw a;
 		}
 
 	}

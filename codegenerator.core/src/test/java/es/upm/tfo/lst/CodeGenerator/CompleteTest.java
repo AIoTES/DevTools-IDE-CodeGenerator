@@ -29,8 +29,7 @@ public class CompleteTest {
 	private final String webTemplatePath="http://localhost/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	private final String sql="src/test/resources/template/SQL/sql.vm";
-	private final String sqlCoordinator="src/test/resources/SQL/coordinator.xml";
-	private final String sqlOutput="src/test/resources/SQL/output/";
+	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
 	@Before
 	public void init() {
@@ -47,6 +46,7 @@ public class CompleteTest {
 		 try {
 			//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
 				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+			 	//this.model=this.parser.generateXMLCoordinator(null);
 				//set XML model to generate project 
 				this.genPro.setMainModel(this.model);
 				//set the ontology to project and recursive state
@@ -63,7 +63,6 @@ public class CompleteTest {
 				genPro.process();
 		} catch (Exception e) {
 			genPro.addError(e);
-			//System.out.println(e.getMessage());
 		}
 		
 		assertTrue(genPro.getErrors().isEmpty());
@@ -73,12 +72,12 @@ public class CompleteTest {
 	
 	@Test
 	public void webTemplateTest() {
-		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
+		 System.out.println("\n------------------------------web template with local ontology--------------------------------------\n");
  		 
 	
 		//creating output dir in test 
 		try{
-			 this.model=this.parser.generateXMLCoordinator(webTemplatePath);
+			 	this.model=this.parser.generateXMLCoordinator(webTemplatePath);
 				//this.model = this.parser.getXmlCoordinatorDataModel();
 				//this.genPro = new GenerateProject(this.model);
 				this.genPro = new GenerateProject();
@@ -111,7 +110,7 @@ public class CompleteTest {
 	@Test
 	public void webTemplateCompleteTest() {
 		
-		 System.out.println("\n------------------------------online template--------------------------------------\n");
+		 System.out.println("\n------------------------------online template and ontology--------------------------------------\n");
 
 		try{
 			this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
@@ -119,7 +118,7 @@ public class CompleteTest {
 			//set XML model to generate project 
 			this.genPro.setMainModel(this.model);
 			//set the ontology to project and recursive state
-			this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+			this.genPro.addOntology(this.ontologyLoader.loadOntology(this.webOntology),false);
 			//set diectory path to load all template needed files
 			//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 			//set output directory
@@ -131,7 +130,9 @@ public class CompleteTest {
 
 		}catch(Exception a) {
 			a.printStackTrace();
+			this.genPro.addError(a);
 		}
+		
 		assertTrue(genPro.getErrors().isEmpty());
 		
 
