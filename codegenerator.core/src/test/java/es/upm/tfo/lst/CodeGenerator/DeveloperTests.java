@@ -75,7 +75,7 @@ public class DeveloperTests {
 		OWLOntology ontology;
 		OWLClass c;
 		OWLNamedIndividual v;
-		
+		//c.getIRI().getNamespace()
 		
 	}
 //OWLDataProperty

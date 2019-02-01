@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.http.impl.io.SocketInputBuffer;
 import org.apache.log4j.Logger;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
@@ -38,7 +39,7 @@ public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private URL xmlSource=null;
-	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor;
+	private NodeList nodeVariable, nodeMacro,templateName, templateVersion,templateDescription,templateAuthor,nodeImports;
 	private Map<String,Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
@@ -52,6 +53,7 @@ public class XmlParser {
 	private File fileToWrite,templatesTempDir,xmlFile;
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
+	private List<String> arrayOfImports = new ArrayList<>();
 	private boolean isLocal=true;
 	
 	
@@ -173,6 +175,7 @@ public class XmlParser {
 
 		         for(int y=0;y<this.nodeVariable.getLength();y++){
 		             	Element b = (Element)this.nodeVariable.item(y);
+		             
 		             	this.variableList.put(
 		             			b.getElementsByTagName("name").item(0).getTextContent(),new Variable(
 		             			b.getElementsByTagName("name").item(0).getTextContent(),
@@ -189,15 +192,21 @@ public class XmlParser {
 			}
 	         log.debug("going to process macro models");	         
 	         this.nodeMacro = doc.getElementsByTagName("macro");
+	         
 	         for(int y=0;y<this.nodeMacro.getLength();y++){
 
 	          	Element b = (Element)this.nodeMacro.item(y);
+	          	
+	          	for (int g = 0;g<b.getElementsByTagName("imports").getLength(); g++) {
+					System.out.println("element "+g+"->"+b.getElementsByTagName("package").item(g).getTextContent());
+				}
 
+	          	
 	          	this.macroList.add( new MacroModel(
 	          			b.getElementsByTagName("template").item(0).getTextContent(),
 	          			b.getElementsByTagName("output").item(0).getTextContent(),
 	          			b.getElementsByTagName("for").item(0).getTextContent()));
-
+	          			//TODO:add imports
 	         }
 
 	         this.javaXMLModel.setMacroList(this.macroList);

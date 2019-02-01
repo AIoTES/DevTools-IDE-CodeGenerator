@@ -140,10 +140,11 @@ public class GenerateProject {
 		if( this.control() ) {
 			try {
 				this.initVelocity();
-				this.baseContext.put("allOntologies",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
+				this.baseContext.put("ontologyCompleteList",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date",new Date());
 				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
+				
 				//add to base context all imports into xml
 				for (MacroModel model : this.mainModel.getMacroList()) {
 					 for (String key : model.getImports().keySet()) {
