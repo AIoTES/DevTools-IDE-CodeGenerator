@@ -28,7 +28,7 @@
     <artifactId>codegenerator.rest.karaf</artifactId>
     <packaging>karaf-assembly</packaging>
 
-    <name>codegenerator.rest.karaf-feature</name>
+    <name>codegenerator.rest.karaf-distro</name>
     <description>codegenerator.rest.karaf details</description>
 
     <properties>

@@ -10,6 +10,6 @@
         <module>codegenerator.protege.plugin</module>
         <module>codegenerator.maven.plugin</module>
         <module>codegenerator.rest.plugin</module>
-		<module>codegenerator.rest.karaf</module>
+	<module>codegenerator.rest.karaf</module>
   </modules>
 </project>
