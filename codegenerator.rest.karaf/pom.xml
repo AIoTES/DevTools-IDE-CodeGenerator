@@ -164,6 +164,35 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>process-resources</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+		      <execution>
+			<id>copy-docker</id>
+			<phase>validate</phase>
+			<goals>
+			  <goal>copy-resources</goal>
+			</goals>
+			<configuration>
+			  <outputDirectory>${basedir}/target</outputDirectory>
+			  <resources>
+			    <resource>
+				<directory>src/main/docker</directory>
+				<filtering>true</filtering>
+			    </resource>
+			  </resources>
+			</configuration>
+		      </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
                 <configuration>
