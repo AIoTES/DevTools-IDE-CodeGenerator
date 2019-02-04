@@ -206,12 +206,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
 					proj.setMainModel(mainModel);
 					proj.setOutputFolder(sourceTextField.getEditor().toString());
-//					if(parser.isLocal())
-//						//uso file para poder usar get parent file y obtener el directorio superior
-//						proj.setLocalBaseLoaderPath(new File(sourceTextField.getEditor().getItem().toString()).getParentFile().getPath()+"/");
-//					else
-//						proj.setLocalBaseLoaderPath("/tmp/");
-					
+				
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";
 					proj.setOutputFolder(aux);
@@ -399,7 +394,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			protected void done() {
 				System.out.println("Done!");
 				pb.setVisible(false);
-				JOptionPane.showMessageDialog(null, "Code successfully generated");
+				if(proj.getErrors().isEmpty())
+					JOptionPane.showMessageDialog(null, "Code successfully generated");
+				
 				dispose();
 			}
 
@@ -408,13 +405,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
-					while(flag==null) {
-						//flag=proj.process();
-						proj.process();
-					}
-
+					proj.process();
 				} catch (Exception e1) {
-					
+					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
 				return null;
 			}
