@@ -5,12 +5,10 @@
 		   "${class.getIRI().getFragment()}":"${class.getIRI()}",
 		#foreach($instance in $reasoner.getReasoner().getInstances($class, true).getFlattened())
 			"${instance.getIRI().getFragment()}":"${instance.getIRI()}",
-				#foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) )
-		   "${example.getProperty().asOWLDataProperty().getIRI().getFragment()}":{
-		   		"@id":"${example.getProperty().asOWLDataProperty().getIRI()}",
-		   		"@type":"@id"
-		   },
-		#end
+			#foreach($data in $ontology.getAxioms($axiomtype.DATA_PROPERTY_RANGE))
+				$data.getSignature()
+			#end
+			
 		#end
 	
 			

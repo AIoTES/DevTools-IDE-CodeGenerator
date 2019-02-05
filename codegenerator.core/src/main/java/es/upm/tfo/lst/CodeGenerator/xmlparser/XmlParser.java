@@ -197,10 +197,6 @@ public class XmlParser {
 
 	          	Element b = (Element)this.nodeMacro.item(y);
 	          	
-	          	for (int g = 0;g<b.getElementsByTagName("imports").getLength(); g++) {
-					System.out.println("element "+g+"->"+b.getElementsByTagName("package").item(g).getTextContent());
-				}
-
 	          	
 	          	this.macroList.add( new MacroModel(
 	          			b.getElementsByTagName("template").item(0).getTextContent(),

@@ -59,7 +59,7 @@
 				<for>class</for>
 				<output>classes2/${ontology.getOntologyID().getOntologyIRI()}</output>
 				<imports>
-					<package>d</package>
+					<package>com.test.upm.codegenerator</package>
 				</imports> 
 			</macro>
 			

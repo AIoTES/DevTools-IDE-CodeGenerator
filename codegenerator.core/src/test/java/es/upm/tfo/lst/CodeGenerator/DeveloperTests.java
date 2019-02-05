@@ -30,7 +30,9 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -39,6 +41,7 @@ import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
+import uk.ac.manchester.cs.jfact.kernel.Axiom;
 
 /**
  * @author amedrano
@@ -50,6 +53,7 @@ public class DeveloperTests {
 	private TemplateDataModel model=null;
 	private GenerateProject genPro=null;
 	private OntologyLoader ontologyLoader=null;
+	OWLReasoner reasoner=null;
 	//----constants
 	private final String templateBasePath="src/test/resources/template-complex/";
 	private final String webTemplatePath="http://localhost/template/complexXml.xml";
@@ -82,58 +86,20 @@ public class DeveloperTests {
 	@Test
 	public void sqltest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
+		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
-
-		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"pizza.owl");
+		 this.reasoner = reasonerFactory.createReasoner(t);
+		// System.out.println(t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN));
 		 //System.out.println("lastindex "+t.getOntologyID().getOntologyIRI().get().getNamespace());
-		 Set <OWLDataProperty> m=new HashSet<>();
-
-		 OWLReasoner reasoner = reasonerFactory.createReasoner(t);
-		 for (OWLClass g  : t.getClassesInSignature()) {
-			 	//reasoner.getDataPropertyValues(ind, pe)
-			 	//System.out.println(reasoner.getInstances(g, true).getNodes());
-			 	for(OWLNamedIndividual ni : reasoner.getInstances(g, true).getFlattened()) {
-			 		
-			 		//System.out.println(reasoner.getDataPropertyValues(ni, g.getDataPropertiesInSignature()));
-					//System.out.println(ni.getIRI().getFragment());
-					//System.out.println(ni.getObjectPropertiesInSignature());
-			 	}
-		//for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
-					 		
-		//System.out.println("-->"+ax.getDataPropertiesInSignature());
-		// System.out.println("prop "+ax.getProperty());
-		//}
-			 	}
-
-		 
-		for ( OWLDataPropertyDomainAxiom g :  t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-			System.out.println("OWLDataPropertyDomainAxiom "+g.getProperty());
+		 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE) ) {
+			 //System.out.println(axiom.getDatatypesInSignature());
+			 System.out.println(axiom.getProperty());
+			 System.out.println(axiom.getSignature());
+			 
 		}
-		
-//		for (OWLDataProperty b : m) {
-//			System.out.println(b);
-//		}
-//		 
-		 try {
-				//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-				this.model=this.parser.generateXMLCoordinator(this.sqlCoordinator);
-				//set XML model to generate project 
-				this.genPro.setMainModel(this.model);
-				//set the ontology to project and recursive state
-				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-				//set output directory
-				this.genPro.setOutputFolder(this.sqlOutput);
-				//add value to variables		
-				
-				genPro.process();
-				assertTrue(genPro.getErrors().isEmpty());
-				
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	
+		 System.out.println(t.getAxioms());
 
-	}
 
 	
+}
 }

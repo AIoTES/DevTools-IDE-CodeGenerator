@@ -5,10 +5,6 @@ create table $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomt
 --inserts
 insert into $class.getIRI() ( #foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN) ) $example.getProperty() #end  ) values ()
 
-
-
-
-
 			 	#foreach( $ni in $reasoner.getReasoner().getInstances($class, true).getFlattened() ) 
 			 		System.out.println(ni.getIRI().getFragment());		
 			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
