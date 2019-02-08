@@ -12,12 +12,12 @@ cache:
 build:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS compile
+    - mvn $MAVEN_CLI_OPTS -pl "!codegenerator.rest.karaf" compile
 
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - mvn $MAVEN_CLI_OPTS -pl "!codegenerator.rest.karaf" test
 
 tests2:
   stage: test
