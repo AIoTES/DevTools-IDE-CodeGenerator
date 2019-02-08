@@ -1,0 +1,36 @@
+image: maven:latest
+
+variables:
+  MAVEN_CLI_OPTS: "--batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+    - codegenerator.rest.karaf\target
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+
+tests2:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS -fn install
+
+deploy:
+  stage: deploy
+  image: dind
+  script:
+    - cd codegenerator.rest.karaf/target
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD docker-activage.satrd.es 
+    - docker -t code.generator -t $DOCKER_SERVER/code.generator:$DOCKER_VERSION build .
+    - docker push $DOCKER_SERVER/code.generator:$DOCKER_VERSION
+  only:
+    - master
