@@ -207,7 +207,7 @@ public class XmlParser {
 
 	         this.javaXMLModel.setMacroList(this.macroList);
          	
-		//}catch (NullPointerException | ParserConfigurationException | IOException | SAXException a ) {
+		
 	}catch (Exception a ) {
 		if(a instanceof ConnectException)
 			log.fatal("Culdn't read given XML file. Seems the XML url is not responding",a);

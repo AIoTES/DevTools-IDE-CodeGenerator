@@ -15,11 +15,14 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.velocity.runtime.log.Log;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.mock.action.ExpectationForwardCallback;
+import org.mockserver.model.Header;
 import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import org.omg.CORBA.portable.InputStream;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -31,7 +34,7 @@ import com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv4.NotSyntaxC
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
-import es.upm.tfo.lst.codegenerator.plugin.rest.GenerateServlet;
+//import es.upm.tfo.lst.codegenerator.plugin.rest.GenerateServlet;
 
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
@@ -45,36 +48,58 @@ public class CompleteTest  {
 	private OntologyLoader ontologyLoader=null;
 	//----constants
 	private final String templateBasePath="src/test/resources/template-complex/";
-	private final String webTemplatePath="http://localhost/template/complexXml.xml";
+	private final String webTemplatePath="http://localhost:7755/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	private final String sql="src/test/resources/template/SQL/sql.vm";
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
 	private ClientAndServer mockServer;
+	StringBuilder sb = new StringBuilder();
+
+//	@Before
+//	public void init() {
+//		
+//		
+//	}
+	
 	@Before
-	public void init() {
+	public  void startMockServer() throws IOException {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
 		this.parser = new XmlParser();
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
+		FileInputStream fis = new FileInputStream(new File(templateBasePath+"complexXml.xml"));
+		 BufferedReader br = null;
+			br = new BufferedReader(new InputStreamReader(fis));
+//			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}	
+
+	    this.mockServer = ClientAndServer.startClientAndServer(7755);
+//	    MockServerClient client = new MockServerClient("localhost",7755);
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/complexXml.xml"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(sb.toString())
+//		      );
+
 	}
-	
-	@Before
-	public void startMockServer() {
-	
-	    this.mockServer = startClientAndServer(1080);
-	    
-	}
-	
-	@After
-	public void stopMockServer() {
-	    mockServer.stop();
-	}
+
+
 	@Test
 	public void localCompleteTest() {
+		
+		System.out.println(this.mockServer.isRunning());
+		
+		//System.out.println(this.mockServer.);
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 try {
-			//get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
+			     //get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
 				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 			 	//this.model=this.parser.generateXMLCoordinator(null);
 				//set XML model to generate project 
@@ -100,22 +125,19 @@ public class CompleteTest  {
 
 	
 	
+	
 	@Test
 	public void webTemplateTest() throws IOException {
 		 System.out.println("\n------------------------------web template with local ontology--------------------------------------\n");
-		
-		FileInputStream fis = new FileInputStream(new File(templateBasePath+"complexXml.xml"));
-		 BufferedReader br = null;
-			br = new BufferedReader(new InputStreamReader(fis));
-			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}			  
-			  br.close();
- 		 this.mockServer.when( request().withPath("/template/complexXml.xml") ).respond(response().withBody(sb.toString()));
-	
-		//creating output dir in test 
+		    MockServerClient client = new MockServerClient("localhost",7755);
+			   client.when(HttpRequest.request()
+				          .withMethod("GET")
+				          .withPath("/template/complexXml.xml"))
+				      .respond(HttpResponse.response()
+				          .withStatusCode(200)
+				          .withHeaders(new Header("Content-Type", "text/plain"))
+				          .withBody(sb.toString())
+				      );
 		try{
 			 	this.model=this.parser.generateXMLCoordinator(webTemplatePath);
 				//this.model = this.parser.getXmlCoordinatorDataModel();
@@ -140,6 +162,7 @@ public class CompleteTest  {
 			this.genPro.process();
 
 		}catch(Exception a) {
+			genPro.addError(a);
 			a.printStackTrace();
 		}
 		 
@@ -152,18 +175,18 @@ public class CompleteTest  {
 		
 		 System.out.println("\n------------------------------online template and ontology--------------------------------------\n");
 		 String line;
-			FileInputStream fis = new FileInputStream(new File(templateBasePath+"complexXml.xml"));
-			 BufferedReader br = null;
-				br = new BufferedReader(new InputStreamReader(fis));
-				StringBuilder sb = new StringBuilder();
-				
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}			  
-				  br.close();
-	 		 this.mockServer.when( request().withPath("/template/complexXml.xml") ).respond(response().withBody(sb.toString()));
+		    MockServerClient client = new MockServerClient("localhost",7755);
+			   client.when(HttpRequest.request()
+				          .withMethod("GET")
+				          .withPath("/template/complexXml.xml"))
+				      .respond(HttpResponse.response()
+				          .withStatusCode(200)
+				          .withHeaders(new Header("Content-Type", "text/plain"))
+				          .withBody(sb.toString())
+				      );
 		try{
-			this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
+			this.model=this.parser.generateXMLCoordinator(webTemplatePath);
+			//this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
 			this.genPro = new GenerateProject();
 			//set XML model to generate project 
 			this.genPro.setMainModel(this.model);
@@ -188,6 +211,11 @@ public class CompleteTest  {
 
 	}
 
-
-
+    
+	
+	@After
+	public void stopMockServer() {
+	    mockServer.stop();
+	}
+	
 }
