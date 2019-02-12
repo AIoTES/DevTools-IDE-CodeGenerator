@@ -97,6 +97,34 @@
                 </configuration>
             </plugin>
 
+<!-- 				<plugin> -->
+<!--      <groupId>org.mock-server</groupId> -->
+<!--      <artifactId>mockserver-maven-plugin</artifactId> -->
+<!--      <version>5.5.1</version> -->
+<!--      <configuration> -->
+<!--         <serverPort>1080</serverPort> -->
+<!--         <logLevel>DEBUG</logLevel> -->
+<!--      </configuration> -->
+<!--      <executions> -->
+<!--          <execution> -->
+<!--              <id>process-test-classes</id> -->
+<!--              <phase>process-test-classes</phase> -->
+<!--              <goals> -->
+<!--                  <goal>runForked</goal> -->
+<!--              </goals> -->
+<!--          </execution> -->
+<!--          <execution> -->
+<!--              <id>verify</id> -->
+<!--              <phase>verify</phase> -->
+<!--              <goals> -->
+<!--                  <goal>stopForked</goal> -->
+<!--              </goals> -->
+<!--          </execution> -->
+<!--      </executions> -->
+<!--  </plugin> -->
+
+
+
         </plugins>
     </build>
   

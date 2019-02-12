@@ -78,6 +78,8 @@ public class CompleteTest  {
 //				sb.append(line);
 //			}	
 
+		System.out.println("starting mock server...");
+		
 	    this.mockServer = ClientAndServer.startClientAndServer(7755);
 	   client = new MockServerClient("localhost",7755);
 	   client.when(HttpRequest.request()
