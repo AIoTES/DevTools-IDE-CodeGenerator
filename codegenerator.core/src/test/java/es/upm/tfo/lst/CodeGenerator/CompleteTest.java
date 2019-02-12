@@ -54,7 +54,8 @@ public class CompleteTest  {
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
 	private ClientAndServer mockServer;
-	StringBuilder sb = new StringBuilder();
+	//StringBuilder sb = new StringBuilder();
+	private MockServerClient client;
 
 //	@Before
 //	public void init() {
@@ -68,25 +69,75 @@ public class CompleteTest  {
 		this.parser = new XmlParser();
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
-		FileInputStream fis = new FileInputStream(new File(templateBasePath+"complexXml.xml"));
-		 BufferedReader br = null;
-			br = new BufferedReader(new InputStreamReader(fis));
-//			StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}	
+//		FileInputStream fis = new FileInputStream(new File(templateBasePath+"complexXml.xml"));
+//		 BufferedReader br = null;
+//			br = new BufferedReader(new InputStreamReader(fis));
+////			StringBuilder sb = new StringBuilder();
+//			String line;
+//			while ((line = br.readLine()) != null) {
+//				sb.append(line);
+//			}	
 
 	    this.mockServer = ClientAndServer.startClientAndServer(7755);
-//	    MockServerClient client = new MockServerClient("localhost",7755);
+	   client = new MockServerClient("localhost",7755);
+	   client.when(HttpRequest.request()
+		          .withMethod("GET")
+		          .withPath("/template/complexXml.xml"))
+		      .respond(HttpResponse.response()
+		          .withStatusCode(200)
+		          .withHeaders(new Header("Content-Type", "text/plain"))
+		          .withBody(this.readFile("complexXml.xml"))
+		      );
+	   
 //	   client.when(HttpRequest.request()
 //		          .withMethod("GET")
-//		          .withPath("/template/complexXml.xml"))
+//		          .withPath("/template/project.vm"))
 //		      .respond(HttpResponse.response()
 //		          .withStatusCode(200)
 //		          .withHeaders(new Header("Content-Type", "text/plain"))
-//		          .withBody(sb.toString())
+//		          .withBody(this.readFile("project.vm"))
 //		      );
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/ontology.vm"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(this.readFile("ontology.vm"))
+//		      );
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/classes.vm"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(this.readFile("classes.vm"))
+//		      );
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/classes2.vm"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(this.readFile("classes2.vm"))
+//		      );
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/enumerations.vm"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(this.readFile("enumerations.vm"))
+//		      );
+//	   client.when(HttpRequest.request()
+//		          .withMethod("GET")
+//		          .withPath("/template/instances.vm"))
+//		      .respond(HttpResponse.response()
+//		          .withStatusCode(200)
+//		          .withHeaders(new Header("Content-Type", "text/plain"))
+//		          .withBody(this.readFile("instances.vm"))
+//		      );
+	    
 
 	}
 
@@ -129,15 +180,16 @@ public class CompleteTest  {
 	@Test
 	public void webTemplateTest() throws IOException {
 		 System.out.println("\n------------------------------web template with local ontology--------------------------------------\n");
-		    MockServerClient client = new MockServerClient("localhost",7755);
-			   client.when(HttpRequest.request()
-				          .withMethod("GET")
-				          .withPath("/template/complexXml.xml"))
-				      .respond(HttpResponse.response()
-				          .withStatusCode(200)
-				          .withHeaders(new Header("Content-Type", "text/plain"))
-				          .withBody(sb.toString())
-				      );
+		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
+//		    MockServerClient client = new MockServerClient("localhost",7755);
+//			   client.when(HttpRequest.request()
+//				          .withMethod("GET")
+//				          .withPath("/template/complexXml.xml"))
+//				      .respond(HttpResponse.response()
+//				          .withStatusCode(200)
+//				          .withHeaders(new Header("Content-Type", "text/plain"))
+//				          .withBody(sb.toString())
+//				      );
 		try{
 			 	this.model=this.parser.generateXMLCoordinator(webTemplatePath);
 				//this.model = this.parser.getXmlCoordinatorDataModel();
@@ -174,16 +226,17 @@ public class CompleteTest  {
 	public void webTemplateCompleteTest() throws IOException {
 		
 		 System.out.println("\n------------------------------online template and ontology--------------------------------------\n");
-		 String line;
-		    MockServerClient client = new MockServerClient("localhost",7755);
-			   client.when(HttpRequest.request()
-				          .withMethod("GET")
-				          .withPath("/template/complexXml.xml"))
-				      .respond(HttpResponse.response()
-				          .withStatusCode(200)
-				          .withHeaders(new Header("Content-Type", "text/plain"))
-				          .withBody(sb.toString())
-				      );
+		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
+//		 String line;
+//		    MockServerClient client = new MockServerClient("localhost",7755);
+//			   client.when(HttpRequest.request()
+//				          .withMethod("GET")
+//				          .withPath("/template/complexXml.xml"))
+//				      .respond(HttpResponse.response()
+//				          .withStatusCode(200)
+//				          .withHeaders(new Header("Content-Type", "text/plain"))
+//				          .withBody(sb.toString())
+//				      );
 		try{
 			this.model=this.parser.generateXMLCoordinator(webTemplatePath);
 			//this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
@@ -215,7 +268,21 @@ public class CompleteTest  {
 	
 	@After
 	public void stopMockServer() {
+		System.out.println("stopping mock server...");
 	    mockServer.stop();
 	}
 	
+	private String readFile(String nameFile) throws IOException {
+		StringBuilder sb=new StringBuilder();
+		FileInputStream fis = new FileInputStream(new File(templateBasePath+nameFile));
+		 BufferedReader br = null;
+			br = new BufferedReader(new InputStreamReader(fis));
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}	
+			fis.close();
+			br.close();
+			return sb.toString();
+	}
 }

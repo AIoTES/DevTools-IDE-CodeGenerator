@@ -191,9 +191,10 @@ public class GenerateProject {
 					this.context= new VelocityContext(this.baseContext);
 
 					if(!this.text.equals("")) {
-						template = vel_eng.getTemplate(projectModel.getTemplateName());
-						//throws IOE
 						try {
+							//throw ResourceNotFoundException
+							template = vel_eng.getTemplate(projectModel.getTemplateName());
+							//throw IOE
 							this.fr = new FileWriter(this.outputFolder+text,true);
 							template.merge(context,fr);
 							fr.close();

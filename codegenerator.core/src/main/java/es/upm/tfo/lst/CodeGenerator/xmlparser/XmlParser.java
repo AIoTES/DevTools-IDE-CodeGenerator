@@ -78,23 +78,26 @@ public class XmlParser {
 		
 		
 		boolean flag=false;
-		System.out.println("generate XML coordinator "+xmlPath);
+		System.out.println("generate XML coordinator from path: "+xmlPath);
 		try{
+			//xml source has the full URL to xml file
 			this.xmlSource =  new URL(xmlPath);
 			flag=true;
 		}catch(Exception a) {
 			System.out.println("couldnt interpret current path as URL "+a.getMessage());
-			flag=false;
+			//flag=false;
 		}
-		
+		//if the flag is true, means the xml file could be processed ok
 		if(flag) {
 			log.debug("generating XML coordinator  from url= "+this.xmlSource);
 			this.isLocal=false;
 			//this.readWebTemplate(this.xmlSource);
 			try {
 				//this.xmlSource =  new File(this.templatesTempDir.getPath()).toURI().toURL();
-				this.templateBasePath=xmlSource.toURI().resolve(".").toURL();
-			} catch (MalformedURLException | URISyntaxException e) {
+				log.debug("setting up the father directory from given url");
+				//teplateBasePath has the  father of the given url (father of xm file)
+				this.templateBasePath=this.xmlSource.toURI().resolve(".").toURL();
+			} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
 				log.fatal("problems reading URL",e);
 			}
 		}else {
@@ -110,7 +113,7 @@ public class XmlParser {
 			}
 		}
 		
-		if(this.xmlSource!=null) {
+		if(this.xmlSource!=null ) {
 			
 			this.readXML();
 			if(this.javaXMLModel != null) {
@@ -152,7 +155,7 @@ public class XmlParser {
 	         //IOException - If any IO errors occur.
 	         //SAXException - If any parse errors occur.
 	         //IllegalArgumentException - When is is null
-	         Document doc = docBuilder.parse (xmlSource.openStream());
+	         Document doc = docBuilder.parse (this.xmlSource.openStream());
 	       
 	         try {
 	        	 this.nodeVariable = doc.getElementsByTagName("variable");

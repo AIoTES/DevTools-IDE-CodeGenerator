@@ -62,15 +62,7 @@
 					<package>com.test.upm.codegenerator</package>
 				</imports> 
 			</macro>
-			
-			<macro>
-				<template>propertyValues.vm</template>
-				<for>objectProperties</for>
-				<output>propertiesValuesOut</output>
-				<imports>
-					<package>d</package>
-				</imports> 
-			</macro>
+
 			 <macro>
 				<template>enumerations.vm</template>
 				<for>enumeration</for>
