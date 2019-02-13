@@ -26,7 +26,7 @@ tests2:
 
 deploy:
   stage: deploy
-  image: dind
+  image: docker:dind
   script:
     - cd codegenerator.rest.karaf/target
     - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD docker-activage.satrd.es 
