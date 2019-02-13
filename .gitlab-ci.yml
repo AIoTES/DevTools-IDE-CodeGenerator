@@ -7,7 +7,7 @@ variables:
 cache:
   paths:
     - .m2/repository/
-    - codegenerator.rest.karaf\target
+    - codegenerator.rest.karaf/target
 
 build:
   stage: build
@@ -19,16 +19,21 @@ test:
   script:
     - mvn $MAVEN_CLI_OPTS -pl "!codegenerator.rest.karaf" test
 
-tests2:
+package:
   stage: test
   script:
     - mvn $MAVEN_CLI_OPTS -fn install
+  artifacts:
+    paths:
+      - codegenerator.rest.karaf/target/
 
 deploy:
   stage: deploy
   image: docker:dind
+  dependencies:
+    - package
   script:
-    - cd codegenerator.rest.karaf/target
+    - cd codegenerator.rest.karaf/target/
     - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD docker-activage.satrd.es 
     - docker -t code.generator -t $DOCKER_SERVER/code.generator:$DOCKER_VERSION build .
     - docker push $DOCKER_SERVER/code.generator:$DOCKER_VERSION
