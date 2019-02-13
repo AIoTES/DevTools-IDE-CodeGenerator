@@ -1,4 +1,4 @@
-image: maven:latest
+image: maven:3-jdk-8
 
 variables:
   MAVEN_CLI_OPTS: "--batch-mode"
@@ -26,6 +26,8 @@ package:
   artifacts:
     paths:
       - codegenerator.rest.karaf/target/
+  only:
+    - master
 
 deploy:
   stage: deploy
