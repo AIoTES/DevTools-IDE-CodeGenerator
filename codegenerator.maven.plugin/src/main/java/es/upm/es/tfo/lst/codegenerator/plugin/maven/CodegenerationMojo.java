@@ -1,9 +1,23 @@
+/*******************************************************************************
+ * Copyright 2018 Universidad Politécnica de Madrid UPM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package es.upm.es.tfo.lst.codegenerator.plugin.maven;
 
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -23,14 +37,14 @@ import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which touches a generates code from the given configuration.
  */
 @Mojo( name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class CodegenerationMojo
     extends AbstractMojo
 {
     /**
-     * Location of the file.
+     * Location of the output.
      */
     @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
     private File outputDirectory;
@@ -78,15 +92,15 @@ public class CodegenerationMojo
     public void execute()
         throws MojoExecutionException
     {
-    
-    	
+
+
     	if (xmlTemplate == null) {
     		throw new MojoExecutionException("Invalid XML Template referece (null).");
     	}
-    	
+
     	getLog().info("Generating code from Ontologies");
     	getLog().info("xml template "+xmlTemplate.toString());
-    
+
     	// set template & init project
 		XmlParser parser = new XmlParser();
 		TemplateDataModel model=null;
@@ -96,32 +110,32 @@ public class CodegenerationMojo
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
 		}
-		
+
 		GenerateProject gp = new GenerateProject();
 		gp.setMainModel(model);
-		
- 		
+
+
 		//gp.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
-		
+
 		if (localOntologies.exists() && localOntologies.isDirectory()) {
 				File[] onts = localOntologies.listFiles(new FilenameFilter() {
-	
+
 					@Override
 					public boolean accept(File dir, String name) {
 
 						return name.toLowerCase().contains(".owl");
 					}
 				});
-				
+
 				for (int i = 0; i < onts.length; i++) {
 					final String url = onts[i].toPath().toString();
 					boolean recursive = recursiveOntologies.stream().anyMatch(new Predicate<String>() {
-	
+
 						@Override
 						public boolean test(String t) {
 							return t.contains(url) || url.contains(t);
@@ -131,25 +145,25 @@ public class CodegenerationMojo
 					gp.addOntology(ontologyLoader.loadOntology(url), recursive);
 				}
 		}
-		
+
 		if (localOntologies.exists() && localOntologies.isFile()) {
 			String url = localOntologies.toPath().toString();
 			boolean recursive = recursiveOntologies.contains(url);
-	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");			
+	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url), recursive);
 		}
 
-	
-		
+
+
 		// add remote ontologies
 		for (URL url : remoteOntologies) {
 			boolean recursive = recursiveOntologies.contains(url.toString());
 	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url.toString()), recursive);
 		}
-		 
-		
-		
+
+
+
 		// add variables
 		for (Entry<String, String> entry : variables.entrySet()) {
 			gp.setVariable(entry.getKey(), entry.getValue());
@@ -179,8 +193,8 @@ public class CodegenerationMojo
 //        	throw new MojoExecutionException("Code generation was not successuful.");
 //        }
         getLog().info("generation completed.");
-        
-        
+
+
 
 
     }
