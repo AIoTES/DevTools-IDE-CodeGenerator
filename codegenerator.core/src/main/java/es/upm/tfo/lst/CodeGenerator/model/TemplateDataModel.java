@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2018 Universidad Politécnica de Madrid UPM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator.model;
 
 import java.net.URL;
@@ -6,8 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 /**
- * Class who represent the given XML in java code.
+ * Class to represent the given XML in java code.
  *
  *
  * @author Buhid Eduardo
@@ -15,238 +31,234 @@ import java.util.stream.Collectors;
  */
 
 public class TemplateDataModel {
-	
-		private String name,version,description,baseTemplatePath;
-	
-		private Map<String,Variable> arrayVars;
-		private List <MacroModel> macroList;
-		
-		
-		public TemplateDataModel() {
-			this.arrayVars = new HashMap<>();
-		}
-		
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			
-			this.name = name;
-		}
-		public String getVersion() {
-			return version;
-		}
-		public void setVersion(String version) {
-			this.version = version;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String desription) {
-			this.description = desription;
-		}
 
+	private String name, version, description, baseTemplatePath;
 
+	private Map<String, Variable> arrayVars;
+	private List<MacroModel> macroList;
 
-		/**
-		 * give a complete list of all macros given in XML
-		 * @return {@link List } of {@link MacroModel}
-		 */
-		public List<MacroModel> getMacroList() {
-			return macroList;
-		}
+	public TemplateDataModel() {
+		this.arrayVars = new HashMap<>();
+	}
 
-		/**
-		 * sets list of {@link MacroModel}
-		 * @param macroList {@link List } of {@link MacroModel}
-		 */
-		public void setMacroList(List<MacroModel> macroList) {
-			this.macroList = macroList;
-		}
+	public String getName() {
+		return name;
+	}
 
-		/**
-		 *
-		 * @return @{@link List}<{@link MacroModel}> object for classs, Null if class macro not exist
-		 */
-		public List<MacroModel> getClassMacro() {
-			return this.getMacro("class");
-		}
+	public void setName(String name) {
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for ontology, Null if ontology macro not exist
-		 */
-		public List<MacroModel> getOntologyMacro() {
-			return this.getMacro("ontology");
-		}
+		this.name = name;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for instances ,Null if instance macro not exist
-		 */
-		public List<MacroModel> getInstanceMacro() {
-			return this.getMacro("instance");
-		}
+	public String getVersion() {
+		return version;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for enumerations, Null if enumerations macro not exist
-		 */
-		public List<MacroModel> getEnumerationMacro() {
-			return this.getMacro("enumeration");
-		}
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for project, Null if project macro not exist
-		 */
-		public List<MacroModel> getProjectMacro() {
-			return this.getMacro("project");
-		}
+	public String getDescription() {
+		return description;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for superclasses, Null if super class macro not exist
-		 */
-		public List<MacroModel> getSuperclassMacro() {
-			return this.getMacro("superclass");
-		}
+	public void setDescription(String desription) {
+		this.description = desription;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for subclasses, Null if sub property values macro not exist
-		 */
-		public List<MacroModel> getSPropertyValues() {
-			return this.getMacro("propertyValues");
-		}
+	/**
+	 * List of all macros given in XML.
+	 *
+	 * @return {@link List } of {@link MacroModel}
+	 */
+	public List<MacroModel> getMacroList() {
+		return macroList;
+	}
 
-		/**
-		 *
-		 * @return {@link List}<{@link MacroModel}> object for object propeties, Null if sub property values macro not exist
-		 */
-		public List<MacroModel> getObjectProperties(){
-			return this.getMacro("objectProperties");
-		}
+	/**
+	 * Sets list of {@link MacroModel}.
+	 *
+	 * @param macroList {@link List } of {@link MacroModel}
+	 */
+	public void setMacroList(List<MacroModel> macroList) {
+		this.macroList = macroList;
+	}
 
-		/**
-		 * If in XML file exists two or more variables with same name (optional or required), the program
-		 * automatically dont add it
-		 * @return {@link Set} of {@link Variable} containing all variables given in XML file
-		 */
-		public Map<String,Variable> getArrayVars() {
-			return this.arrayVars;
-		}
+	/**
+	 *
+	 * @return @{@link List}<{@link MacroModel}> of class iteration macros, Null if
+	 *         not defined
+	 */
+	public List<MacroModel> getClassMacros() {
+		return this.getMacro("class");
+	}
 
-		/**
-		 *
-		 * @return {@link Set} <{@link Variable}> of variables setted as required from XML file
-		 */
-		public Map<String, Variable> getRequiredVariables(){
-			Set <String> aux =this.arrayVars.keySet();
-			Map <String, Variable> aux_map = new HashMap<String, Variable>();
-			for (String t : aux) {
-				if( !this.arrayVars.get(t).isRequired() ) {
-					aux_map.put(t, this.arrayVars.get(t));
-				}
-			}
-			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
-			return aux_map;
-			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
-		}
-		/**
-		 *
-		 * @return {@link Set} <{@link Variable}> of variables setted as optional from XML file
-		 */
-		public Map<String, Variable> getOptionalVariables(){
-			Set <String> aux =this.arrayVars.keySet();
-			Map <String, Variable> aux_map = new HashMap<String, Variable>();
-			for (String t : aux) {
-				if( !this.arrayVars.get(t).isRequired() ) {
-					aux_map.put(t, this.arrayVars.get(t));
-				}
-			}
-			//return this.arrayVars.stream().filter(t->t.isRequired()).collect(Collectors.toSet());
-			return aux_map;
-		}
+	/**
+	 *
+	 * @return {@link List}<{@link MacroModel}> object for ontology iteration
+	 *         macros, Null if not defined
+	 */
+	public List<MacroModel> getOntologyMacros() {
+		return this.getMacro("ontology");
+	}
 
-		/**
-		 *
-		 * @param vars {@link Set} <{@link Variable}> of all variables given in XML file
-		 */
-		public void setVars(Map<String,Variable> vars) {
-			this.arrayVars = vars;
-		}
+	/**
+	 *
+	 * @return {@link List}<{@link MacroModel}> object for instances iteration
+	 *         macros, Null if not defined
+	 */
+	public List<MacroModel> getInstanceMacros() {
+		return this.getMacro("instance");
+	}
 
-		/**
-		 * print all macros into console
-		 */
-		public void showMacros() {
-			this.macroList.stream().forEach(r->System.out.println(r.getTemplateFor()));
-		}
-		/**
-		 * mthod to modifify existing variable
-		 */
-		public void modifyVariable(String name, String value) {
-			this.arrayVars.get(name).setValue(value);
-		}
-		
-		/**
-		 * setter to add local base loader path to project
-		 * @param baseTemplatePath
-		 */
-		public void setBaseTemplatePath(String baseTemplatePath) {
-			this.baseTemplatePath = baseTemplatePath;
-		}
+	/**
+	 *
+	 * @return {@link List}<{@link MacroModel}> object for enumerations iteration
+	 *         macros, Null if not defined
+	 */
+	public List<MacroModel> getEnumerationMacros() {
+		return this.getMacro("enumeration");
+	}
 
-		/**
-		 * return the path to load all template files
-		 * @return {@link String}
-		 */
-		public String getBaseTemplatePath() {
-			return baseTemplatePath;
-		}
+	/**
+	 *
+	 * @return {@link List}<{@link MacroModel}> object for project iteration macros,
+	 *         Null if not defined
+	 */
+	public List<MacroModel> getProjectMacros() {
+		return this.getMacro("project");
+	}
 
-		/**
-		 * @return Boolean value indicating id the template is or not web
-		 */
-		public boolean isWebTemplate() {
-			boolean flag = true;
-			try {
-				URL aux = new URL(this.baseTemplatePath);
-			}catch (Exception e) {
-				flag = false;			}
-			return flag;
-		}
-		public  void printVariables() {
-			Set<String> aux= this.arrayVars.keySet();
-			for (String t : aux) {
-				System.out.println(this.arrayVars.get(t).getValue());
+	/**
+	 *
+	 * @return {@link List}<{@link MacroModel}> object for object propeties
+	 *         iteration macros, Null if not defined
+	 */
+	public List<MacroModel> getObjectProperties() {
+		return this.getMacro("objectProperties");
+	}
+
+	/**
+	 * If in XML file exists two or more variables with same name (optional or
+	 * required), they will be ignored.
+	 *
+	 * @return {@link Set} of {@link Variable} containing all variables given in XML
+	 *         file
+	 */
+	public Map<String, Variable> getArrayVars() {
+		return this.arrayVars;
+	}
+
+	/**
+	 *
+	 * @return {@link Set} <{@link Variable}> of variables configured as required from
+	 *         XML file
+	 */
+	public Map<String, Variable> getRequiredVariables() {
+		Set<String> aux = this.arrayVars.keySet();
+		Map<String, Variable> aux_map = new HashMap<String, Variable>();
+		for (String t : aux) {
+			if (!this.arrayVars.get(t).isRequired()) {
+				aux_map.put(t, this.arrayVars.get(t));
 			}
 		}
-		
-	 /**
-	 * @param type
+		return aux_map;
+	}
+
+	/**
+	 *
+	 * @return {@link Set} <{@link Variable}> of variables configured as optional from
+	 *         XML file
+	 */
+	public Map<String, Variable> getOptionalVariables() {
+		Set<String> aux = this.arrayVars.keySet();
+		Map<String, Variable> aux_map = new HashMap<String, Variable>();
+		for (String t : aux) {
+			if (!this.arrayVars.get(t).isRequired()) {
+				aux_map.put(t, this.arrayVars.get(t));
+			}
+		}
+		return aux_map;
+	}
+
+	/**
+	 *
+	 * @param vars {@link Set} <{@link Variable}> of all variables to be set.
+	 */
+	public void setVars(Map<String, Variable> vars) {
+		this.arrayVars = vars;
+	}
+
+	/**
+	 * Print all macros into console.
+	 */
+	public void showMacros() {
+		this.macroList.stream().forEach(r -> System.out.println(r.getTemplateFor()));
+	}
+
+	/**
+	 * Modify existing variable value.
+	 */
+	public void modifyVariable(String name, String value) {
+		this.arrayVars.get(name).setValue(value);
+	}
+
+	/**
+	 * Setter to add local base loader path to project.
+	 *
+	 * @param baseTemplatePath
+	 */
+	public void setBaseTemplatePath(String baseTemplatePath) {
+		this.baseTemplatePath = baseTemplatePath;
+	}
+
+	/**
+	 * Get base path, for example to load all relative template files.
+	 *
+	 * @return {@link String}
+	 */
+	public String getBaseTemplatePath() {
+		return baseTemplatePath;
+	}
+
+	/**
+	 * @return Boolean value indicating id the template is or not web
+	 */
+	public boolean isWebTemplate() {
+		boolean flag = true;
+		try {
+			URL aux = new URL(this.baseTemplatePath);
+		} catch (Exception e) {
+			flag = false;
+		}
+		return flag;
+	}
+
+	/**
+	 * Print variables on console.
+	 */
+	public void showVariables() {
+		Set<String> aux = this.arrayVars.keySet();
+		for (String t : aux) {
+			System.out.println(this.arrayVars.get(t).getValue());
+		}
+	}
+
+	/**
+	 * @param type iteration type of macros.
 	 * @return Null if given macro not exist
 	 */
-		private List<MacroModel> getMacro(String type) {
-		
-			return this.macroList.stream().filter(t->t.getTemplateFor().equals(type)).collect(Collectors.toList());
+	private List<MacroModel> getMacro(String type) {
 
-		}
+		return this.macroList.stream().filter(t -> t.getTemplateFor().equals(type)).collect(Collectors.toList());
 
-		@Override
-		public String toString() {
-			return 		"TemplateName="+
-					this.name+
-						"\n template version="+
-					this.version+
-						"\n template description="+
-					this.description+
-						"\n variables count="+
-					this.macroList.size();
+	}
 
-		}
+	@Override
+	public String toString() {
+		return "TemplateName=" + this.name + "\n template version=" + this.version + "\n template description="
+				+ this.description + "\n variables count=" + this.macroList.size();
+
+	}
 
 }
-
-
