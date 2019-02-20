@@ -46,6 +46,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -285,19 +286,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		});
 
 		JLabel lblOutput = new JLabel("Output");
-		JCheckBox checkRecursive = new JCheckBox("Not recursive");
+		JCheckBox checkRecursive = new JCheckBox("Load Imported Ontologies recursively");
+		checkRecursive.setHorizontalTextPosition(SwingConstants.LEFT);
 		checkRecursive.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				recursiveValue=checkRecursive.isSelected();
-				if(checkRecursive.isSelected()) {
-					checkRecursive.setText("Recursive");
-				}else {
-					checkRecursive.setText("Not recursive");
-				}
 			}
 		});
-
-		JLabel lblloadRecursively = new JLabel("¿Load Imports recursively?");
 
 		JLabel lblVariablesInXml = new JLabel("Variables in XML file");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -307,10 +302,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					.addGap(29)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblloadRecursively)
-							.addGap(18)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+							.addContainerGap())
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 							.addComponent(checkRecursive)
-							.addPreferredGap(ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
 							.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
 							.addGap(12)
 							.addComponent(btnGenerate, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
@@ -320,17 +316,14 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblTemplateSource, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
-							.addComponent(sourceTextField, 0, 372, Short.MAX_VALUE)
+							.addComponent(sourceTextField, 0, 375, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnTemplateFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 							.addContainerGap())
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
-							.addGap(53))
-						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblOutput, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
-							.addComponent(outputTextfield, 0, 373, Short.MAX_VALUE)
+							.addComponent(outputTextfield, 0, 385, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnOutputFileChooser, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))))
 		);
@@ -351,7 +344,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 							.addComponent(lblVariablesInXml))
 						.addComponent(sourceTextField, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
 					.addGap(11)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
 					.addGap(12)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
@@ -362,9 +355,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 							.addComponent(btnOutputFileChooser)))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-							.addComponent(btnCancel)
-							.addComponent(lblloadRecursively))
+						.addComponent(btnCancel)
 						.addComponent(btnGenerate)
 						.addComponent(checkRecursive))
 					.addGap(8))
