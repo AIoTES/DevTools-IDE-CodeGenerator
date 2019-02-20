@@ -74,7 +74,7 @@
 			<macro>
 				<template>instances.vm</template>
 				<for>instance</for>
-				<output>instancesDirectory</output>
+				<output>instancesDirectory/${instance.getIRI().getFragment()}</output>
 				<imports>
 					<package>d</package>
 				</imports>
