@@ -69,7 +69,7 @@
 
 <complexType name="import">
 	<sequence>
-		<element name="FullyQalifiedName" type="string"></element>
+		<element name="FullyQualifiedName" type="string"></element>
 		<element name="alias" type="string"></element>
      </sequence>
 
