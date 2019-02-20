@@ -17,17 +17,13 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;import org.eclipse.jetty.io.Buffer;
-import org.eclipse.jetty.util.resource.Resource;
+import javax.servlet.http.HttpServletResponse;
+
 import org.osgi.service.http.HttpContext;
-
-
 
 /**
  * @author amedrano
@@ -36,22 +32,26 @@ import org.osgi.service.http.HttpContext;
 public class OutputHTTPContext implements HttpContext {
 
 	public OutputHTTPContext(File outputDir) {
-		
+
 		this.outputDir = outputDir;
 	}
 
 	private File outputDir;
 
-
-	/* (non-Javadoc)
-	 * @see org.osgi.service.http.HttpContext#handleSecurity(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.osgi.service.http.HttpContext#handleSecurity(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.osgi.service.http.HttpContext#getResource(java.lang.String)
 	 */
 	@Override
@@ -66,14 +66,14 @@ public class OutputHTTPContext implements HttpContext {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.osgi.service.http.HttpContext#getMimeType(java.lang.String)
 	 */
 	@Override
 	public String getMimeType(String name) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
 }

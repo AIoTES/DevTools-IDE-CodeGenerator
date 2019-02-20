@@ -18,43 +18,25 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sound.midi.Soundbank;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.io.SocketInputBuffer;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.apache.velocity.runtime.parser.node.SimpleNode;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apache.velocity.runtime.resource.util.StringResourceRepository;
-import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -69,23 +51,24 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  * @author amedrano
  *
  */
-@WebServlet (value="/GenerateCode", name="CodeGenerator")
+@WebServlet(value = "/GenerateCode", name = "CodeGenerator")
 
 public class GenerateServlet extends HttpServlet {
-	private Properties props=null;
+	private Properties props = null;
 	private static final String ONT = "ontologies";
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
-	private static final String CONTENT_TYPE="Content-Type";
+	private static final String CONTENT_TYPE = "Content-Type";
 	private File tempFolder;
-	private String outputAlias,outDir;
+	private String outputAlias, outDir;
 	private VelocityContext velocityContext;
 	private VelocityEngine vel_eng;
 	private Template template;
-	private final String HTMLtemplate="listing.htm.vm";
-	private final String baseTemplatePath="/";
-	private String servletName="/GenerateCode";
+	private final String HTMLtemplate = "listing.htm.vm";
+	private final String baseTemplatePath = "/";
+	private String servletName = "/GenerateCode";
 	private JsonObject outO = null;
+
 	public GenerateServlet(String outDir) {
 		this.outDir = outDir;
 		this.vel_eng = new VelocityEngine();
@@ -93,103 +76,102 @@ public class GenerateServlet extends HttpServlet {
 		outO = new JsonObject();
 	}
 
-	
-
-	
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		
-				if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
-				
-		
-					 // { template: "", ontologies:[{url:"", recursive:""}], variables:{varname:varvalue} }
-					//{ template: "http://localhost/template/", ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl", recursive:"true"}], variables:{varname:varvalue} }
-					JsonParser jp = new JsonParser();
-					JsonElement sreq = jp.parse(req.getReader());
-					if (sreq instanceof JsonObject) {
-						JsonObject gc = (JsonObject) sreq;
-						// set template & init project
-						XmlParser parser = new XmlParser();
-						TemplateDataModel model=null;
-						try {
-							model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
-						} catch (Exception e) {
-							resp.getWriter().println(e.getMessage());
-							//e.printStackTrace();
-						}
-						 
-						GenerateProject gp = new GenerateProject();
-						gp.setMainModel(model);
-						// set ontologies
-						OntologyLoader ontologyLoader = new OntologyLoader();
-						if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
-							for (int i = 0; i < gc.get(ONT).getAsJsonArray().size(); i++) {
-								if (gc.get(ONT).getAsJsonArray().get(0).isJsonPrimitive()) {
-									// array of strings (multiple onts without recursive)
-									gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonArray().get(i).getAsString()), false);
-								} else {
-									// array of object (multiple onts with recursive)
-									JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
-		
-									gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
-								}
-							}
+		if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
+
+			// { template: "", ontologies:[{url:"", recursive:""}],
+			// variables:{varname:varvalue} }
+			// { template: "http://localhost/template/",
+			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
+			// recursive:"true"}], variables:{varname:varvalue} }
+			JsonParser jp = new JsonParser();
+			JsonElement sreq = jp.parse(req.getReader());
+			if (sreq instanceof JsonObject) {
+				JsonObject gc = (JsonObject) sreq;
+				// set template & init project
+				XmlParser parser = new XmlParser();
+				TemplateDataModel model = null;
+				try {
+					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+				} catch (Exception e) {
+					resp.getWriter().println(e.getMessage());
+					// e.printStackTrace();
+				}
+
+				GenerateProject gp = new GenerateProject();
+				gp.setMainModel(model);
+				// set ontologies
+				OntologyLoader ontologyLoader = new OntologyLoader();
+				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
+					for (int i = 0; i < gc.get(ONT).getAsJsonArray().size(); i++) {
+						if (gc.get(ONT).getAsJsonArray().get(0).isJsonPrimitive()) {
+							// array of strings (multiple onts without recursive)
+							gp.addOntology(
+									ontologyLoader.loadOntology(gc.get(ONT).getAsJsonArray().get(i).getAsString()),
+									false);
 						} else {
-							if (gc.get(ONT).isJsonPrimitive()) {
-								// string (single ont without recursive)
-								gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsString()), false);
-							} else {
-								// object (single ont with recursive parameter)
-								JsonObject ont = gc.get(ONT).getAsJsonObject();
-								gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()), ont.get("recursive").getAsBoolean());
-							}
+							// array of object (multiple onts with recursive)
+							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
+
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
+									ont.get("recursive").getAsBoolean());
 						}
-		
-					// set variables
-					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
-						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
 					}
-		
-					// set Output
-					String out = Integer.toHexString(sreq.hashCode());
-					File outFile = new File(tempFolder, out);
-					//Files.deleteIfExists(outFile.toPath());
-					this.deleteFolder(outFile);
-					outFile.mkdirs();
-					gp.setOutputFolder(outFile.getAbsolutePath()+File.separatorChar);
-					// generate
-					try {
-						gp.process();
-					} catch (Exception e) {
-						resp.getWriter().println(e.getMessage());
+				} else {
+					if (gc.get(ONT).isJsonPrimitive()) {
+						// string (single ont without recursive)
+						gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsString()), false);
+					} else {
+						// object (single ont with recursive parameter)
+						JsonObject ont = gc.get(ONT).getAsJsonObject();
+						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
+								ont.get("recursive").getAsBoolean());
+					}
+				}
 
-					}
-					boolean result;
+				// set variables
+				for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
+					gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+				}
 
-					outO.addProperty("output", outputAlias);
-					resp.addHeader(CONTENT_TYPE, "application/json");
-					resp.getWriter().println(outO.toString());
-					}
+				// set Output
+				String out = Integer.toHexString(sreq.hashCode());
+				File outFile = new File(tempFolder, out);
+				// Files.deleteIfExists(outFile.toPath());
+				this.deleteFolder(outFile);
+				outFile.mkdirs();
+				gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
+				// generate
+				try {
+					gp.process();
+				} catch (Exception e) {
+					resp.getWriter().println(e.getMessage());
+
+				}
+				boolean result;
+
+				outO.addProperty("output", outputAlias);
+				resp.addHeader(CONTENT_TYPE, "application/json");
+				resp.getWriter().println(outO.toString());
 			}
 		}
+	}
 
-	
-	
 	@Override
-	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String line,req_data,aux;
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String line, req_data, aux;
 		URL urlToFile;
-		req_data=req.getRequestURI().replaceAll(servletName, "");
-		urlToFile=this.getServletContext().getResource(req_data);		
-			
+		req_data = req.getRequestURI().replaceAll(servletName, "");
+		urlToFile = this.getServletContext().getResource(req_data);
+
 		try {
-			File t = new File( urlToFile.getFile());
-			if(t.isFile()) {
-				
-//				System.out.println("file");
+			File t = new File(urlToFile.getFile());
+			if (t.isFile()) {
+
 				BufferedReader br = null;
 				br = new BufferedReader(new FileReader(t));
 				StringBuilder sb = new StringBuilder();
@@ -197,66 +179,62 @@ public class GenerateServlet extends HttpServlet {
 				while ((line = br.readLine()) != null) {
 					sb.append(line);
 				}
-				resp.getWriter().write(sb.toString());	
+				resp.getWriter().write(sb.toString());
 			}
-			
-			if(t.isDirectory()){
-//				System.out.println("directory");
+
+			if (t.isDirectory()) {
 				BufferedReader br = null;
-				br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
+				br = new BufferedReader(new InputStreamReader(
+						GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
 				StringBuilder sb = new StringBuilder();
 
 				while ((line = br.readLine()) != null) {
 					sb.append(line);
 				}
-				
-//				System.out.println("file exists? "+t.exists());
+
 				RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
 				StringReader reader = new StringReader(sb.toString());
 				StringWriter stringWriter = new StringWriter();
 				Template template = new Template();
 				template.setRuntimeServices(runtimeServices);
 				VelocityContext context = new VelocityContext();
-				context.put("path",t.getAbsolutePath());
+				context.put("path", t.getAbsolutePath());
 				context.put("file", t);
 				context.put("dirContent", t.listFiles());
-				context.put("BACK", req_data.split("/").length >3);
-				template.setData(runtimeServices.parse(reader,HTMLtemplate));
-				//template.setData(runtimeServices.parse(reader, template));
-				//template.setData(runtimeServices.parse(reader, HTMLtemplate, false));
+				context.put("BACK", req_data.split("/").length > 3);
+				template.setData(runtimeServices.parse(reader, HTMLtemplate));
+				// template.setData(runtimeServices.parse(reader, template));
+				// template.setData(runtimeServices.parse(reader, HTMLtemplate, false));
 				template.initDocument();
-				template.merge(context,stringWriter );
-				resp.getWriter().write(stringWriter.toString());	
+				template.merge(context, stringWriter);
+				resp.getWriter().write(stringWriter.toString());
 				stringWriter.close();
-				
+
 			}
-		
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 
 		}
-			
-	
-		
-			} 
 
-	public  void deleteFolder(File folder) {
-	    File[] files = folder.listFiles();
-	    if(files!=null) { //some JVMs return null for empty dirs
-	        for(File f: files) {
-	            if(f.isDirectory()) {
-	                deleteFolder(f);
-	            } else {
-	                f.delete();
-	            }
-	        }
-	    }
-	    folder.delete();
 	}
+
+	public void deleteFolder(File folder) {
+		File[] files = folder.listFiles();
+		if (files != null) { // some JVMs return null for empty dirs
+			for (File f : files) {
+				if (f.isDirectory()) {
+					deleteFolder(f);
+				} else {
+					f.delete();
+				}
+			}
+		}
+		folder.delete();
+	}
+
 	public void setOutputDir(File outputDir, String outputAlias) {
 		tempFolder = outputDir;
 		this.outputAlias = outputAlias;
 	}
-	
-	
+
 }
