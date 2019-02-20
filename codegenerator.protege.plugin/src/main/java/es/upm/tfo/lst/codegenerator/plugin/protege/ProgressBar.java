@@ -1,12 +1,20 @@
+/*******************************************************************************
+ * Copyright 2018 Universidad Politécnica de Madrid UPM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package es.upm.tfo.lst.codegenerator.plugin.protege;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.lang.reflect.GenericArrayType;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JFrame;
@@ -36,7 +44,7 @@ public class ProgressBar extends JFrame{
 		progressBar.setMinimum(0);
         progressBar.setMaximum(max);
 		progressBar.setStringPainted(true);
-		
+
 		JLabel lblGeneratingCode = new JLabel("Generating code");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -59,7 +67,7 @@ public class ProgressBar extends JFrame{
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
-	
+
 
 
 

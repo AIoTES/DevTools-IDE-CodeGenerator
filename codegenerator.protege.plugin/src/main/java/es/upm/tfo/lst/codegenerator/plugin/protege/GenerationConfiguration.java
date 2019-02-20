@@ -1,10 +1,25 @@
+/*******************************************************************************
+ * Copyright 2018 Universidad Politécnica de Madrid UPM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package es.upm.tfo.lst.codegenerator.plugin.protege;
 /*
- * 
- * 
- * 
+ *
+ *
+ *
  * comprobar que la ruta de los ficheros no esten fuera de la ruta de output
- * 
+ *
  * */
 
 import java.awt.Color;
@@ -15,9 +30,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -32,25 +46,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.osgi.framework.BundleContext;
 import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.library.folder.SAXParseCompletedException;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import es.upm.tfo.lst.codegenerator.plugin.protege.models.CodeGenerationVariableTable;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 
 
@@ -66,18 +76,18 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	private OWLModelManager owlModelManager;
 	private TemplateDataModel mainModel=null;
 	private XmlParser parser;
-	private boolean checkValue;
+	private boolean recursiveValue;
 	private Boolean flag=null;
     private static SwingWorker<Integer, Void> swingWorker;
     private List<String> templateArrayOptions;
     private List<String> outputArrayOptions;
     private File templateFileOptions=null,outputFileOptions=null;
-    
+
     private int progress;
     private ProgressBar pb;
     private String xmlParentDir=null;
     //---------messages
-    
+
     private final String MISSINGTAG="Seems in the xml coodinator some fields is missing";
     private final String SINTAXERROR="Seems in the xml coodinator are error in xml sintax";
 	/**
@@ -90,49 +100,50 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		 this.proj.GenConf = this;
 
 			try
-			{ 
+			{
 				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
 				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
 				if(!templateFileOptions.exists())
 					templateFileOptions.createNewFile();
 				if(!outputFileOptions.exists())
 					outputFileOptions.createNewFile();
-				
-				
-			}catch (Exception e) {
-				System.out.println("bundle "+e.getMessage());
+
+
+			}catch (Exception e1) {
+				String mainMessage = "Message: " + e1.getMessage()
+				+ "\nStackTrace: " + Arrays.toString(e1.getStackTrace());
+				String title = e1.getClass().getName();
+				JOptionPane.showMessageDialog(null, mainMessage, title, JOptionPane.ERROR_MESSAGE);
 			}
 		 readFile();
-		 
-		
+
+
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 621, 471);
 		setMinimumSize( new Dimension(570, 444));
 		contentPane = new JPanel();
-		
+
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		variableTable = new JTable();
 		variableTable.setMinimumSize(new Dimension(500, 200));
-		
-		
 
-		
+
+
+		// initial model: empty table with the columns
 		generateTable = new AbstractTableModel() {
-			
+
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public int getRowCount() {
-				// TODO Auto-generated method stub
 				return 0;
 			}
-			
+
 			@Override
 			public String getColumnName(int column) {
 
@@ -141,16 +152,15 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 			@Override
 			public int getColumnCount() {
-				// TODO Auto-generated method stub
-				return 0;
+				return CodeGenerationVariableTable.COLS.length;
 			}
 		};
-		
-	
+
+
 		sourceTextField = new JComboBox(templateArrayOptions.toArray());
-		
+
 		sourceTextField.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				parser = new XmlParser();
 				try {
@@ -161,11 +171,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 						message = MISSINGTAG;
 					else
 						message=SINTAXERROR;
-							
+
 					JOptionPane.showMessageDialog(null, message);
 					e1.printStackTrace();
 				}
-				 
+
 				//parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
 					generateTable= new CodeGenerationVariableTable(mainModel);
@@ -175,42 +185,42 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					//JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
 					parser = new XmlParser();
 				}
-	
+
 			}
 		});
 		sourceTextField.setEditable(true);
-		
+
 		outputTextfield = new JComboBox(outputArrayOptions.toArray());
 		outputTextfield.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				
+
+
 			}
 		});
 		outputTextfield.setEditable(true);
-		
+
 		//button to generate code
 		JButton btnGenerate = new JButton("Generate");
 		btnGenerate.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
-				
+
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
-					System.out.println(sourceTextField.getEditor().getItem().toString());
+					//System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
 				}else {
-					 
-					OWLOntology owlOntology = null; 
+
+					OWLOntology owlOntology = null;
 					owlOntology = owlModelManager.getActiveOntology();
-					
-					proj.addOntology(owlModelManager.getActiveOntology(), checkValue);
+
+					proj.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
 					proj.setMainModel(mainModel);
 					proj.setOutputFolder(sourceTextField.getEditor().toString());
-				
+
 					String aux = outputTextfield.getEditor().getItem().toString();
 					if(!aux.endsWith("/")) aux += "/";
 					proj.setOutputFolder(aux);
-					
+
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
 					asyncProcess();
@@ -233,7 +243,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		btnTemplateFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				
+
 				fc.setFileFilter(new FileFilter() {
 
 					@Override
@@ -256,28 +266,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			}
 		});
 
-		
+
 		//button to select output directory
 		JButton btnOutputFileChooser = new JButton("...");
-		
+
 		btnOutputFileChooser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-							
-				fc.setFileFilter(new FileFilter() {
-				
-					@Override
-					public String getDescription() {
-						return "Coordinator XML file";
-					}
-					
-					@Override
-					public boolean accept(File f) {
-						return f.getName().toLowerCase().endsWith(".xml");
-						}
-				});
-
-				
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 				int returnVal = fc.showOpenDialog(GenerationConfiguration.this);
@@ -288,12 +283,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		        }
 			}
 		});
-		
+
 		JLabel lblOutput = new JLabel("Output");
 		JCheckBox checkRecursive = new JCheckBox("Not recursive");
 		checkRecursive.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				checkValue=checkRecursive.isSelected();
+				recursiveValue=checkRecursive.isSelected();
 				if(checkRecursive.isSelected()) {
 					checkRecursive.setText("Recursive");
 				}else {
@@ -301,9 +296,9 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				}
 			}
 		});
-		
+
 		JLabel lblloadRecursively = new JLabel("¿Load Imports recursively?");
-		
+
 		JLabel lblVariablesInXml = new JLabel("Variables in XML file");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -377,26 +372,26 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	
+
 
 	private void saveComboContent(String t){
 			if(new File(t).exists()) {
 				//save data
 			}
 	}
-	private void asyncProcess() {	 
-		 
+	private void asyncProcess() {
+
 		pb = new ProgressBar(this.proj.getTotal2Process());
 		swingWorker = new SwingWorker<Integer, Void>(){
-			
-		
+
+
 			@Override
 			protected void done() {
 				System.out.println("Done!");
 				pb.setVisible(false);
 				if(proj.getErrors().isEmpty())
 					JOptionPane.showMessageDialog(null, "Code successfully generated");
-				
+
 				dispose();
 			}
 
@@ -411,11 +406,11 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				}
 				return null;
 			}
-			
+
 		};
 		swingWorker.execute();
-				
-		
+
+
 	}
 
 	private void readFile() {
@@ -423,34 +418,34 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 		 this.templateArrayOptions = new ArrayList<>();
 		 this.outputArrayOptions= new ArrayList<>();
 		try {
-			  BufferedReader br = new BufferedReader(new FileReader(this.templateFileOptions)); 
-			  String st; 
-			  while ((st = br.readLine()) != null) { 
+			  BufferedReader br = new BufferedReader(new FileReader(this.templateFileOptions));
+			  String st;
+			  while ((st = br.readLine()) != null) {
 				  templateArrayOptions.add(st);
-			  } 
+			  }
 			  br.close();
-			  
+
 			  st=null;
-			  
-			  br = new BufferedReader(new FileReader(this.outputFileOptions)); 
-			  while ((st = br.readLine()) != null) { 
+
+			  br = new BufferedReader(new FileReader(this.outputFileOptions));
+			  while ((st = br.readLine()) != null) {
 				  outputArrayOptions.add(st);
-			  } 
+			  }
 			  br.close();
-			  
+
 		}catch (Exception e) {
 			System.out.println(e.getLocalizedMessage());
-				
+
 		}
 	}
 	private void writeFile( File f,String dataToWrite) {
 		 System.out.println("write file "+dataToWrite);
 		boolean aux=true;
-		 
+
 		try {
-			 BufferedReader br = new BufferedReader(new FileReader(f)); 
-			  String st; 
-			  while ((st = br.readLine()) != null) { 
+			 BufferedReader br = new BufferedReader(new FileReader(f));
+			  String st;
+			  while ((st = br.readLine()) != null) {
 				  if(st.equals(dataToWrite)) {
 					  aux =false;
 					  break;
@@ -463,15 +458,13 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				fr.write("\n");
 				fr.close();
 			}
-			
-			  
+
+
 		}catch (Exception e) {
 			System.out.println("writeFile "+e.getMessage());
-				
+
 		}
 	}
-
-
 
 	@Override
 	public void updateProgress(int done) {
