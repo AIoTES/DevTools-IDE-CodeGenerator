@@ -5,6 +5,18 @@
     <artifactId>codegenerator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+	<organization>
+		<name>Universidad Politécnica de Madrid</name>
+		<url>http://www.upm.es</url>
+	</organization> 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
     <modules>
         <module>codegenerator.core</module>
         <module>codegenerator.protege.plugin</module>
@@ -27,5 +39,12 @@
 		        </plugin>
 			</plugins>
 		</pluginManagement>
+	<plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+      </plugin>
+    </plugins>
   </build>
 </project>
