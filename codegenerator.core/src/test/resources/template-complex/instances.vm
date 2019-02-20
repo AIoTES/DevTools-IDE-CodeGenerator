@@ -1,11 +1,10 @@
 #parse("baseTemplate.vm")
-#macro( instances $c)
-#foreach( $value in $c )
-$value.getIRI().getShortForm()
-#end
+#macro( instance $c)
+$c.getIRI().getShortForm()
+$c.getIRI()
 #end
 ##test parsing reasoner reference result $reasoner.getInstances($c, true).getFlattened().size()
 ontology IRI: $ontology.getOntologyID().getOntologyIRI()
 class count for this ontology: $ontology.getClassesInSignature().size()
-instances count for class $class.getIRI().getShortForm(): $instances.size()
-#instances($instances)
+##instances count for class $class.getIRI().getShortForm(): $instances.size()
+#instance($instance)
