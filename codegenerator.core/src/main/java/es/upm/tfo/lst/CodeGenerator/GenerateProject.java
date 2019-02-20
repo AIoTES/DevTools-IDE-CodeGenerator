@@ -166,12 +166,7 @@ public class GenerateProject {
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
 
-				// add to base context all imports into xml
-				for (MacroModel model : this.mainModel.getMacroList()) {
-					for (String key : model.getImports().keySet()) {
-						this.baseContext.put(key, model.getImports().get(key));
-					}
-				}
+
 
 				this.addVariablesToBaseContext();
 
@@ -273,16 +268,24 @@ public class GenerateProject {
 
 		// do work for any macro for ontology
 		if (!ontologyModelArray.isEmpty()) {
+			
+
 			// this.context= new VelocityContext(this.baseContext);
 			for (MacroModel ontologyModel : ontologyModelArray) {
+				// merge base context to actual context
+				this.context = new VelocityContext(this.baseContext);
+				//add all imports static classes into current context 				
+				for (String key : ontologyModel.getImports().keySet()) {
+					this.context.put(key, ontologyModel.getImports().get(key));
+				}
+				
 				// read xml output tag and parse to velocity
 				this.text = this.processName(ontologyModel.getOutput(), baseContext);
 				// control directory existance for result of velocity process of output
 				File outputFolder = new File(this.outputFolder + this.text);
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
-				// merge base context to actual context
-				this.context = new VelocityContext(this.baseContext);
+
 				// this.context.put("ontology",ontology);
 				if (!this.text.equals("")) {
 					template = vel_eng.getTemplate(ontologyModel.getTemplateName());
@@ -323,8 +326,14 @@ public class GenerateProject {
 		List<MacroModel> classModelArray = this.mainModel.getClassMacros();
 		this.baseContext.put("class", c);
 		if (!classModelArray.isEmpty()) {
+			//initialize context and merge it with base context
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
+				//add all imports static classes into current context 				
+				for (String key : macroModel.getImports().keySet()) {
+					this.context.put(key, macroModel.getImports().get(key));
+				}
+				//getting the template name and adding it to template object
 				this.text = this.processName(macroModel.getOutput(), this.context);
 				File outputFile = new File(this.outputFolder + this.text);
 				if (!outputFile.getParentFile().exists())
@@ -375,29 +384,60 @@ public class GenerateProject {
 		// ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace("\\.","");
 		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacros();
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
-		this.baseContext.put("instances", instances);
+		//this.baseContext.put("instances", instances);
 		if (!instancesModelArray.isEmpty()) {
-			for (MacroModel macroModel : instancesModelArray) {
+			
+			for (MacroModel instancesMacro : instancesModelArray) {
+				for (OWLNamedIndividual inst : instances) {
+					//initialize and merge current context with base context
+					this.context = new VelocityContext(this.baseContext);
+					//add all imports static classes into current context 				
+					for (String key : instancesMacro.getImports().keySet()) {
+						this.context.put(key, instancesMacro.getImports().get(key));
+					}
+					//initialize tenplate object with template given in XML file
+					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
+					
+					this.context.put("instance", inst);
+					this.text = this.processName(instancesMacro.getOutput(), this.context);
+					File outputFolder = new File(this.outputFolder + this.text);
+					if (!outputFolder.getParentFile().exists())
+						outputFolder.getParentFile().mkdirs();
+					// throws IOE
+					try {
+						this.fr = new FileWriter(this.outputFolder + this.text, true);
+						template.merge(this.context, fr);
+						fr.close();
 
-				template = vel_eng.getTemplate(macroModel.getTemplateName());
-				this.context = new VelocityContext(this.baseContext);
-				this.text = this.processName(macroModel.getOutput(), this.context);
-				File outputFolder = new File(this.outputFolder + this.text);
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
-				// throws IOE
-				try {
-					this.fr = new FileWriter(this.outputFolder + this.text, true);
-					template.merge(context, fr);
-					fr.close();
+					} catch (Exception e) {
+						this.arrayOfExceptions.add(e);
+						log.fatal("cant merge velocity template with velocity context", e);
+						throw e;
+					}
 
-				} catch (Exception e) {
-					this.arrayOfExceptions.add(e);
-					log.fatal("cant merge velocity template with velocity context", e);
-					throw e;
-				}
+					this.processObjectProperties(c, instances, ontology);
 
-				this.processObjectProperties(c, instances, ontology);
+				}	
+//				template = vel_eng.getTemplate(macroModel.getTemplateName());//set the velocity template name 
+//				this.context = new VelocityContext(this.baseContext);
+//				this.context.put("instance", inst);
+//				this.text = this.processName(macroModel.getOutput(), this.context);
+//				File outputFolder = new File(this.outputFolder + this.text);
+//				if (!outputFolder.getParentFile().exists())
+//					outputFolder.getParentFile().mkdirs();
+//				// throws IOE
+//				try {
+//					this.fr = new FileWriter(this.outputFolder + this.text, true);
+//					template.merge(this.context, fr);
+//					fr.close();
+//
+//				} catch (Exception e) {
+//					this.arrayOfExceptions.add(e);
+//					log.fatal("cant merge velocity template with velocity context", e);
+//					throw e;
+//				}
+//
+//				this.processObjectProperties(c, instances, ontology);
 
 			}
 		} else {
@@ -427,19 +467,23 @@ public class GenerateProject {
 		this.text = "";
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
 		if (!propertyModelArray.isEmpty()) {
-			for (MacroModel macroModel : propertyModelArray) {
-
+			for (MacroModel macroObjectProperties : propertyModelArray) {
+				//initialize and merge current context with base context
 				this.context = new VelocityContext(this.baseContext);
-				this.text = this.processName(macroModel.getOutput(), this.context);
+				//add all imports static classes into current context 				
+				for (String key : macroObjectProperties.getImports().keySet()) {
+					this.context.put(key, macroObjectProperties.getImports().get(key));
+				}
+				this.text = this.processName(macroObjectProperties.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + this.text);
 
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
 
-				if (!macroModel.getOutput().equals("")) {
+				if (!macroObjectProperties.getOutput().equals("")) {
 					try {
 						this.fr = new FileWriter(this.outputFolder + this.text, true);
-						template = vel_eng.getTemplate(macroModel.getTemplateName());
+						template = vel_eng.getTemplate(macroObjectProperties.getTemplateName());
 						template.merge(context, fr);
 						fr.close();
 					} catch (Exception e) {
