@@ -71,7 +71,7 @@
 					<package>d</package>
 				</imports>
 			</macro>
-			<!-- <macro>
+			<macro>
 				<template>instances.vm</template>
 				<for>instance</for>
 				<output>instancesDirectory</output>
@@ -79,7 +79,7 @@
 					<package>d</package>
 				</imports>
 			</macro>
-			 -->
+
 				<macro>
 				<template>ontology.vm</template>
 				<for>ontology</for>
