@@ -161,12 +161,10 @@ public class GenerateProject {
 			try {
 				this.initVelocity();
 				this.baseContext.put("ontologyCompleteList",
-						this.ontologies2BProcesed.stream().collect(Collectors.toList()));
+				this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
-
-
 
 				this.addVariablesToBaseContext();
 

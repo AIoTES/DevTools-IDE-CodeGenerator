@@ -32,6 +32,20 @@ public class MacroModel {
 	private Map<String, String> imports;
 
 	/**
+	 * 
+	 * @param template    template source
+	 * @param output      output filename
+	 * @param templateFor type of iteration
+	 * @param imports {@link Map} of imports 
+	 */
+	public MacroModel(String template, String output, String templateFor,Map<String, String> imports) {
+		this.template = template;
+		this.output = output;
+		this.templateFor = templateFor;
+		this.imports = imports;
+	}
+	
+	/**
 	 *
 	 * @param template    template source
 	 * @param output      output filename
@@ -43,6 +57,8 @@ public class MacroModel {
 		this.templateFor = templateFor;
 		this.imports = new HashMap<>();
 	}
+	
+
 
 	/**
 	 *

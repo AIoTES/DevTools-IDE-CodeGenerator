@@ -183,7 +183,7 @@ public class XmlParser {
 				this.templateName = doc.getElementsByTagName("template-name");
 				this.templateVersion = doc.getElementsByTagName("template-version");
 				this.templateDescription = doc.getElementsByTagName("template-description");
-
+				
 				t = (Element) this.templateName.item(0);
 
 				this.javaXMLModel.setName(t.getFirstChild().getTextContent());
@@ -194,6 +194,8 @@ public class XmlParser {
 				// xml tags not obligatory
 				t = (Element) this.templateAuthor.item(0);
 
+				
+				//processing node variables
 				for (int y = 0; y < this.nodeVariable.getLength(); y++) {
 					Element b = (Element) this.nodeVariable.item(y);
 
@@ -206,19 +208,23 @@ public class XmlParser {
 											b.getElementsByTagName("default").item(0).getTextContent()));
 
 				}
-
+				//adding variables to model	
 				this.javaXMLModel.setVars(this.variableList);
 
 			} catch (Exception e) {
 				log.warn("some optionals tags into XML coordinator file isn't set");
 			}
-			log.debug("going to process macro models");
+			
+			//log.debug("going to process macro models");
+			
+			
+			//processing macro
 			this.nodeMacro = doc.getElementsByTagName("macro");
-
 			for (int y = 0; y < this.nodeMacro.getLength(); y++) {
 
 				Element b = (Element) this.nodeMacro.item(y);
-
+				log.debug(b.getElementsByTagName("imports").item(0).getChildNodes().item(0).getTextContent());
+				//adding each macro to array to be iteared later
 				this.macroList.add(new MacroModel(b.getElementsByTagName("template").item(0).getTextContent(),
 						b.getElementsByTagName("output").item(0).getTextContent(),
 						b.getElementsByTagName("for").item(0).getTextContent()));

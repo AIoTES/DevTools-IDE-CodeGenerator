@@ -1,0 +1,184 @@
+--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+
+
+
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	--create table
+create table http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono> varchar (254)  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_> varchar (254)  ))
+--inserts
+insert into http://www.semanticweb.org/edu/ontologies/2018/8/universidad#Alumno (  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#nombre>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#apellido>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#telefono>  <http://www.semanticweb.org/edu/ontologies/2018/8/universidad#id_>   ) values ()
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 				 		System.out.println(ni.getIRI().getFragment());		
+			 		for (OWLDataPropertyAssertionAxiom ax: t.getDataPropertyAssertionAxioms(ni)) {
+			 		    System.out.println("prop "+ax.getProperty());
+
+			 	

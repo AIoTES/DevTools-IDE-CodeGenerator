@@ -1,35 +1,15 @@
 {
-	@context:{
-		##"name": ${ontology.getOntologyID().getOntologyIRI().get().getNamespace()}##
-		#*
-		#foreach( $class in $ontology.getClassesInSignature())
-		   "${class.getIRI().getFragment()}":"${class.getIRI()}",
-		#foreach($instance in $reasoner.getReasoner().getInstances($class, true).getFlattened())
-			"${instance.getIRI().getFragment()}":"${instance.getIRI()}",
-			
-				#foreach($example in  $ontology.getAxioms($axiomtype.DATA_PROPERTY_ASSERTION) )
-					$example.getSignature()
-				   "${example.getProperty().asOWLDataProperty().getIRI().getFragment()}":{
-			   		"@id":"${example.getProperty().asOWLDataProperty().getIRI()}",
-			   		"@type":"@id"
-				   },
-				#end
-			
-		#end
-	
-			
-		#end
-		
-		*#
-		
-		#foreach($cls in $ontology.getClassesInSignature())
-			"${cls.getIRI().getFragment()}":"${cls.getIRI()}",
-		#end
-		#foreach($ff in $ontology.getAxioms($axiomtype.DATA_PROPERTY_ASSERTION))
-			#foreach($rr in $$ff.getSignature())
-			$rr
+@context:{				
+#foreach($axiom in $ontology.getAxioms($axiomtype.DATA_PROPERTY_RANGE))
+	#foreach($entity in $axiom.getSignature())
+		#foreach( $element in $entity.getSignature())
+			#foreach($item in $element.getSignature())
+"${item.getIRI()}":"${item.getIRI().getFragment()}",
 			#end
 		#end
+	#end
+#end	
+			
 	}
 }
 

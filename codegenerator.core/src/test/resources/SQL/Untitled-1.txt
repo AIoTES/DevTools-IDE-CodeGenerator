@@ -1,0 +1,22 @@
+ 
+    false
+
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#materia_fisica4>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#materia_mat1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#materia_mat1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#materia_fisica4>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_1>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#alumno_2>
+<http://www.semanticweb.org/edu/ontologies/2018/8/universidad#profesor1>
+
+
+    true
