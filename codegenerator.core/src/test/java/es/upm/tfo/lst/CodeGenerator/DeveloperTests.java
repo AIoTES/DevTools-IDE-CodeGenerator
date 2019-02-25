@@ -21,7 +21,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.sound.midi.Soundbank;
+
 import org.apache.log4j.PropertyConfigurator;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -36,6 +39,7 @@ import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -57,7 +61,7 @@ public class DeveloperTests {
 	private TemplateDataModel model=null;
 	private GenerateProject genPro=null;
 	private OntologyLoader ontologyLoader=null;
-	OWLReasoner reasoner=null;
+	private OWLReasoner reasoner=null;
 	//----constants
 	private final String templateBasePath="src/test/resources/template-complex/";
 	private final String webTemplatePath="http://localhost/template/complexXml.xml";
@@ -73,80 +77,70 @@ public class DeveloperTests {
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
 	}
-	@Test
-	public void classAccessExample() {
-		OWLClass cls;
-	}
 
-	@Test
-	public void ontologyAccessExample() {
-		OWLOntology ontology;
-		OWLClass c;
-		OWLNamedIndividual v;
-		//c.getIRI().getNamespace()
-		
-	}
 //OWLDataProperty
 	@Test
-	public void sqltest() {
+	public void testSomething() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
-		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universaal.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
 		 this.reasoner = reasonerFactory.createReasoner(t);
-//		 for (OWLClass cls : t.getClassesInSignature()) {
-//			 for (Node<OWLNamedIndividual> individual: 	this.reasoner.getInstances(cls, true)) {
-//				System.out.println(individual.getRepresentativeElement().getSignature());
-//				 //individual.getRepresentativeElement().getIndividualsInSignature();
-//			}
-//		
-//		}
-		// System.out.println(t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN));
-		 //System.out.println("lastindex "+t.getOntologyID().getOntologyIRI().get().getNamespace());
-//		 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE) ) {
-//			 System.out.println(t.getAnnotationPropertiesInSignature());
-			 //System.out.println(axiom.getDatatypesInSignature());
-			 //System.out.println(axiom.getProperty().asOWLDataProperty().getIRI().getFragment());
-//			 for (OWLEntity ent : axiom.getSignature()) {
-//				System.out.println(ent);
-//				
-//			}
-			 //System.out.println();
-			// System.out.println(axiom);
-			 
-//		}
+
 		 for (OWLClass cls : t.getClassesInSignature()) {
-			System.out.println(cls.getIRI());
+			 System.out.println("------>"+cls.getIRI());
+			 	for (OWLDataPropertyDomainAxiom op : t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {	
+			 		if(op.getDomain().equals(cls)) {
+			 			for (OWLDataProperty element : op.getDataPropertiesInSignature()) {
+			 				System.out.println("type "+this.reasoner.get);
+							System.out.println(element.getSignature());
+						}
+			 		}
+			 	}
+			 }
 		}
-		 System.out.println("\n");
-		 for (OWLDataPropertyAssertionAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION) ) {
-//			 System.out.println(axiom.getIndividualsInSignature());
-			// System.out.println(axiom.getSignature());
-			 	
-			 for (OWLEntity y : axiom.getSignature()) {
-				 System.out.println(y);
-				//IRI example = IRI.create(y.toString());
-//				System.out.println(example);
-//				System.out.println(y.getIndividualsInSignature());
-//				System.out.println(y.getDatatypesInSignature().size());
-//				System.out.println(y.getDataPropertiesInSignature().size());
-			}
-			 System.out.println("\n");
-		//	System.out.println(axiom.asOWLSubClassOfAxiom());//to print subclasses of
-		//	System.out.println(axiom.getSignature());//return the individual name, the propertie and the propertie type
-			//System.out.println(axiom.asOWLSubClassOfAxiom().getDatatypesInSignature());
-//			 System.out.println("---");
-			// System.out.println(axiom.getDataPropertiesInSignature());
-//			for (OWLDatatype n : axiom.asOWLSubClassOfAxiom().getDatatypesInSignature()) {
-//			System.out.println(axiom.getDataPropertiesInSignature().iterator().next().getIRI());
-//			System.out.println(axiom.getDataPropertiesInSignature().iterator().next().getIRI().getFragment());
-
-			//System.out.println(n.getIRI().getFragment());
-//				System.out.println(n.getSignature());
+		 
+		 
+		 
+		 
+		 
+//		 for (OWLClass cls : t.getClassesInSignature()) {
+//			System.out.println(cls.getIRI());
+//			
+//		 }
+		// System.out.println("\n");
+		 
+//		 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE) ) {
+//			 for (OWLEntity y : axiom.getSignature()) {
+//				//System.out.println(y.getSignature());
+//				 for (OWLEntity element : y.getSignature()) {
+//					 //System.out.println(element.getSignature());
+//					 for (OWLEntity item : element.getSignature()) {
+//						System.out.println(item.getIRI());
+//					}
+//				}
+//				 
 //			}
+//			 System.out.println("-----------");
+//
+//	}
+		 //System.out.println(t.getSignature());
+//		 for (OWLEntity item : t.getSignature()) {
+//			System.out.println(item.); 
+//			
+//		}
+//		 for (OWLDataPropertyDomainAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN) ) {
+//			 for (OWLEntity y : axiom.getSignature()) {
+//				//System.out.println(y.getSignature());
+//				 for (OWLEntity element : y.getSignature()) {
+//					 //System.out.println(element.getSignature());
+//					 for (OWLEntity item : element.getSignature()) {
+//						//System.out.println(item.getIRI());
+//					}
+//				}
+//				 
+//			}
+//			 System.out.println("-----------");
+
+//	}
 		}
-		 //System.out.println(t.getAxioms());
 
-
-	
-}
-}

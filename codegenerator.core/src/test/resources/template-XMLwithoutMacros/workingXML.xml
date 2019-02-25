@@ -47,45 +47,57 @@
 			<macro>
 				<template>classes.vm</template>
 				<for>class</for>
-				
-				<output>clasesOutput</output>
+				<output>classes/${class.getIRI().getShortForm()}</output>
+				<imports>
+					<package>package.example.one</package>
+					<package>package.example.two</package>
+				</imports>
 			</macro>
 			<macro>
-				<template>classes.vm</template>
+				<template>classes2.vm</template>
 				<for>class</for>
-				<output>clasesSecondOutput</output>
-				
-				 
+				<output>classes2/${class.getIRI().getFragment()}</output>
+				<imports>
+					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName>
+				</imports>
 			</macro>
-			
-			<macro>
-				<template>propertyValues.vm</template>
-				<for>objectProperties</for>
-				<output>propertiesValuesOut</output>
-				
-			</macro>
+
 			 <macro>
 				<template>enumerations.vm</template>
 				<for>enumeration</for>
 				<output>enumerationsDirectory</output>
+				<imports>
+					<FullyQualifiedName>d</FullyQualifiedName>
+				</imports>
 			</macro>
 			<macro>
 				<template>instances.vm</template>
 				<for>instance</for>
-				<output>instancesDirectory</output>
+				<output>instancesDirectory/${instance.getIRI().getFragment()}</output>
+				<imports>
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName>
+				</imports>
 			</macro>
+
 				<macro>
 				<template>ontology.vm</template>
 				<for>ontology</for>
 				<output>ontologyOutput</output>
-			 
+				<imports>
+					<FullyQualifiedName></FullyQualifiedName>
+				</imports>
+
 			</macro>
-	
+
 			<macro>
 				<template>project.vm</template>
 				<for>project</for>
 				<output>projectOutput</output>
+				<imports>
+					<package>d</package>
+				</imports>
 			</macro>
+
 
 		</macros>
 </Template>

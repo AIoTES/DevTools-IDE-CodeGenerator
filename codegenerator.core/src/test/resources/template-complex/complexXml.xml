@@ -59,7 +59,14 @@
 				<for>class</for>
 				<output>classes2/${class.getIRI().getFragment()}</output>
 				<imports>
-					<package>com.test.upm.codegenerator</package>
+					<FullyQualifiedName>com.test.upm.1</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.2</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.3</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.4</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.5</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.6</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.7</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName>
 				</imports>
 			</macro>
 
@@ -68,7 +75,7 @@
 				<for>enumeration</for>
 				<output>enumerationsDirectory</output>
 				<imports>
-					<package>d</package>
+					<FullyQualifiedName>d</FullyQualifiedName>
 				</imports>
 			</macro>
 			<macro>
@@ -76,7 +83,7 @@
 				<for>instance</for>
 				<output>instancesDirectory/${instance.getIRI().getFragment()}</output>
 				<imports>
-					<package>d</package>
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName>
 				</imports>
 			</macro>
 
@@ -85,7 +92,7 @@
 				<for>ontology</for>
 				<output>ontologyOutput</output>
 				<imports>
-					<package>d</package>
+					<FullyQualifiedName></FullyQualifiedName>
 				</imports>
 
 			</macro>

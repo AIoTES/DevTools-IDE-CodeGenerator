@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template
+	xmlns="http://www.example.org/prueba2" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"	
+  	xs:schemaLocation="http://CodeGeneratorTool/4.0.0 schema.xsd">
+  	
+  
+</template>
