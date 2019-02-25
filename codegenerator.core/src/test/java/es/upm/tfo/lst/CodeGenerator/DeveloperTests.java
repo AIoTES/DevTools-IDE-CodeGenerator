@@ -15,29 +15,17 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
-import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
-import org.semanticweb.owlapi.model.OWLDatatype;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
@@ -45,7 +33,6 @@ import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
-import uk.ac.manchester.cs.jfact.kernel.Axiom;
 
 /**
  * @author amedrano
@@ -57,7 +44,7 @@ public class DeveloperTests {
 	private TemplateDataModel model=null;
 	private GenerateProject genPro=null;
 	private OntologyLoader ontologyLoader=null;
-	OWLReasoner reasoner=null;
+	private OWLReasoner reasoner=null;
 	//----constants
 	private final String templateBasePath="src/test/resources/template-complex/";
 	private final String webTemplatePath="http://localhost/template/complexXml.xml";
@@ -86,67 +73,23 @@ public class DeveloperTests {
 		//c.getIRI().getNamespace()
 		
 	}
-//OWLDataProperty
+
 	@Test
 	public void sqltest() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
-		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl");
+		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"games.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
+		 Set<OWLDataProperty> dataPropCollection= t.getDataPropertiesInSignature();
 		 this.reasoner = reasonerFactory.createReasoner(t);
-//		 for (OWLClass cls : t.getClassesInSignature()) {
-//			 for (Node<OWLNamedIndividual> individual: 	this.reasoner.getInstances(cls, true)) {
-//				System.out.println(individual.getRepresentativeElement().getSignature());
-//				 //individual.getRepresentativeElement().getIndividualsInSignature();
-//			}
-//		
-//		}
-		// System.out.println(t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN));
-		 //System.out.println("lastindex "+t.getOntologyID().getOntologyIRI().get().getNamespace());
-//		 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE) ) {
-//			 System.out.println(t.getAnnotationPropertiesInSignature());
-			 //System.out.println(axiom.getDatatypesInSignature());
-			 //System.out.println(axiom.getProperty().asOWLDataProperty().getIRI().getFragment());
-//			 for (OWLEntity ent : axiom.getSignature()) {
-//				System.out.println(ent);
-//				
-//			}
-			 //System.out.println();
-			// System.out.println(axiom);
-			 
-//		}
+
 		 for (OWLClass cls : t.getClassesInSignature()) {
-			System.out.println(cls.getIRI());
-		}
-		 System.out.println("\n");
-		 for (OWLDataPropertyAssertionAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION) ) {
-//			 System.out.println(axiom.getIndividualsInSignature());
-			// System.out.println(axiom.getSignature());
-			 	
-			 for (OWLEntity y : axiom.getSignature()) {
-				 System.out.println(y);
-				//IRI example = IRI.create(y.toString());
-//				System.out.println(example);
-//				System.out.println(y.getIndividualsInSignature());
-//				System.out.println(y.getDatatypesInSignature().size());
-//				System.out.println(y.getDataPropertiesInSignature().size());
-			}
-			 System.out.println("\n");
-		//	System.out.println(axiom.asOWLSubClassOfAxiom());//to print subclasses of
-		//	System.out.println(axiom.getSignature());//return the individual name, the propertie and the propertie type
-			//System.out.println(axiom.asOWLSubClassOfAxiom().getDatatypesInSignature());
-//			 System.out.println("---");
-			// System.out.println(axiom.getDataPropertiesInSignature());
-//			for (OWLDatatype n : axiom.asOWLSubClassOfAxiom().getDatatypesInSignature()) {
-//			System.out.println(axiom.getDataPropertiesInSignature().iterator().next().getIRI());
-//			System.out.println(axiom.getDataPropertiesInSignature().iterator().next().getIRI().getFragment());
-
-			//System.out.println(n.getIRI().getFragment());
-//				System.out.println(n.getSignature());
-//			}
-		}
-		 //System.out.println(t.getAxioms());
-
-
-	
-}
+			// System.out.println("class "+cls);
+			 for (OWLDataPropertyDomainAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+				 if( axiom.getClassesInSignature().contains(cls) ) {
+					 System.out.println(axiom.getProperty());
+				 }
+				
+			 }
+		 }
+	}
 }
