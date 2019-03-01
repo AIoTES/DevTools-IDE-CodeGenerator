@@ -5,6 +5,7 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
+  key: "$CI_COMMIT_REF_SLUG"
   untracked: true
   paths:
     - .m2/repository/
@@ -38,7 +39,7 @@ deploy:
   script:
     - cd codegenerator.rest.karaf/target/
     - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD $DOCKER_SERVER 
-    - docker build -t code.generator -t $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG -t code.generator $DOCKER_SERVER/code.generator:latest .
+    - docker build -t code.generator -t $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG -t $DOCKER_SERVER/code.generator:latest .
     - docker push $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG
     - docker push $DOCKER_SERVER/code.generator:latest
   only:
