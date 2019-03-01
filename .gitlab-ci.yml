@@ -38,8 +38,9 @@ deploy:
   script:
     - cd codegenerator.rest.karaf/target/
     - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD $DOCKER_SERVER 
-    - docker build -t code.generator -t $DOCKER_SERVER/code.generator:$DOCKER_VERSION .
-    - docker push $DOCKER_SERVER/code.generator:$DOCKER_VERSION
+    - docker build -t code.generator -t $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG -t code.generator $DOCKER_SERVER/code.generator:latest .
+    - docker push $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG
+    - docker push $DOCKER_SERVER/code.generator:latest
   only:
     - master
 
