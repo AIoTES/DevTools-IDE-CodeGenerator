@@ -15,19 +15,23 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.util.OWLAxiomVisitorAdapter;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
@@ -53,6 +57,7 @@ public class DeveloperTests {
 	private final String sqlCoordinator="src/test/resources/SQL/coordinator.xml";
 	private final String sqlOutput="src/test/resources/SQL/output/";
 	private final String baseOutput="target/completeTest/";
+	private String[] array;
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
@@ -75,21 +80,29 @@ public class DeveloperTests {
 	}
 
 	@Test
-	public void sqltest() {
+	public void DeveloperTests() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"games.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
 		 Set<OWLDataProperty> dataPropCollection= t.getDataPropertiesInSignature();
 		 this.reasoner = reasonerFactory.createReasoner(t);
-
+		 
 		 for (OWLClass cls : t.getClassesInSignature()) {
-			// System.out.println("class "+cls);
-			 for (OWLDataPropertyDomainAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-				 if( axiom.getClassesInSignature().contains(cls) ) {
-					 System.out.println(axiom.getProperty());
-				 }
+		 System.out.println(cls.getIRI().getFragment());
+			 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
+				 
+				 	array = axiom.toString().replace("DataPropertyRange", "").split(" ");	
+//				 	for (String item : array) {
+//						System.out.println(item.replace("(", "").replace(")", ""));
+//				 		
+//					}
+//
+//				 if( axiom.getClassesInSignature().contains(cls) ) {
+//					 
+//				 }
 				
 			 }
 		 }
 	}
 }
+
