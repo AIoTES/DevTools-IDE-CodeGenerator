@@ -81,7 +81,9 @@ public class CompleteTest  {
 				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 			 	//this.model=this.parser.generateXMLCoordinator(null);
 				//set XML model to generate project
+				
 				this.genPro.setMainModel(this.model);
+				this.model.getClassMacros().get(0).getImportList();
 				//set the ontology to project and recursive state
 				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
 				//set output directory

@@ -223,11 +223,17 @@ public class XmlParser {
 			for (int y = 0; y < this.nodeMacro.getLength(); y++) {
 
 				Element b = (Element) this.nodeMacro.item(y);
-				log.debug(b.getElementsByTagName("imports").item(0).getChildNodes().item(0).getTextContent());
-				//adding each macro to array to be iteared later
-				this.macroList.add(new MacroModel(b.getElementsByTagName("template").item(0).getTextContent(),
-						b.getElementsByTagName("output").item(0).getTextContent(),
-						b.getElementsByTagName("for").item(0).getTextContent()));
+				log.debug(b.getElementsByTagName("imports").item(0).getTextContent());
+				//adding each macro to array to be iterated later
+				this.macroList.add(
+						new MacroModel(
+							b.getElementsByTagName("template").item(0).getTextContent(),
+							b.getElementsByTagName("output").item(0).getTextContent(),
+							b.getElementsByTagName("for").item(0).getTextContent()
+//							b.getElementsByTagName("imports").item(0)
+						));
+				
+				
 				// TODO:add imports
 			}
 

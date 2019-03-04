@@ -16,7 +16,10 @@
 package es.upm.tfo.lst.CodeGenerator.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Node;
 
 /**
  *
@@ -29,6 +32,7 @@ import java.util.Map;
 
 public class MacroModel {
 	private String template, output, templateFor;
+	private Node node = null;
 	private Map<String, String> imports;
 
 	/**
@@ -44,7 +48,24 @@ public class MacroModel {
 		this.templateFor = templateFor;
 		this.imports = imports;
 	}
+	/**
+	 * 
+	 * @param template    template source
+	 * @param output      output filename
+	 * @param templateFor type of iteration
+	 * @param imports {@link Map} of imports 
+	 * @param node
+	 */
+	public MacroModel(String template, String output, String templateFor,Map<String, String> imports,Node node) {
+		this(template,output,template, imports);
+		this.node=node;
+	}
 	
+	
+	public void getImportList() {
+		if(this.node != null)
+		  System.out.println(this.node.getTextContent());
+	}
 	/**
 	 *
 	 * @param template    template source

@@ -90,7 +90,7 @@ public class TemplateDataModel {
 	 *         not defined
 	 */
 	public List<MacroModel> getClassMacros() {
-		return this.getMacro("class");
+		return this.getMacroList("class");
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getOntologyMacros() {
-		return this.getMacro("ontology");
+		return this.getMacroList("ontology");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getInstanceMacros() {
-		return this.getMacro("instance");
+		return this.getMacroList("instance");
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getEnumerationMacros() {
-		return this.getMacro("enumeration");
+		return this.getMacroList("enumeration");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class TemplateDataModel {
 	 *         Null if not defined
 	 */
 	public List<MacroModel> getProjectMacros() {
-		return this.getMacro("project");
+		return this.getMacroList("project");
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class TemplateDataModel {
 	 *         iteration macros, Null if not defined
 	 */
 	public List<MacroModel> getObjectProperties() {
-		return this.getMacro("objectProperties");
+		return this.getMacroList("objectProperties");
 	}
 
 	/**
@@ -248,11 +248,13 @@ public class TemplateDataModel {
 	 * @param type iteration type of macros.
 	 * @return Null if given macro not exist
 	 */
-	private List<MacroModel> getMacro(String type) {
+	private List<MacroModel> getMacroList(String type) {
 
 		return this.macroList.stream().filter(t -> t.getTemplateFor().equals(type)).collect(Collectors.toList());
 
 	}
+	
+	
 
 	@Override
 	public String toString() {
