@@ -50,8 +50,8 @@ public class CompleteTest  {
 
 
 	@BeforeClass
-	public  void startMockServer() throws IOException {
-		this.mockServer = ClientAndServer.startClientAndServer(MOCK_PORT);
+	public static void startMockServer() throws IOException {
+		mockServer = ClientAndServer.startClientAndServer(MOCK_PORT);
 		client = new MockServerClient("localhost",MOCK_PORT);
 		client.when(HttpRequest.request()
 				.withMethod("GET")
@@ -178,7 +178,7 @@ public class CompleteTest  {
 
 
 	@AfterClass
-	public void stopMockServer() {
+	public static void stopMockServer() {
 		System.out.println("stopping mock server...");
 	    mockServer.stop();
 	}
