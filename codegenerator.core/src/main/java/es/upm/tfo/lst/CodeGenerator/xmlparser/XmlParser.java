@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.runtime.log.LogDisplayWrapper;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -229,10 +230,14 @@ public class XmlParser {
 				Element b = (Element) this.nodeMacro.item(y);
 			//	log.debug(b.getElementsByTagName("imports").item(0).getTextContent());
 				Element h = (Element)b.getElementsByTagName("imports").item(0);
-//				log.debug(h.getElementsByTagName("FullyQualifiedName"));
+				log.debug(h.getElementsByTagName("FullyQualifiedName").getLength());
+				//log.debug(h.getElementsByTagName("FullyQualifiedName"));
 				for (int i = 0; i <h.getElementsByTagName("FullyQualifiedName").getLength(); i++) {
 					String name = h.getElementsByTagName("FullyQualifiedName").item(i).getTextContent();
-					//log.debug(name.substring(name.lastIndexOf(".")).replace(".", ""));
+					log.debug(name);
+					if(! name.equals(""));
+						//log.debug(name.substring(name.lastIndexOf(".")).replace(".", ""));
+					
 				}
 				
 //				HashMap <String, String> p ;
