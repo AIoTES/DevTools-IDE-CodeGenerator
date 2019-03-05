@@ -60,8 +60,7 @@ public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private URL xmlSource = null;
-	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription, templateAuthor,
-			nodeImports;
+	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription, templateAuthor;
 	private Map<String, Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
@@ -77,7 +76,8 @@ public class XmlParser {
 	private List<String> arrayOfNames = new ArrayList<>();
 	private List<String> arrayOfImports = new ArrayList<>();
 	private boolean isLocal = true;
-
+	private Set<Map<String, String> > imports=null;
+	
 	public boolean isLocal() {
 		return isLocal;
 	}
@@ -166,7 +166,7 @@ public class XmlParser {
 	 *                  load
 	 */
 	private void readXML() throws Exception {
-
+		
 		Element t;
 
 		try {
@@ -212,59 +212,34 @@ public class XmlParser {
 											b.getElementsByTagName("default").item(0).getTextContent()));
 
 				}
-				//adding variables to model	
+				
 				this.javaXMLModel.setVars(this.variableList);
 
 			} catch (Exception e) {
 				log.warn("some optionals tags into XML coordinator file isn't set");
 			}
-			
-			//log.debug("going to process macro models");
-			
-			
-			//processing macro
+
 			this.nodeMacro = doc.getElementsByTagName("macro");
 			for (int y = 0; y < this.nodeMacro.getLength(); y++) {
-//				Set< HashMap <String,String> > imports = new HashSet< HashMap<String,String> >();
-						
+				HashMap <String, String> p ;
+				this.imports = new HashSet<>();		
 				Element b = (Element) this.nodeMacro.item(y);
-			//	log.debug(b.getElementsByTagName("imports").item(0).getTextContent());
 				Element h = (Element)b.getElementsByTagName("imports").item(0);
-				log.debug(h.getElementsByTagName("FullyQualifiedName").getLength());
-				//log.debug(h.getElementsByTagName("FullyQualifiedName"));
 				for (int i = 0; i <h.getElementsByTagName("FullyQualifiedName").getLength(); i++) {
 					String name = h.getElementsByTagName("FullyQualifiedName").item(i).getTextContent();
-					log.debug(name);
-					if(! name.equals(""));
-						//log.debug(name.substring(name.lastIndexOf(".")).replace(".", ""));
-					
+				
+					p = new HashMap<String, String>();
+					p.put(name.substring(name.lastIndexOf(".")).replace(".", ""), name);
+					this.imports.add(p);
 				}
 				
-//				HashMap <String, String> p ;
-//				for (int i = 0; i < b.getElementsByTagName("imports").item(0).getChildNodes().getLength(); i++) {
-//					p = new HashMap<String, String>();
-//					String aux = b.getElementsByTagName("imports").item(0).getChildNodes().item(i).getTextContent();
-//					p.put(aux.substring(aux.lastIndexOf(".")), aux);
-//					//imports.add(p);
-//					//System.out.println("aux "+aux);
-//					System.out.println(b.getElementsByTagName("imports").item(0).getChildNodes().item(i));
-//				}
-//				for (String hashMap : h.getTextContent().split("")) {
-//					System.out.println("hasmap "+hashMap);
-//					System.out.println("*********");
-//				}
-				
-				//adding each macro to array to be iterated later
 				this.macroList.add(
 						new MacroModel(
 							b.getElementsByTagName("template").item(0).getTextContent(),
 							b.getElementsByTagName("output").item(0).getTextContent(),
-							b.getElementsByTagName("for").item(0).getTextContent()
-//							b.getElementsByTagName("imports").item(0)
+							b.getElementsByTagName("for").item(0).getTextContent(),
+							this.imports
 						));
-				
-				
-				// TODO:add imports
 			}
 
 			this.javaXMLModel.setMacroList(this.macroList);

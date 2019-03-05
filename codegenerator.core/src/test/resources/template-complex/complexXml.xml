@@ -59,13 +59,8 @@
 				<for>class</for>
 				<output>classes2/${class.getIRI().getFragment()}</output>
 				<imports>
-					<FullyQualifiedName>com.test.upm.1</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.2</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.3</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.4</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.5</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.6</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.7</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.protege.plugin</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.rest.plugin.StaticExample</FullyQualifiedName>
 					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName>
 				</imports>
 			</macro>
@@ -75,7 +70,7 @@
 				<for>enumeration</for>
 				<output>enumerationsDirectory</output>
 				<imports>
-					<FullyQualifiedName>d</FullyQualifiedName>
+					<FullyQualifiedName>org.apache.velocity.imports</FullyQualifiedName>
 				</imports>
 			</macro>
 			<macro>
@@ -92,7 +87,7 @@
 				<for>ontology</for>
 				<output>ontologyOutput</output>
 				<imports>
-					<FullyQualifiedName></FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.codegenerator.test</FullyQualifiedName>
 				</imports>
 
 			</macro>
@@ -102,7 +97,7 @@
 				<for>project</for>
 				<output>projectOutput</output>
 				<imports>
-					<FullyQualifiedName>d</FullyQualifiedName>
+					<FullyQualifiedName>com.test.upm.codegenerator.test.projectTestStaticImport</FullyQualifiedName>
 				</imports>
 			</macro>
 

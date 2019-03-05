@@ -202,13 +202,20 @@ public class GenerateProject {
 		if (!projectModelArray.isEmpty()) {
 
 			for (MacroModel projectModel : projectModelArray) {
+				
 
 				this.text = this.processName(projectModel.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + text);
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdir();
 				this.context = new VelocityContext(this.baseContext);
+				
+				for (Map<String, String> key : projectModel.getImports()) {
+					for (String k : key.keySet()) {
+						this.context.put(k, key.get(k));
+					}
 
+				}
 				if (!this.text.equals("")) {
 					try {
 						// throw ResourceNotFoundException
@@ -334,10 +341,6 @@ public class GenerateProject {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
 				//add all imports static classes into current context 				
-//				for (String key : macroModel.getImports().keySet()) {
-//					this.context.put(key, macroModel.getImports().get(key));
-//				}
-				
 				for (Map<String, String> key : macroModel.getImports()) {
 					for (String k : key.keySet()) {
 						this.context.put(k, key.get(k));

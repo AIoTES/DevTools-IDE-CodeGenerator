@@ -7,3 +7,6 @@ ontology IRI $ontology.getOntologyID().getOntologyIRI()
 class simple name: $class.getIRI().getShortForm()
 classs complete name: $class
 project output from user interface->  $output
+import packages
+$one
+$two

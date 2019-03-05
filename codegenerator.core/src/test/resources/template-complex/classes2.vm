@@ -10,3 +10,7 @@ XML variables
 reasoner object name
     $reasoner.getReasoner()    
 project output from user interface->  $output
+package imports
+$plugin
+$StaticExample
+$codegenerator
