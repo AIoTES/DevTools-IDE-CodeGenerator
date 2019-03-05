@@ -85,7 +85,7 @@ public class CompleteTest  {
 				//set XML model to generate project
 				
 				this.genPro.setMainModel(this.model);
-				this.model.getClassMacros().get(0).getImportList();
+				
 				//set the ontology to project and recursive state
 				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
 				//set output directory
@@ -101,7 +101,7 @@ public class CompleteTest  {
 		} catch (Exception e) {
 			genPro.addError(e);
 		}
-
+		 genPro.getErrors().stream().forEach(f->f.printStackTrace());
 		assertTrue(genPro.getErrors().isEmpty());
 		}
 

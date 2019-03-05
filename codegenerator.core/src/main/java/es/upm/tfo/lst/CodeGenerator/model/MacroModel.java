@@ -15,9 +15,9 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator.model;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -33,39 +33,24 @@ import org.w3c.dom.Node;
 public class MacroModel {
 	private String template, output, templateFor;
 	private Node node = null;
-	private Map<String, String> imports;
+	private Set <Map<String, String> >imports;
 
 	/**
 	 * 
 	 * @param template    template source
 	 * @param output      output filename
 	 * @param templateFor type of iteration
-	 * @param imports {@link Map} of imports 
+	 * @param imports {@link Set} of {@link Map} 
 	 */
-	public MacroModel(String template, String output, String templateFor,Map<String, String> imports) {
+	public MacroModel(String template, String output, String templateFor,Set<Map<String, String>> imports) {
 		this.template = template;
 		this.output = output;
 		this.templateFor = templateFor;
 		this.imports = imports;
 	}
-	/**
-	 * 
-	 * @param template    template source
-	 * @param output      output filename
-	 * @param templateFor type of iteration
-	 * @param imports {@link Map} of imports 
-	 * @param node
-	 */
-	public MacroModel(String template, String output, String templateFor,Map<String, String> imports,Node node) {
-		this(template,output,template, imports);
-		this.node=node;
-	}
 	
 	
-	public void getImportList() {
-		if(this.node != null)
-		  System.out.println(this.node.getTextContent());
-	}
+	
 	/**
 	 *
 	 * @param template    template source
@@ -76,9 +61,35 @@ public class MacroModel {
 		this.template = template;
 		this.output = output;
 		this.templateFor = templateFor;
-		this.imports = new HashMap<>();
+		this.imports = new HashSet<>();
 	}
+	/**
+	 * 
+	 * @param template    template source
+	 * @param output      output filename
+	 * @param templateFor type of iteration
+	 * @param imports {@link Map} of imports 
+	 * @param node
+	 */
+	public MacroModel(String template, String output, String templateFor,Set < Map<String, String> > imports,Node node) {
+		this(template,output,template, imports);
+		this.node=node;
+	}
+
+
 	
+
+
+	public Set<Map<String, String>> getImports() {
+		return imports;
+	}
+
+
+
+	public void setImports(Set<Map<String, String>> imports) {
+		this.imports = imports;
+	}
+
 
 
 	/**
@@ -105,40 +116,6 @@ public class MacroModel {
 		return templateFor;
 	}
 
-	/**
-	 * This method adds to the model all the given imports given in xml.
-	 *
-	 * @param fullQualifiedClassName The complete package name including the class to be
-	 *        added. The class will be accessible as class name in the velocity
-	 *        macro file.
-	 */
-	public void setImport(String fullQualifiedClassName) {
-		// TODO: detect special characters
-		this.imports.put(fullQualifiedClassName.substring(fullQualifiedClassName.lastIndexOf(".")), fullQualifiedClassName);
-	}
-
-	/**
-	 * This method adds in the model all the given imports in the xml. T
-	 *
-	 * @param fullQualifiedClassName : The complete package name including the class to be added
-	 * @param alias : Alias to refer the class into velocity templates. If it is
-	 *        setted null, empty or have invalid character, the program will use the
-	 *        the last part of fullQualifiedClassName variable
-	 */
-	public void setImport(String fullQualifiedClassName, String alias) {
-		// TODO: detect special characters
-		if (alias.equals("") | alias == null) {
-			this.setImport(fullQualifiedClassName);
-		} else
-			this.imports.put(alias, fullQualifiedClassName);
-	}
-
-	/**
-	 * @return {@link Map}< {@link String}, {@link String}> of impors
-	 */
-	public Map<String, String> getImports() {
-		return imports;
-	}
 
 	@Override
 	public String toString() {

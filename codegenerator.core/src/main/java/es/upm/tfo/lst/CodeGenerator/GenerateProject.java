@@ -273,8 +273,14 @@ public class GenerateProject {
 				// merge base context to actual context
 				this.context = new VelocityContext(this.baseContext);
 				//add all imports static classes into current context 				
-				for (String key : ontologyModel.getImports().keySet()) {
-					this.context.put(key, ontologyModel.getImports().get(key));
+//				for (String key : ontologyModel.getImports().keySet()) {
+//					this.context.put(key, ontologyModel.getImports().get(key));
+//				}
+				for (Map<String, String> key : ontologyModel.getImports()) {
+					for (String k : key.keySet()) {
+						this.context.put(k, key.get(k));
+					}
+
 				}
 				
 				// read xml output tag and parse to velocity
@@ -328,8 +334,15 @@ public class GenerateProject {
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
 				//add all imports static classes into current context 				
-				for (String key : macroModel.getImports().keySet()) {
-					this.context.put(key, macroModel.getImports().get(key));
+//				for (String key : macroModel.getImports().keySet()) {
+//					this.context.put(key, macroModel.getImports().get(key));
+//				}
+				
+				for (Map<String, String> key : macroModel.getImports()) {
+					for (String k : key.keySet()) {
+						this.context.put(k, key.get(k));
+					}
+
 				}
 				//getting the template name and adding it to template object
 				this.text = this.processName(macroModel.getOutput(), this.context);
@@ -390,9 +403,16 @@ public class GenerateProject {
 					//initialize and merge current context with base context
 					this.context = new VelocityContext(this.baseContext);
 					//add all imports static classes into current context 				
-					for (String key : instancesMacro.getImports().keySet()) {
-						this.context.put(key, instancesMacro.getImports().get(key));
+//					for (String key : instancesMacro.getImports().keySet()) {
+//						this.context.put(key, instancesMacro.getImports().get(key));
+//					}
+					for (Map<String, String> key : instancesMacro.getImports()) {
+						for (String k : key.keySet()) {
+							this.context.put(k, key.get(k));
+						}
+
 					}
+
 					//initialize tenplate object with template given in XML file
 					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
 					
@@ -469,8 +489,14 @@ public class GenerateProject {
 				//initialize and merge current context with base context
 				this.context = new VelocityContext(this.baseContext);
 				//add all imports static classes into current context 				
-				for (String key : macroObjectProperties.getImports().keySet()) {
-					this.context.put(key, macroObjectProperties.getImports().get(key));
+//				for (String key : macroObjectProperties.getImports().keySet()) {
+//					this.context.put(key, macroObjectProperties.getImports().get(key));
+//				}
+				for (Map<String, String> key : macroObjectProperties.getImports()) {
+					for (String k : key.keySet()) {
+						this.context.put(k, key.get(k));
+					}
+
 				}
 				this.text = this.processName(macroObjectProperties.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + this.text);

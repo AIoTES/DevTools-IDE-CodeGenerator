@@ -24,9 +24,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.sound.midi.Soundbank;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -221,9 +224,31 @@ public class XmlParser {
 			//processing macro
 			this.nodeMacro = doc.getElementsByTagName("macro");
 			for (int y = 0; y < this.nodeMacro.getLength(); y++) {
-
+//				Set< HashMap <String,String> > imports = new HashSet< HashMap<String,String> >();
+						
 				Element b = (Element) this.nodeMacro.item(y);
-				log.debug(b.getElementsByTagName("imports").item(0).getTextContent());
+			//	log.debug(b.getElementsByTagName("imports").item(0).getTextContent());
+				Element h = (Element)b.getElementsByTagName("imports").item(0);
+//				log.debug(h.getElementsByTagName("FullyQualifiedName"));
+				for (int i = 0; i <h.getElementsByTagName("FullyQualifiedName").getLength(); i++) {
+					String name = h.getElementsByTagName("FullyQualifiedName").item(i).getTextContent();
+					//log.debug(name.substring(name.lastIndexOf(".")).replace(".", ""));
+				}
+				
+//				HashMap <String, String> p ;
+//				for (int i = 0; i < b.getElementsByTagName("imports").item(0).getChildNodes().getLength(); i++) {
+//					p = new HashMap<String, String>();
+//					String aux = b.getElementsByTagName("imports").item(0).getChildNodes().item(i).getTextContent();
+//					p.put(aux.substring(aux.lastIndexOf(".")), aux);
+//					//imports.add(p);
+//					//System.out.println("aux "+aux);
+//					System.out.println(b.getElementsByTagName("imports").item(0).getChildNodes().item(i));
+//				}
+//				for (String hashMap : h.getTextContent().split("")) {
+//					System.out.println("hasmap "+hashMap);
+//					System.out.println("*********");
+//				}
+				
 				//adding each macro to array to be iterated later
 				this.macroList.add(
 						new MacroModel(
