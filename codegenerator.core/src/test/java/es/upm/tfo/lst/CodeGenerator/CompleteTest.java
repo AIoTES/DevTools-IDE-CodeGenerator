@@ -13,7 +13,9 @@ import javax.security.auth.callback.Callback;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
@@ -31,7 +33,7 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 
 public class CompleteTest  {
 
-	private  XmlParser parser=null;
+	private XmlParser parser=null;
 	private TemplateDataModel model=null;
 	private GenerateProject genPro=null;
 	private OntologyLoader ontologyLoader=null;
@@ -43,17 +45,12 @@ public class CompleteTest  {
 	private final String sql="src/test/resources/template/SQL/sql.vm";
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
-	private ClientAndServer mockServer;
-	private MockServerClient client;
+	private static ClientAndServer mockServer;
+	private static MockServerClient client;
 
 
-	@Before
+	@BeforeClass
 	public  void startMockServer() throws IOException {
-		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
-		this.parser = new XmlParser();
-		this.ontologyLoader = new OntologyLoader();
-		this.genPro = new GenerateProject();
-
 		this.mockServer = ClientAndServer.startClientAndServer(MOCK_PORT);
 		client = new MockServerClient("localhost",MOCK_PORT);
 		client.when(HttpRequest.request()
@@ -63,9 +60,14 @@ public class CompleteTest  {
 				new HttpClassCallback()
                    .withCallbackClass(TestExpectationResponseCallback.class.getName())
            );
-
-
-
+	}
+	
+	@Before
+	public void init() {
+		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
+		this.parser = new XmlParser();
+		this.ontologyLoader = new OntologyLoader();
+		this.genPro = new GenerateProject();
 	}
 
 
@@ -175,7 +177,7 @@ public class CompleteTest  {
 
 
 
-	@After
+	@AfterClass
 	public void stopMockServer() {
 		System.out.println("stopping mock server...");
 	    mockServer.stop();

@@ -1,14 +1,14 @@
 {
 @context:{				
-#foreach($axiom in $ontology.getAxioms($axiomtype.DATA_PROPERTY_RANGE))
-	#foreach($entity in $axiom.getSignature())
-		#foreach( $element in $entity.getSignature())
-			#foreach($item in $element.getSignature())
-"${item.getIRI()}":"${item.getIRI().getFragment()}",
+	
+	#foreach($class in $ontology.getClassesInSignature())
+		"${class.getIRI.getFragment()}":"${class.getIRI()}",
+		#foreach($domain in $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN))
+			#if($domain.getClassesInSignature().contains($class))
+				
 			#end
 		#end
 	#end
-#end	
 			
 	}
 }
