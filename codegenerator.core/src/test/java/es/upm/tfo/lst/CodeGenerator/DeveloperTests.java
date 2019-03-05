@@ -80,7 +80,7 @@ public class DeveloperTests {
 	}
 
 	@Test
-	public void DeveloperTests() {
+	public void JsonGeneratorTests() {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"games.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
@@ -104,5 +104,20 @@ public class DeveloperTests {
 			 }
 		 }
 	}
+	
+	@Test
+	public void DefaultVelocityTemplateTest() {
+		
+	}
+	
+	@Test
+	public  void SQLTemplateTest() {
+		
+	}
+	
+	
+	
+	
+	
 }
 
