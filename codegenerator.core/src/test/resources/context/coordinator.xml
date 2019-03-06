@@ -5,8 +5,7 @@
 			<for>ontology</for>
 			<output>context.json</output>
 				<imports>
-					<package>package.example.one</package>
-					<package>package.example.two</package>
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName>					
 				</imports>
 		</macro>
 	</macros>	

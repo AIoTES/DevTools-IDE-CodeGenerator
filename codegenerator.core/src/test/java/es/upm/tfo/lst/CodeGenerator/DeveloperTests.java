@@ -91,8 +91,9 @@ public class DeveloperTests {
 		 for (OWLClass cls : t.getClassesInSignature()) {
 		 System.out.println(cls.getIRI().getFragment());
 			 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
-				 	array = axiom.toString().replace("DataPropertyRange", "").split(" ");
-				 	data.put(array[0].replace("(", "").replace(")", ""), array[1].replace("(", "").replace(")", ""));
+				 	array = axiom.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ");
+				 	//data.put(array[0].replace("(", "").replace(")", ""), array[1].replace("(", "").replace(")", ""));
+				 	data.put(array[0], array[1].replace("xsd:", ""));
 				 	lista.add(data);
 			 	System.out.println("true");
 

@@ -43,6 +43,8 @@ public class CompleteTest  {
 	private final String webTemplatePath="http://localhost:"+ Integer.toString(MOCK_PORT)+"/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	private final String sql="src/test/resources/template/SQL/sql.vm";
+	
+	private final String jsonCoordinator="src/test/resources/context/coordinator.xml";
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
 	private static ClientAndServer mockServer;
@@ -80,7 +82,8 @@ public class CompleteTest  {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 try {
 			     //get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+//				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+			 this.model=this.parser.generateXMLCoordinator(this.jsonCoordinator);
 			 	//this.model=this.parser.generateXMLCoordinator(null);
 				//set XML model to generate project
 				
