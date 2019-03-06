@@ -164,7 +164,7 @@ public class GenerateProject {
 				this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
-				this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
+				//this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
 
 				this.addVariablesToBaseContext();
 
@@ -209,13 +209,13 @@ public class GenerateProject {
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdir();
 				this.context = new VelocityContext(this.baseContext);
-				
-				for (Map<String, String> key : projectModel.getImports()) {
-					for (String k : key.keySet()) {
-						this.context.put(k, key.get(k));
-					}
-
-				}
+				this.addImportsToContext(projectModel);
+//				for (Map<String, String> key : projectModel.getImports()) {
+//					for (String k : key.keySet()) {
+//						this.context.put(k, new FieldMethodizer(key.get(k)) );
+//					}
+//
+//				}
 				if (!this.text.equals("")) {
 					try {
 						// throw ResourceNotFoundException
@@ -283,12 +283,14 @@ public class GenerateProject {
 //				for (String key : ontologyModel.getImports().keySet()) {
 //					this.context.put(key, ontologyModel.getImports().get(key));
 //				}
-				for (Map<String, String> key : ontologyModel.getImports()) {
-					for (String k : key.keySet()) {
-						this.context.put(k, key.get(k));
-					}
-
-				}
+				this.addImportsToContext(ontologyModel);
+//				for (Map<String, String> key : ontologyModel.getImports()) {
+//					for (String k : key.keySet()) {
+//						//this.context.put(k, key.get(k));
+//						this.context.put(k, new FieldMethodizer(key.get(k)) );
+//					}
+//
+//				}
 				
 				// read xml output tag and parse to velocity
 				this.text = this.processName(ontologyModel.getOutput(), baseContext);
@@ -340,13 +342,15 @@ public class GenerateProject {
 			//initialize context and merge it with base context
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
+				
 				//add all imports static classes into current context 				
-				for (Map<String, String> key : macroModel.getImports()) {
-					for (String k : key.keySet()) {
-						this.context.put(k, key.get(k));
-					}
-
-				}
+//				for (Map<String, String> key : macroModel.getImports()) {
+//					for (String k : key.keySet()) {
+//						this.context.put(k, key.get(k));
+//					}
+//
+//				}
+				this.addImportsToContext(macroModel);
 				//getting the template name and adding it to template object
 				this.text = this.processName(macroModel.getOutput(), this.context);
 				File outputFile = new File(this.outputFolder + this.text);
@@ -409,12 +413,13 @@ public class GenerateProject {
 //					for (String key : instancesMacro.getImports().keySet()) {
 //						this.context.put(key, instancesMacro.getImports().get(key));
 //					}
-					for (Map<String, String> key : instancesMacro.getImports()) {
-						for (String k : key.keySet()) {
-							this.context.put(k, key.get(k));
-						}
-
-					}
+//					for (Map<String, String> key : instancesMacro.getImports()) {
+//						for (String k : key.keySet()) {
+//							this.context.put(k, key.get(k));
+//						}
+//
+//					}
+					this.addImportsToContext(instancesMacro);
 
 					//initialize tenplate object with template given in XML file
 					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
@@ -495,12 +500,13 @@ public class GenerateProject {
 //				for (String key : macroObjectProperties.getImports().keySet()) {
 //					this.context.put(key, macroObjectProperties.getImports().get(key));
 //				}
-				for (Map<String, String> key : macroObjectProperties.getImports()) {
-					for (String k : key.keySet()) {
-						this.context.put(k, key.get(k));
-					}
-
-				}
+//				for (Map<String, String> key : macroObjectProperties.getImports()) {
+//					for (String k : key.keySet()) {
+//						this.context.put(k, key.get(k));
+//					}
+//
+//				}
+				this.addImportsToContext(macroObjectProperties);
 				this.text = this.processName(macroObjectProperties.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + this.text);
 
@@ -782,4 +788,18 @@ public class GenerateProject {
 	public int getTotal2Process() {
 		return total2Process;
 	}
+	
+	/**
+	 * To add the imports into context
+	 * @param model
+	 */
+	private void addImportsToContext(MacroModel model) {
+		for (Map<String, String> key : model.getImports()) {
+			for (String k : key.keySet()) {
+				this.context.put(k, new FieldMethodizer(key.get(k)) );
+			}
+
+		}
+	}
+
 }

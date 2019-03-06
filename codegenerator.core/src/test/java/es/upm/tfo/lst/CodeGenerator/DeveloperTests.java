@@ -15,6 +15,7 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -84,24 +85,25 @@ public class DeveloperTests {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"games.owl");
 		 OWLReasonerFactory reasonerFactory= new JFactFactory();
-		 Set<OWLDataProperty> dataPropCollection= t.getDataPropertiesInSignature();
 		 this.reasoner = reasonerFactory.createReasoner(t);
-		 
+		 Map <String, String> data = new HashMap<String, String>();
+		 Set< Map <String, String>  > lista = new HashSet<Map<String,String>>();
 		 for (OWLClass cls : t.getClassesInSignature()) {
 		 System.out.println(cls.getIRI().getFragment());
 			 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
-				 
-				 	array = axiom.toString().replace("DataPropertyRange", "").split(" ");	
-//				 	for (String item : array) {
-//						System.out.println(item.replace("(", "").replace(")", ""));
-//				 		
-//					}
-//
-//				 if( axiom.getClassesInSignature().contains(cls) ) {
-//					 
-//				 }
+				 	array = axiom.toString().replace("DataPropertyRange", "").split(" ");
+				 	data.put(array[0].replace("(", "").replace(")", ""), array[1].replace("(", "").replace(")", ""));
+				 	lista.add(data);
+			 	System.out.println("true");
+
 				
 			 }
+			 for (Map<String, String> map : lista) {
+				 for (String map2 : map.keySet()) {
+					System.out.println("key "+map2+" value-> "+map.get(map2));
+				}
+				
+			}
 		 }
 	}
 	

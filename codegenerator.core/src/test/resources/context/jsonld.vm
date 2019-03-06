@@ -1,10 +1,15 @@
+#macro( imports $list )
+  #foreach( $value in $list )
+    #set($name = $value.toString().replace("DataPropertyRange", "").split(" "))
+    #set ($map )
+  #end
+#end
 {
 @context:{				
 	
 	#foreach($class in $ontology.getClassesInSignature())
 		"${class.getIRI.getFragment()}":"${class.getIRI()}",
-		#foreach($domain in $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN))
-			#if($domain.getClassesInSignature().contains($class))
+		#foreach($domain in $ontology.getAxioms($axiomtype.DATA_PROPERTY_RANGE))
 				
 			#end
 		#end
