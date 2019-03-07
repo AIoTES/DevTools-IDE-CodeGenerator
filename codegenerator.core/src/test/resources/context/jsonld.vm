@@ -5,26 +5,16 @@
 	
 	#foreach($class in $ontology.getClassesInSignature())
 		"${class.getIRI().getFragment()}":"${class.getIRI()}",
-		#foreach($domain in $k)
-		$domain
-		#*
-			#if($domain.getClassesInSignature().contains($class))
-				#foreach($value in $domain.getDataPropertiesInSgnature())
-					#foreach($g in $h)
-						#if($g.containsEntityInSignature($value))
-								## ${g.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")}:item.getDatatypesInSignature().toString().replace("[", " ").replace("]", " ")
-								##${g.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")}
-								ddf
+		#foreach($axiom in $k)
+			#if ( $axiom.getClassesInSignature().contains($class) )
+				#foreach($map in $axiom.getDataPropertiesInSignature())
+					#foreach($item in $h)
+						#if($item.containsEntityInSignature($map))
+							$item.getDataPropertiesInSignature()
 						#end
-					#end 
-			#end		
-				#*	
-					#foreach( $t in $domain.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ") )
-						$t
 					#end
-				
+				#end
 			#end
-		 *#	
 		#end
 	#end
 			

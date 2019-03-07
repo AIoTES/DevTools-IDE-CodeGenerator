@@ -94,9 +94,9 @@ public class DeveloperTests {
 		 Map <String, String> data = new HashMap<String, String>();
 		 Set< Map <String, String>  > lista = new HashSet<Map<String,String>>();
 		 for (OWLClass cls : t.getClassesInSignature()) {
-		 System.out.println(cls.getIRI().getFragment());
-		  Set<OWLDataPropertyRangeAxiom> g = t.getAxioms(AxiomType.DATA_PROPERTY_RANGE); //para obtener data  type con el nombre de la propiedad
-		  Set<OWLDataPropertyDomainAxiom> k = t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
+			 System.out.println(cls.getIRI().getFragment());
+			  Set<OWLDataPropertyRangeAxiom> g = t.getAxioms(AxiomType.DATA_PROPERTY_RANGE); //para obtener data  type con el nombre de la propiedad
+			  Set<OWLDataPropertyDomainAxiom> k = t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
 		  
 //		  System.out.println("DATA_PROPERTY_RANGE "+g.size());
 //		  System.out.println("DATA_PROPERTY_DOMAIN "+k.size());
