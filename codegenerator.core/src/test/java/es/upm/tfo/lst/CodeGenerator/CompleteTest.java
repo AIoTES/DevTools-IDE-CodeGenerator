@@ -24,12 +24,12 @@ import org.mockserver.model.Header;
 import org.mockserver.model.HttpClassCallback;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
-import org.mockserver.model.HttpStatusCode;
+
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
-//import es.upm.tfo.lst.codegenerator.plugin.rest.GenerateServlet;
+
 
 public class CompleteTest  {
 
@@ -78,14 +78,11 @@ public class CompleteTest  {
 
 		System.out.println(this.mockServer.isRunning());
 
-		//System.out.println(this.mockServer.);
+
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 try {
-			     //get instance of TemplateDataModel,giving to method the local file path or URL of the xml location
-//				this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
+
 			 this.model=this.parser.generateXMLCoordinator(this.jsonCoordinator);
-			 	//this.model=this.parser.generateXMLCoordinator(null);
-				//set XML model to generate project
 				
 				this.genPro.setMainModel(this.model);
 				
@@ -117,15 +114,12 @@ public class CompleteTest  {
 		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
 		try{
 			 	this.model=this.parser.generateXMLCoordinator(webTemplatePath);
-				//this.model = this.parser.getXmlCoordinatorDataModel();
-				//this.genPro = new GenerateProject(this.model);
 				this.genPro = new GenerateProject();
 				//set XML model to generate project
 				this.genPro.setMainModel(this.model);
 				//set the ontology to project and recursive state
 				this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
 				//set diectory path to load all template needed files
-				//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 				//set output directory
 				this.genPro.setOutputFolder("target/completeTest/");
 				//add value to variables
@@ -142,7 +136,6 @@ public class CompleteTest  {
 			genPro.addError(a);
 			a.printStackTrace();
 		}
-
 		assertTrue(genPro.getErrors().isEmpty());
 
 	}
@@ -153,15 +146,13 @@ public class CompleteTest  {
 		 System.out.println("\n------------------------------online template and ontology--------------------------------------\n");
 		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
 		try{
-			this.model=this.parser.generateXMLCoordinator(webTemplatePath);
-			//this.model=this.parser.generateXMLCoordinator("http://localhost/template/complexXml.xml");
+			this.model=this.parser.generateXMLCoordinator(webTemplatePath);	
 			this.genPro = new GenerateProject();
 			//set XML model to generate project
 			this.genPro.setMainModel(this.model);
 			//set the ontology to project and recursive state
 			this.genPro.addOntology(this.ontologyLoader.loadOntology(this.webOntology),false);
 			//set diectory path to load all template needed files
-			//this.genPro.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 			//set output directory
 			this.genPro.setOutputFolder("target/completeTest/");
 			//creating output dir in test
@@ -177,8 +168,6 @@ public class CompleteTest  {
 		assertTrue(genPro.getErrors().isEmpty());
 
 	}
-
-
 
 	@AfterClass
 	public static void stopMockServer() {

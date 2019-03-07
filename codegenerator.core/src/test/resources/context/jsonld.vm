@@ -5,7 +5,7 @@
 	$class
 		"${class.getIRI().getFragment()}":"${class.getIRI()}",
 		#foreach($domain in $ontology.getAxioms($AxiomType.DATA_PROPERTY_RANGE))
-				#foreach( $t in $value.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ") )
+				#foreach( $t in $domain.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ") )
 					$t
 				#end
 		#end

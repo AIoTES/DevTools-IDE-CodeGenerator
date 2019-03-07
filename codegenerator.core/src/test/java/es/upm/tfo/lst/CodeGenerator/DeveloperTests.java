@@ -27,7 +27,12 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
+import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -90,21 +95,30 @@ public class DeveloperTests {
 		 Set< Map <String, String>  > lista = new HashSet<Map<String,String>>();
 		 for (OWLClass cls : t.getClassesInSignature()) {
 		 System.out.println(cls.getIRI().getFragment());
-			 for (OWLDataPropertyRangeAxiom axiom : t.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
-				 	array = axiom.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ");
-				 	//data.put(array[0].replace("(", "").replace(")", ""), array[1].replace("(", "").replace(")", ""));
-				 	data.put(array[0], array[1].replace("xsd:", ""));
-				 	lista.add(data);
-			 	System.out.println("true");
+		  Set<OWLDataPropertyRangeAxiom> g = t.getAxioms(AxiomType.DATA_PROPERTY_RANGE); //para obtener data  type con el nombre de la propiedad
+		  Set<OWLDataPropertyDomainAxiom> k = t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
+		  
+//		  System.out.println("DATA_PROPERTY_RANGE "+g.size());
+//		  System.out.println("DATA_PROPERTY_DOMAIN "+k.size());
 
-				
+			 for (OWLDataPropertyDomainAxiom axiom : k) {
+//					axiom.getDataPropertiesInSignature().forEach(r->{if (axiom.getClassesInSignature().contains(cls) ) System.out.println("dataprops "+r.getIRI().getFragment());});
+				 if (axiom.getClassesInSignature().contains(cls) ) {
+					 for (OWLDataProperty map : axiom.getDataPropertiesInSignature()) {
+						 for (OWLDataPropertyRangeAxiom item : g) {
+							 if(item.containsEntityInSignature(map )) {
+								 System.out.println(item.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")+":"+item.getDatatypesInSignature().toString().replace("[", " ").replace("]", " "));
+							 }
+							}
+
+//						 System.out.println(map);	
+					}
+					
+				 }
+//				 System.err.println(axiom);
 			 }
-			 for (Map<String, String> map : lista) {
-				 for (String map2 : map.keySet()) {
-					System.out.println("key "+map2+" value-> "+map.get(map2));
-				}
-				
-			}
+			 
+
 		 }
 	}
 	
