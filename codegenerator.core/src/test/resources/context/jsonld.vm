@@ -1,13 +1,30 @@
+#set($h =  $ontology.getAxioms($AxiomType.DATA_PROPERTY_RANGE) )
+#set($k =  $ontology.getAxioms($AxiomType.DATA_PROPERTY_DOMAIN) )
 {
 @context:{				
 	
 	#foreach($class in $ontology.getClassesInSignature())
-	$class
 		"${class.getIRI().getFragment()}":"${class.getIRI()}",
-		#foreach($domain in $ontology.getAxioms($AxiomType.DATA_PROPERTY_RANGE))
-				#foreach( $t in $domain.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ") )
-					$t
-				#end
+		#foreach($domain in $k)
+		$domain
+		#*
+			#if($domain.getClassesInSignature().contains($class))
+				#foreach($value in $domain.getDataPropertiesInSgnature())
+					#foreach($g in $h)
+						#if($g.containsEntityInSignature($value))
+								## ${g.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")}:item.getDatatypesInSignature().toString().replace("[", " ").replace("]", " ")
+								##${g.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")}
+								ddf
+						#end
+					#end 
+			#end		
+				#*	
+					#foreach( $t in $domain.toString().replace("DataPropertyRange", "").replace("(", "").replace(")", "").split(" ") )
+						$t
+					#end
+				
+			#end
+		 *#	
 		#end
 	#end
 			
