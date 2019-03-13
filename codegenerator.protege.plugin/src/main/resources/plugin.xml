@@ -8,7 +8,7 @@
 	<extension id="toolmenu1" point="org.protege.editor.core.application.EditorKitMenuAction">
 		<name value="GenerateCode Tool"/>
 		<path value="org.protege.editor.owl.menu.tools/SlotG-A"/>
-		<toolTip value="This example menu item appears in the Tools menu"/>
+		<toolTip value="Plugin to generate code from ontology using the template system"/>
 		<class value="es.upm.tfo.lst.codegenerator.plugin.protege.DeployXmlMenu"/>
 		
 		<editorKitId value="any"/>
