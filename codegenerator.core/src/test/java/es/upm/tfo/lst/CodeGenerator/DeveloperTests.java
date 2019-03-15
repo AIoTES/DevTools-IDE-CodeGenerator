@@ -24,6 +24,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -34,7 +35,10 @@ import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLAxiomVisitorAdapter;
@@ -43,6 +47,7 @@ import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
+import uk.ac.manchester.cs.jfact.JFactReasoner;
 
 /**
  * @author amedrano
@@ -74,7 +79,39 @@ public class DeveloperTests {
 	
 	@Test
 	public void classAccessExample() {
-		OWLClass cls;
+		
+		OWLOntology ontology=null;
+		 
+		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
+		try {
+			OWLReasonerFactory reasonerFactory= new JFactFactory();
+			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
+		//	System.out.println(ontology.getClassesInSignature());
+			
+			for (OWLClass cls : ontology.getClassesInSignature()) {
+				System.out.println("class ->"+cls.getIRI().getFragment());
+				System.out.println("cls dataprop size"+cls.getDataPropertiesInSignature().size());
+				for (OWLDataProperty prop: cls.getDataPropertiesInSignature()) {
+					System.out.println("class= "+cls.getIRI().getFragment()+"prop: "+prop.getIRI().getFragment());
+				}
+				System.err.println("cls obj size "+cls.getObjectPropertiesInSignature().size());
+				for (OWLObjectProperty prop: cls.getObjectPropertiesInSignature()) {
+					System.out.println("class= "+cls.getIRI().getFragment()+"obj-prop: "+prop.getIRI().getFragment());
+				}
+				for (Node<OWLNamedIndividual> node: reasoner.getInstances(cls, true )) {
+					for (OWLNamedIndividual entity : node.getEntities()) {
+						entity.getDataPropertiesInSignature().stream().forEach(y->System.out.println("entity "+entity.getIRI().getFragment()+" dataprop "+y.getIRI().getFragment()));
+					}
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+
 	}
 
 	@Test

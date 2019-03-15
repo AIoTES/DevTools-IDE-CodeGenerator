@@ -46,7 +46,9 @@ import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -344,7 +346,14 @@ public class GenerateProject {
 						throw e;
 					}
 				}
-			
+				//TODO process ClassDataProperties
+				for (OWLDataProperty macroModel2 : c.getDataPropertiesInSignature()) {
+					
+				}
+				//TODO process ClassObjectProperties
+				for (OWLObjectProperty macroModel2 : c.getObjectPropertiesInSignature()) {
+					
+				}
 
 				for (OWLClass cls : ontology.getClassesInSignature()) {
 					this.processInstances(cls, ontology);
@@ -382,12 +391,9 @@ public class GenerateProject {
 				for (OWLNamedIndividual inst : instances) {
 					//initialize and merge current context with base context
 					this.context = new VelocityContext(this.baseContext);
-
 					this.addImportsToContext(instancesMacro);
-
 					//initialize tenplate object with template given in XML file
 					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
-					
 					this.context.put("instance", inst);
 					this.text = this.processName(instancesMacro.getOutput(), this.context);
 					File outputFolder = new File(this.outputFolder + this.text);
@@ -398,18 +404,13 @@ public class GenerateProject {
 						this.fr = new FileWriter(this.outputFolder + this.text, true);
 						template.merge(this.context, fr);
 						fr.close();
-
 					} catch (Exception e) {
 						this.arrayOfExceptions.add(e);
 						log.fatal("cant merge velocity template with velocity context", e);
 						throw e;
 					}
-
 					this.processObjectProperties(c, instances, ontology);
-
 				}	
-
-
 			}
 		} else {
 
