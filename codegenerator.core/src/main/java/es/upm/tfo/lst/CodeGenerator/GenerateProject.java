@@ -39,6 +39,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
+import org.apache.velocity.runtime.directive.Macro;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
@@ -103,13 +104,12 @@ public class GenerateProject {
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner = null;
 	private Map<String, Variable> variables;
-	private String jarFullPath = null, localBaseLoaderPath = null, outputFolder = null;
+	private String outputFolder = null;
 	private String text = "";
 	private List<Exception> arrayOfExceptions = null;
 	private URL urlBasePath = null;
 	private Properties props;
 	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
-	// private List<ProgessCallback> progressCallbacs = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process = 0;
 	public ProgessCallbackPublisher GenConf;
@@ -164,7 +164,6 @@ public class GenerateProject {
 				this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
-				//this.baseContext.put("axiomtype", new FieldMethodizer("org.semanticweb.owlapi.model.AxiomType"));
 
 				this.addVariablesToBaseContext();
 
@@ -210,12 +209,7 @@ public class GenerateProject {
 					outputFolder.getParentFile().mkdir();
 				this.context = new VelocityContext(this.baseContext);
 				this.addImportsToContext(projectModel);
-//				for (Map<String, String> key : projectModel.getImports()) {
-//					for (String k : key.keySet()) {
-//						this.context.put(k, new FieldMethodizer(key.get(k)) );
-//					}
-//
-//				}
+
 				if (!this.text.equals("")) {
 					try {
 						// throw ResourceNotFoundException
@@ -234,8 +228,7 @@ public class GenerateProject {
 				// update(1);
 
 				for (OWLOntology ontology : this.ontologies2BProcesed) {
-					// este reasoner es para esta ontologia, de aqui hacia abajo el reasoner no va a
-					// cambiar de ontologia
+
 					this.reasoner = this.reasonerFactory.createReasoner(ontology);
 					this.wrapper.setReasoner(this.reasoner);
 					this.baseContext.put("reasoner", this.wrapper);
@@ -275,22 +268,13 @@ public class GenerateProject {
 		if (!ontologyModelArray.isEmpty()) {
 			
 
-			// this.context= new VelocityContext(this.baseContext);
+			
 			for (MacroModel ontologyModel : ontologyModelArray) {
 				// merge base context to actual context
 				this.context = new VelocityContext(this.baseContext);
 				//add all imports static classes into current context 				
-//				for (String key : ontologyModel.getImports().keySet()) {
-//					this.context.put(key, ontologyModel.getImports().get(key));
-//				}
+
 				this.addImportsToContext(ontologyModel);
-//				for (Map<String, String> key : ontologyModel.getImports()) {
-//					for (String k : key.keySet()) {
-//						//this.context.put(k, key.get(k));
-//						this.context.put(k, new FieldMethodizer(key.get(k)) );
-//					}
-//
-//				}
 				
 				// read xml output tag and parse to velocity
 				this.text = this.processName(ontologyModel.getOutput(), baseContext);
@@ -299,7 +283,6 @@ public class GenerateProject {
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
 
-				// this.context.put("ontology",ontology);
 				if (!this.text.equals("")) {
 					template = vel_eng.getTemplate(ontologyModel.getTemplateName());
 					// throws IOE
@@ -342,14 +325,6 @@ public class GenerateProject {
 			//initialize context and merge it with base context
 			this.context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : classModelArray) {
-				
-				//add all imports static classes into current context 				
-//				for (Map<String, String> key : macroModel.getImports()) {
-//					for (String k : key.keySet()) {
-//						this.context.put(k, key.get(k));
-//					}
-//
-//				}
 				this.addImportsToContext(macroModel);
 				//getting the template name and adding it to template object
 				this.text = this.processName(macroModel.getOutput(), this.context);
@@ -358,7 +333,7 @@ public class GenerateProject {
 					outputFile.getParentFile().mkdirs();
 				if (!macroModel.getOutput().equals("")) {
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
-					// throw IOE
+					// TODO heare throws IOE
 					try {
 						this.fr = new FileWriter(this.outputFolder + this.text, true);
 						template.merge(context, fr);
@@ -369,9 +344,7 @@ public class GenerateProject {
 						throw e;
 					}
 				}
-//					else {
-//						log.warn("output for class is empty and the program will not generate any output file to class");
-//					}
+			
 
 				for (OWLClass cls : ontology.getClassesInSignature()) {
 					this.processInstances(cls, ontology);
@@ -399,26 +372,17 @@ public class GenerateProject {
 	private void processInstances(OWLClass c, OWLOntology ontology) throws Exception {
 		this.text = "";
 		Set<OWLNamedIndividual> instances = new HashSet<>();
-		// ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace("\\.","");
+		
 		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacros();
 		instances.addAll(reasoner.getInstances(c, true).getFlattened());
-		//this.baseContext.put("instances", instances);
+		
 		if (!instancesModelArray.isEmpty()) {
 			
 			for (MacroModel instancesMacro : instancesModelArray) {
 				for (OWLNamedIndividual inst : instances) {
 					//initialize and merge current context with base context
 					this.context = new VelocityContext(this.baseContext);
-					//add all imports static classes into current context 				
-//					for (String key : instancesMacro.getImports().keySet()) {
-//						this.context.put(key, instancesMacro.getImports().get(key));
-//					}
-//					for (Map<String, String> key : instancesMacro.getImports()) {
-//						for (String k : key.keySet()) {
-//							this.context.put(k, key.get(k));
-//						}
-//
-//					}
+
 					this.addImportsToContext(instancesMacro);
 
 					//initialize tenplate object with template given in XML file
@@ -429,7 +393,7 @@ public class GenerateProject {
 					File outputFolder = new File(this.outputFolder + this.text);
 					if (!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
-					// throws IOE
+					// TODO throws IOE
 					try {
 						this.fr = new FileWriter(this.outputFolder + this.text, true);
 						template.merge(this.context, fr);
@@ -444,32 +408,11 @@ public class GenerateProject {
 					this.processObjectProperties(c, instances, ontology);
 
 				}	
-//				template = vel_eng.getTemplate(macroModel.getTemplateName());//set the velocity template name 
-//				this.context = new VelocityContext(this.baseContext);
-//				this.context.put("instance", inst);
-//				this.text = this.processName(macroModel.getOutput(), this.context);
-//				File outputFolder = new File(this.outputFolder + this.text);
-//				if (!outputFolder.getParentFile().exists())
-//					outputFolder.getParentFile().mkdirs();
-//				// throws IOE
-//				try {
-//					this.fr = new FileWriter(this.outputFolder + this.text, true);
-//					template.merge(this.context, fr);
-//					fr.close();
-//
-//				} catch (Exception e) {
-//					this.arrayOfExceptions.add(e);
-//					log.fatal("cant merge velocity template with velocity context", e);
-//					throw e;
-//				}
-//
-//				this.processObjectProperties(c, instances, ontology);
+
 
 			}
 		} else {
 
-			// log.warn("output for instances is empty and the program will not generate any
-			// output file to instances");
 			this.processObjectProperties(c, instances, ontology);
 
 		}
@@ -494,18 +437,9 @@ public class GenerateProject {
 		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
 		if (!propertyModelArray.isEmpty()) {
 			for (MacroModel macroObjectProperties : propertyModelArray) {
-				//initialize and merge current context with base context
+
 				this.context = new VelocityContext(this.baseContext);
-				//add all imports static classes into current context 				
-//				for (String key : macroObjectProperties.getImports().keySet()) {
-//					this.context.put(key, macroObjectProperties.getImports().get(key));
-//				}
-//				for (Map<String, String> key : macroObjectProperties.getImports()) {
-//					for (String k : key.keySet()) {
-//						this.context.put(k, key.get(k));
-//					}
-//
-//				}
+
 				this.addImportsToContext(macroObjectProperties);
 				this.text = this.processName(macroObjectProperties.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + this.text);
@@ -551,10 +485,9 @@ public class GenerateProject {
 		this.baseContext = new VelocityContext();
 		// adding separately each variable to velocity context
 		for (String s : this.mainModel.getArrayVars().keySet()) {
-			// this.baseContext.put(s,this.mainModel.getArrayVars().get(s).getValue());
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		// this.baseContext.put("variables", this.mainModel.getArrayVars());
+		
 
 		try {
 			URL source = new URL(this.mainModel.getBaseTemplatePath());
@@ -575,14 +508,6 @@ public class GenerateProject {
 
 	}
 
-	/**
-	 * Set path to load velocity templates from specific jar file.
-	 *
-	 * @param jarFullPath path to jar who contains needed velocity macros.
-	 */
-	public void setBaseJarFullPath(String jarFullPath) {
-		this.jarFullPath = jarFullPath;
-	}
 
 	/**
 	 * Sets the output folder to generated files.
@@ -660,7 +585,7 @@ public class GenerateProject {
 		try {
 			StringWriter fw = new StringWriter();
 			StringResourceRepository rep = StringResourceLoader.getRepository();
-			// VelocityEngine ve = new VelocityEngine();
+			
 			Template te = new Template();
 			RuntimeServices rs = RuntimeSingleton.getRuntimeServices();
 			StringReader sr = new StringReader(toProcess);
@@ -729,23 +654,41 @@ public class GenerateProject {
 		ontologies2BProcesed.add(ont);
 
 	}
-
+	/**
+	 *   
+	 * @return {@link String} : path to output directory
+	 */
 	public String getOutputDir() {
 		return outputFolder;
 	}
 
+	/**
+	 * 
+	 * @return {@link Properties} object containing the velocity properties
+	 */
 	public Properties getProps() {
 		return props;
 	}
-
+	/**
+	 * 
+	 * @param props {@link Properties} to add in velocity 
+	 */
 	public void setProps(Properties props) {
 		this.props = props;
 	}
 
+	/**
+	 * 
+	 * @return {@link TemplateDataModel} object representing the XML file
+	 */
 	public TemplateDataModel getMainModel() {
 		return mainModel;
 	}
 
+	/**
+	 * 
+	 * @param mainModel {@link TemplateDataModel} object representing the XML file
+	 */
 	public void setMainModel(TemplateDataModel mainModel) {
 		this.mainModel = mainModel;
 	}
@@ -773,7 +716,11 @@ public class GenerateProject {
 	public List<Exception> getErrors() {
 		return this.arrayOfExceptions;
 	}
-
+	/**
+	 * method to add all exceptions into a collection.
+	 * 
+	 * @param a {@link Exception} 
+	 */
 	public void addError(Exception a) {
 		this.arrayOfExceptions.add(a);
 	}
@@ -790,7 +737,7 @@ public class GenerateProject {
 	}
 	
 	/**
-	 * To add the imports into context
+	 * To add the imports of static classes into context
 	 * @param model
 	 */
 	private void addImportsToContext(MacroModel model) {

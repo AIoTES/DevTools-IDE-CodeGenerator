@@ -71,6 +71,7 @@ public class DeveloperTests {
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
 	}
+	
 	@Test
 	public void classAccessExample() {
 		OWLClass cls;
@@ -81,6 +82,8 @@ public class DeveloperTests {
 		OWLOntology ontology;
 		OWLClass c;
 		OWLNamedIndividual v;
+		
+		 
 		//c.getIRI().getNamespace()
 		
 	}
