@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -33,11 +34,13 @@ import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -85,27 +88,58 @@ public class DeveloperTests {
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
 		try {
 			OWLReasonerFactory reasonerFactory= new JFactFactory();
-			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/games.owl").openStream());
 			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
-		//	System.out.println(ontology.getClassesInSignature());
+			System.out.println("getDataPropertiesInSignature() "+ontology.getDataPropertiesInSignature().size());
+			System.out.println("getDatatypesInSignature() "+ontology.getDatatypesInSignature().size());
+			System.out.println("getAxioms "+ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE).size());
+			System.out.println("DATA_PROPERTY_ASSERTION "+ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION).size());
+			System.out.println("DATA_PROPERTY_DOMAIN "+ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN).size());
+			System.out.println("DATA_PROPERTY_RANGE "+ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE).size());
+			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
+
 			
 			for (OWLClass cls : ontology.getClassesInSignature()) {
-				System.out.println("class ->"+cls.getIRI().getFragment());
-				System.out.println("cls dataprop size"+cls.getDataPropertiesInSignature().size());
-				for (OWLDataProperty prop: cls.getDataPropertiesInSignature()) {
-					System.out.println("class= "+cls.getIRI().getFragment()+"prop: "+prop.getIRI().getFragment());
-				}
-				System.err.println("cls obj size "+cls.getObjectPropertiesInSignature().size());
-				for (OWLObjectProperty prop: cls.getObjectPropertiesInSignature()) {
-					System.out.println("class= "+cls.getIRI().getFragment()+"obj-prop: "+prop.getIRI().getFragment());
-				}
-				for (Node<OWLNamedIndividual> node: reasoner.getInstances(cls, true )) {
-					for (OWLNamedIndividual entity : node.getEntities()) {
-						entity.getDataPropertiesInSignature().stream().forEach(y->System.out.println("entity "+entity.getIRI().getFragment()+" dataprop "+y.getIRI().getFragment()));
+				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+					if(data.getDomain().equals(cls)) {
+						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
+							if(range.getProperty().equals(data.getProperty()))
+								System.out.println(cls.getIRI().getFragment()+"--"+
+								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
+								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
+							
 					}
+						
+					}	
+					
 				}
-				
 			}
+
+			
+				
+			
+			
+			
+			
+		//	System.out.println(ontology.getClassesInSignature());
+			
+//			for (OWLClass cls : ontology.getClassesInSignature()) {
+//				System.out.println("class ->"+cls.getIRI().getFragment());
+//				System.out.println("cls dataprop size"+cls.getObjectPropertiesInSignature().size());
+//				for (OWLDataProperty prop: cls.getDataPropertiesInSignature()) {
+//					System.out.println("class= "+cls.getIRI().getFragment()+"prop: "+prop.getIRI().getFragment());
+//					
+//				}
+				//System.out.println("cls obj size "+cls.getObjectPropertiesInSignature().size());
+//				for (OWLObjectProperty prop: cls.getObjectPropertiesInSignature()) {
+//					System.out.println("class= "+cls.getIRI().getFragment()+"obj-prop: "+prop.getIRI().getFragment());
+//				}
+//				for (Node<OWLNamedIndividual> node: reasoner.getInstances(cls, true )) {
+//					for (OWLNamedIndividual entity : node.getEntities()) {
+//						entity.getDataPropertiesInSignature().stream().forEach(y->System.out.println("entity "+entity.getIRI().getFragment()+" dataprop "+y.getIRI().getFragment()));
+//					}
+//				}				
+//			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -138,11 +172,9 @@ public class DeveloperTests {
 			  Set<OWLDataPropertyRangeAxiom> g = t.getAxioms(AxiomType.DATA_PROPERTY_RANGE); //para obtener data  type con el nombre de la propiedad
 			  Set<OWLDataPropertyDomainAxiom> k = t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
 		  
-//		  System.out.println("DATA_PROPERTY_RANGE "+g.size());
-//		  System.out.println("DATA_PROPERTY_DOMAIN "+k.size());
 
 			 for (OWLDataPropertyDomainAxiom axiom : k) {
-//					axiom.getDataPropertiesInSignature().forEach(r->{if (axiom.getClassesInSignature().contains(cls) ) System.out.println("dataprops "+r.getIRI().getFragment());});
+
 				 if (axiom.getClassesInSignature().contains(cls) ) {
 					 for (OWLDataProperty map : axiom.getDataPropertiesInSignature()) {
 						 for (OWLDataPropertyRangeAxiom item : g) {
@@ -151,11 +183,11 @@ public class DeveloperTests {
 							 }
 							}
 
-//						 System.out.println(map);	
+
 					}
 					
 				 }
-//				 System.err.println(axiom);
+
 			 }
 			 
 
