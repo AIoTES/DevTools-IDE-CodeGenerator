@@ -1,0 +1,428 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/eduardo/ontologies/2019/1/untitled-ontology-82#"
+     xml:base="http://www.semanticweb.org/eduardo/ontologies/2019/1/untitled-ontology-82"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#busLine_busStop_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#busLine_busStop_1">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusLine"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusStop"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#evenSession_pointOfInterest_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#evenSession_pointOfInterest_1">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#EventSession"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#PointOfInterest"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#LeveledSession"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel_gameDificulty_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel_gameDificulty_1">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+        <rdfs:range>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameDificulty"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2002/07/owl#rational"/>
+            </owl:Restriction>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel_gameMechanic_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#gameLevel_gameMechanic_1">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#gameMechanic -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#gameMechanic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TrackingFingerTapping"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#leveledSession_gameLevel_1 -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#leveledSession_gameLevel_1">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#LeveledSession"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/games.ontology#via_busline -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/game/ontologies/games.ontology#via_busline">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusSession"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusLine"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameDificulty -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameDificulty">
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                        <rdf:first>easy</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first>hard</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first>hardcore</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first>normal</rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TEABrainTrainingCategory -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TEABrainTrainingCategory">
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                        <rdf:first>calculus</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first>figure_recognition</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first>memory_and_verbal_comprehencion</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first>memory_and_verbal_reasoning</rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                        <rdf:first>mental_control</rdf:first>
+                                                        <rdf:rest>
+                                                            <rdf:Description>
+                                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                <rdf:first>numerical_recognition_and_attention</rdf:first>
+                                                                <rdf:rest>
+                                                                    <rdf:Description>
+                                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                        <rdf:first>reading_and_reading_comprehension</rdf:first>
+                                                                        <rdf:rest>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                <rdf:first>remote_memory</rdf:first>
+                                                                                <rdf:rest>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                        <rdf:first>semantic_and_phonological_fluency</rdf:first>
+                                                                                        <rdf:rest>
+                                                                                            <rdf:Description>
+                                                                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                                                                <rdf:first>spatial_reasoning</rdf:first>
+                                                                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                                                            </rdf:Description>
+                                                                                        </rdf:rest>
+                                                                                    </rdf:Description>
+                                                                                </rdf:rest>
+                                                                            </rdf:Description>
+                                                                        </rdf:rest>
+                                                                    </rdf:Description>
+                                                                </rdf:rest>
+                                                            </rdf:Description>
+                                                        </rdf:rest>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BrainTraining -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BrainTraining">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameCategory"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusLine -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusLine"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TransportSession"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusStop -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#BusStop"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#ComissionError -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#ComissionError">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Error"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Distractor -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Distractor">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Error -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Error">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#EventSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#EventSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#VisitSession"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FingerTapping -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FingerTapping">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FixedGameSession"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FixedGameSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FixedGameSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameSession"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FixedWindowedSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FixedWindowedSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameCategory -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameCategory"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Hit -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Hit">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameMechanic"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#LeveledSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#LeveledSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameLevel"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameSession"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#MedicalGame -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#MedicalGame">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#GameCategory"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#OmissionError -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#OmissionError">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Error"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#OneFingerFingerTapping -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#OneFingerFingerTapping">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FingerTapping"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#PointOfInterest -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#PointOfInterest"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session"/>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TrackingFingerTapping -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TrackingFingerTapping">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FingerTapping"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TransportSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TransportSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TwoFingerFingerTapping -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#TwoFingerFingerTapping">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#FingerTapping"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#VisitSession -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#VisitSession">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/game/ontologies/2019/1/untitled-ontology-82#Session"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.7.2018-12-02T02:23:35Z) https://github.com/owlcs/owlapi -->
+
