@@ -1,0 +1,10 @@
+#include("interfaceGenerator.vm")
+#foreach($DataProp in $ontology.getAxioms($axiomtype.DATA_PROPERTY_DOMAIN))
+	#if($DataProp.getDomain().equals($class))
+		#foreach($DataRange in $ontology.getAxioms($axiomtype.DATA_PROPERTY_RANGE))
+			#if($DataRange.getProperty().equals($DataProp))
+			#methods($class.getIRI().getFragment() parent $prop $type)
+			#end
+		#end
+	#end
+#end
