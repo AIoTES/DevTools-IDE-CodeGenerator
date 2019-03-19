@@ -72,6 +72,8 @@ public class DeveloperTests {
 	private final String sqlOutput="src/test/resources/SQL/output/";
 	private final String baseOutput="target/completeTest/";
 	private String[] array;
+	
+	
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
