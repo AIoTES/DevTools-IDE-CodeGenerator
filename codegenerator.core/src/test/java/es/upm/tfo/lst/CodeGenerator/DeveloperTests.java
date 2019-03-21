@@ -102,6 +102,7 @@ public class DeveloperTests {
 
 			
 			for (OWLClass cls : ontology.getClassesInSignature()) {
+//				reasoner.getSuperClasses(cls, false);	
 				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
 					if(data.getDomain().equals(cls)) {
 						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
