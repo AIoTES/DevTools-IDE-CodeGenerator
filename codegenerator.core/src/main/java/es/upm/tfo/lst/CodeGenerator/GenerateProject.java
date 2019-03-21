@@ -162,8 +162,7 @@ public class GenerateProject {
 		if (this.control()) {
 			try {
 				this.initVelocity();
-				this.baseContext.put("ontologyCompleteList",
-				this.ontologies2BProcesed.stream().collect(Collectors.toList()));
+				this.baseContext.put("ontologyCompleteList",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
 
