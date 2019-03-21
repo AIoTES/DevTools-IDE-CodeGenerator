@@ -347,12 +347,12 @@ public class GenerateProject {
 					}
 				}
 				//TODO process ClassDataProperties
-				for (OWLDataProperty macroModel2 : c.getDataPropertiesInSignature()) {
-					
+				for (OWLDataProperty dataProp : c.getDataPropertiesInSignature()) {
+					//TODO añadir en velocity
 				}
 				//TODO process ClassObjectProperties
-				for (OWLObjectProperty macroModel2 : c.getObjectPropertiesInSignature()) {
-					
+				for (OWLObjectProperty objProp : c.getObjectPropertiesInSignature()) {
+					//TODO añadir en velocity
 				}
 
 				for (OWLClass cls : ontology.getClassesInSignature()) {
