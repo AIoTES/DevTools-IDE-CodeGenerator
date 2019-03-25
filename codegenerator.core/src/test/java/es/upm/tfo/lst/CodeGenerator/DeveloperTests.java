@@ -36,11 +36,8 @@ import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
-<<<<<<< HEAD
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
-=======
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
->>>>>>> 87e22652b88d47064d72d2d05033e009f9e6aa96
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -111,80 +108,7 @@ public class DeveloperTests {
 			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
 
 			
-<<<<<<< HEAD
-			for (OWLAxiom a : ontology.getAxioms()) {
-				if (a.isOfType(AxiomType.DECLARATION)  && ((OWLDeclarationAxiom) a).getEntity().isOWLClass()) {
-				OWLClass cls = (OWLClass)a.getClassesInSignature().toArray()[0];
-						System.out.println("DECLARATION "+cls.getIRI().getFragment());
-				}
 				
-				if(a.isOfType(AxiomType.ANNOTATION_ASSERTION)) {
-					System.out.println("ANNOTATION_ASSERTION "+a);
-=======
-			for (OWLClass cls : ontology.getClassesInSignature()) {
-//				reasoner.getSuperClasses(cls, false);	
-				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-					if(data.getDomain().equals(cls)) {
-						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
-							if(range.getProperty().equals(data.getProperty()))
-								System.out.println(cls.getIRI().getFragment()+"--"+
-								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
-								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
-							
-					}
-						
-					}	
->>>>>>> 87e22652b88d47064d72d2d05033e009f9e6aa96
-					
-				}
-			
-
-			}
-
-			
-			
-//			for (OWLClass cls : ontology.getClassesInSignature()) {
-//				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-//					if(data.getDomain().equals(cls)) {
-//						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
-//							if(range.getProperty().equals(data.getProperty()))
-//								System.out.println(cls.getIRI().getFragment()+"--"+
-//								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
-//								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
-//							
-//					}
-//						
-//					}	
-//					
-//				}
-//			}
-
-			
-				
-			
-			
-			
-			
-		//	System.out.println(ontology.getClassesInSignature());
-			
-//			for (OWLClass cls : ontology.getClassesInSignature()) {
-//				System.out.println("class ->"+cls.getIRI().getFragment());
-//				System.out.println("cls dataprop size"+cls.getObjectPropertiesInSignature().size());
-//				for (OWLDataProperty prop: cls.getDataPropertiesInSignature()) {
-//					System.out.println("class= "+cls.getIRI().getFragment()+"prop: "+prop.getIRI().getFragment());
-//					
-//				}
-				//System.out.println("cls obj size "+cls.getObjectPropertiesInSignature().size());
-//				for (OWLObjectProperty prop: cls.getObjectPropertiesInSignature()) {
-//					System.out.println("class= "+cls.getIRI().getFragment()+"obj-prop: "+prop.getIRI().getFragment());
-//				}
-//				for (Node<OWLNamedIndividual> node: reasoner.getInstances(cls, true )) {
-//					for (OWLNamedIndividual entity : node.getEntities()) {
-//						entity.getDataPropertiesInSignature().stream().forEach(y->System.out.println("entity "+entity.getIRI().getFragment()+" dataprop "+y.getIRI().getFragment()));
-//					}
-//				}				
-//			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			
