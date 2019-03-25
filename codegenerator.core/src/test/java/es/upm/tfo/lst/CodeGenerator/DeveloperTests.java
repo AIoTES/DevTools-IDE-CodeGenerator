@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -34,6 +35,7 @@ import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -51,6 +53,7 @@ import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 import uk.ac.manchester.cs.jfact.JFactReasoner;
+import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
 /**
  * @author amedrano
@@ -90,7 +93,7 @@ public class DeveloperTests {
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
 		try {
 			OWLReasonerFactory reasonerFactory= new JFactFactory();
-			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/games.owl").openStream());
+			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/games-complete.owl").openStream());
 			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
 			System.out.println("getDataPropertiesInSignature() "+ontology.getDataPropertiesInSignature().size());
 			System.out.println("getDatatypesInSignature() "+ontology.getDatatypesInSignature().size());
@@ -101,21 +104,37 @@ public class DeveloperTests {
 			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
 
 			
-			for (OWLClass cls : ontology.getClassesInSignature()) {
-				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-					if(data.getDomain().equals(cls)) {
-						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
-							if(range.getProperty().equals(data.getProperty()))
-								System.out.println(cls.getIRI().getFragment()+"--"+
-								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
-								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
-							
-					}
-						
-					}	
+			for (OWLAxiom a : ontology.getAxioms()) {
+				if (a.isOfType(AxiomType.DECLARATION)  && ((OWLDeclarationAxiom) a).getEntity().isOWLClass()) {
+				OWLClass cls = (OWLClass)a.getClassesInSignature().toArray()[0];
+						System.out.println("DECLARATION "+cls.getIRI().getFragment());
+				}
+				
+				if(a.isOfType(AxiomType.ANNOTATION_ASSERTION)) {
+					System.out.println("ANNOTATION_ASSERTION "+a);
 					
 				}
+			
+
 			}
+
+			
+			
+//			for (OWLClass cls : ontology.getClassesInSignature()) {
+//				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+//					if(data.getDomain().equals(cls)) {
+//						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
+//							if(range.getProperty().equals(data.getProperty()))
+//								System.out.println(cls.getIRI().getFragment()+"--"+
+//								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
+//								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
+//							
+//					}
+//						
+//					}	
+//					
+//				}
+//			}
 
 			
 				
