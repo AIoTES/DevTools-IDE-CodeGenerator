@@ -15,6 +15,7 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,13 +36,19 @@ import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
+<<<<<<< HEAD
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
+=======
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
+>>>>>>> 87e22652b88d47064d72d2d05033e009f9e6aa96
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
 import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -104,6 +111,7 @@ public class DeveloperTests {
 			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
 
 			
+<<<<<<< HEAD
 			for (OWLAxiom a : ontology.getAxioms()) {
 				if (a.isOfType(AxiomType.DECLARATION)  && ((OWLDeclarationAxiom) a).getEntity().isOWLClass()) {
 				OWLClass cls = (OWLClass)a.getClassesInSignature().toArray()[0];
@@ -112,6 +120,21 @@ public class DeveloperTests {
 				
 				if(a.isOfType(AxiomType.ANNOTATION_ASSERTION)) {
 					System.out.println("ANNOTATION_ASSERTION "+a);
+=======
+			for (OWLClass cls : ontology.getClassesInSignature()) {
+//				reasoner.getSuperClasses(cls, false);	
+				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+					if(data.getDomain().equals(cls)) {
+						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
+							if(range.getProperty().equals(data.getProperty()))
+								System.out.println(cls.getIRI().getFragment()+"--"+
+								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
+								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
+							
+					}
+						
+					}	
+>>>>>>> 87e22652b88d47064d72d2d05033e009f9e6aa96
 					
 				}
 			
@@ -170,13 +193,23 @@ public class DeveloperTests {
 	}
 
 	@Test
-	public void ontologyAccessExample() {
-		OWLOntology ontology;
-		OWLClass c;
+	public void ontologyAccessExample() throws Exception {
+		OWLOntology ontology=null;
+		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
 		OWLNamedIndividual v;
-		
-		 
-		//c.getIRI().getNamespace()
+		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		System.out.println("AxiomType.DIFFERENT_INDIVIDUALS");
+		for (OWLDifferentIndividualsAxiom item : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
+			System.out.println(item);
+		}
+		System.out.println("AxiomType.SAME_INDIVIDUAL");
+		for (OWLSameIndividualAxiom item : ontology.getAxioms(AxiomType.SAME_INDIVIDUAL)) {
+			System.out.println("same individuals "+item);
+		}
+		System.out.println("ontology.getIndividualsInSignature()");
+		for (OWLNamedIndividual data: ontology.getIndividualsInSignature()) {
+				System.out.println(data); 
+		}
 		
 	}
 
