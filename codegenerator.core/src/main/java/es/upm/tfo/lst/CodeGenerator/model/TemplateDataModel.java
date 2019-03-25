@@ -138,6 +138,10 @@ public class TemplateDataModel {
 		return this.getMacroList("objectProperties");
 	}
 
+	public List<MacroModel> getDataProperties(){
+		return this.getMacroList("dataProperties");
+	}
+	
 	/**
 	 * If in XML file exists two or more variables with same name (optional or
 	 * required), they will be ignored.
