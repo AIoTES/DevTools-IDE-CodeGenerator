@@ -45,8 +45,15 @@ import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -298,9 +305,19 @@ public class GenerateProject {
 					}
 
 				}
-				for (OWLClass c : ontology.getClassesInSignature()) {
-					this.processClass(c, ontology);
+				// get classes using AxiomType
+				
+				for (OWLAxiom axiom : ontology.getAxioms()) {
+					if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
+						OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
+						this.processClass(cls, ontology);
+					}
 				}
+				
+				
+//				for (OWLClass c : ontology.getClassesInSignature()) {
+//					this.processClass(c, ontology);
+//				}
 			}
 		} else {
 			for (OWLClass c : ontology.getClassesInSignature()) {
@@ -349,45 +366,37 @@ public class GenerateProject {
 				for (OWLDataProperty dataProp : c.getDataPropertiesInSignature()) {
 					//TODO añadir en velocity
 				}
+				
 				//TODO process ClassObjectProperties
 				for (OWLObjectProperty objProp : c.getObjectPropertiesInSignature()) {
 					//TODO añadir en velocity
 				}
 
-				for (OWLClass cls : ontology.getClassesInSignature()) {
-					this.processInstances(cls, ontology);
-				}
 			}
+			//procesar instancias
+
+			
 		} else {
 			update(i++);
-			for (OWLClass cls : ontology.getClassesInSignature()) {
-				this.processInstances(cls, ontology);
-			}
-
 		}
-
+		this.processInstances(c, ontology);
 	}
 
 	/**
-	 * Needs OWLReasoner to process data.
-	 *
-	 * @param clase    {@link OWLClass} to process
-	 * @param ontology {@link OWLOntology} to process
-	 * @return boolean value.True if the process is sucessfull.False if any problem
-	 *         occur.
+	 * 
+	 * @param cls {@link OWLClass}
+	 * @param ontology {@link OWLOntology} 
 	 * @throws Exception
 	 */
-	private void processInstances(OWLClass c, OWLOntology ontology) throws Exception {
+	private void processInstances(OWLClass cls,OWLOntology ontology) throws Exception {
 		this.text = "";
-		Set<OWLNamedIndividual> instances = new HashSet<>();
 		
-		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacros();
-		instances.addAll(reasoner.getInstances(c, true).getFlattened());
+
 		
-		if (!instancesModelArray.isEmpty()) {
+		if (!this.mainModel.getInstanceMacros().isEmpty()) {
 			
-			for (MacroModel instancesMacro : instancesModelArray) {
-				for (OWLNamedIndividual inst : instances) {
+			for (MacroModel instancesMacro : this.mainModel.getInstanceMacros()) {
+				for (OWLDifferentIndividualsAxiom inst : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
 					//initialize and merge current context with base context
 					this.context = new VelocityContext(this.baseContext);
 					this.addImportsToContext(instancesMacro);
@@ -408,38 +417,39 @@ public class GenerateProject {
 						log.fatal("cant merge velocity template with velocity context", e);
 						throw e;
 					}
-					this.processObjectProperties(c, instances, ontology);
+					this.processObjectProperties(inst,  ontology);
+					this.processDataPropeties(inst,  ontology);
 				}	
 			}
 		} else {
-
-			this.processObjectProperties(c, instances, ontology);
+			this.processObjectProperties(null,  ontology);
+			this.processDataPropeties(null,  ontology);
+			
 
 		}
 		// update(4);
 	}
-
 	/**
-	 * Method to get Object Properties of class instances.
-	 *
-	 * @param c         {@link OWLClass}: Class to be processed.
-	 * @param instances {@link Set}<{@link OWLNamedIndividual}>: Individuals of
-	 *                  given class.
-	 * @param ontology  {@link OWLOntology}: Ontology to process.
-	 * @return boolean value.True if the process is sucessfull.False if any problem
-	 *         occur.
-	 * @throws Exception.
+	 * 
+	 * @param individual {@link OWLNamedIndividual}
+	 * @param ontology {@link OWLOntology}
+	 * @throws Exception
 	 */
-	private void processObjectProperties(OWLClass c, Set<OWLNamedIndividual> instances, OWLOntology ontology)
-			throws Exception {
+	private void processObjectProperties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
 
 		this.text = "";
-		List<MacroModel> propertyModelArray = this.mainModel.getObjectProperties();
-		if (!propertyModelArray.isEmpty()) {
-			for (MacroModel macroObjectProperties : propertyModelArray) {
+		
+		if (!this.mainModel.getObjectProperties().isEmpty()) {
+			for (MacroModel macroObjectProperties : this.mainModel.getObjectProperties()) {
 
 				this.context = new VelocityContext(this.baseContext);
-
+				
+				if(individual==null)
+					this.context.put("instance","null");
+				else
+					this.context.put("instance",individual);
+				
+				
 				this.addImportsToContext(macroObjectProperties);
 				this.text = this.processName(macroObjectProperties.getOutput(), this.context);
 				File outputFolder = new File(this.outputFolder + this.text);
@@ -466,7 +476,66 @@ public class GenerateProject {
 
 
 	}
+	
+	/**
+	 * @param cls
+	 * @param instances
+	 * @param ontology
+	 * @throws Exception 
+	 */
+	private void processDataPropeties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology) throws Exception {
+		
+		if (!this.mainModel.getObjectProperties().isEmpty()) {
+			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
 
+				this.context = new VelocityContext(this.baseContext);
+				
+				if(individual==null)
+					this.context.put("instance","null");
+				else
+					this.context.put("instance",individual);
+				
+				this.addImportsToContext(macroDataPropeties);
+				this.text = this.processName(macroDataPropeties.getOutput(), this.context);
+				File outputFolder = new File(this.outputFolder + this.text);
+
+				if (!outputFolder.getParentFile().exists())
+					outputFolder.getParentFile().mkdirs();
+
+				if (!macroDataPropeties.getOutput().equals("")) {
+					try {
+						this.fr = new FileWriter(this.outputFolder + this.text, true);
+						template = vel_eng.getTemplate(macroDataPropeties.getTemplateName());
+						template.merge(context, fr);
+						fr.close();
+					} catch (Exception e) {
+						this.arrayOfExceptions.add(e);
+						log.fatal("cant merge velocity template with velocity context", e);
+						throw e;
+					}
+
+				}
+
+			}
+		}
+		/*
+		 *a esto se puede acceder directamente desde la template, no hace falta agregarlo al velocityContext
+		 */
+		
+		for (OWLDataPropertyDomainAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+//			System.out.println("DATA_PROPERTY_DOMAIN "+item);
+		}
+		System.out.println("------");
+		for (OWLDataPropertyAssertionAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION)) {
+//			System.out.println("DATA_PROPERTY_ASSERTION "+item);
+		}
+		System.out.println("------");
+		for (OWLDataPropertyRangeAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
+//			System.out.println("DATA_PROPERTY_RANGE "+item);
+		}
+		
+	}
+	
 	private static Properties defaultVelocityProperties() {
 		Properties props = new Properties();
 		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");

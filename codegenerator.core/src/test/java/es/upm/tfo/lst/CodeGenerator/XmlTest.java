@@ -44,11 +44,9 @@ public class XmlTest {
 			this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLbadSchema/badSchema.xml");
 			assertNull(this.model);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-//		System.out.println(this.basePath+"template-XMLbadSchema/badSchema.xml");
-//		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLbadSchema/badSchema.xml");
-//		assertNull(this.model);
+
 	}
 	
 	/**
@@ -63,8 +61,7 @@ public class XmlTest {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-//		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLinexistent");
-//		assertNull(this.model);
+
 	}
 	
 	/**
@@ -77,10 +74,8 @@ public class XmlTest {
 			this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
 			assertNotNull(this.model);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-//		this.model= parser.generateXMLCoordinator(this.basePath+"template-XMLwithoutMacros/workingXML.xml");
-//		assertNotNull(this.model);
 	}
 	
 }

@@ -227,10 +227,28 @@ public class XmlParser {
 				Element h = (Element)b.getElementsByTagName("imports").item(0);
 				for (int i = 0; i <h.getElementsByTagName("FullyQualifiedName").getLength(); i++) {
 					String name = h.getElementsByTagName("FullyQualifiedName").item(i).getTextContent();
-				
 					p = new HashMap<String, String>();
-					p.put(name.substring(name.lastIndexOf(".")).replace(".", ""), name);
-					this.imports.add(p);
+					
+					if(name != null ) {
+						log.debug("name "+name);
+						//TODO control characters. Maybe throw an error indicating if the given string to imports is not valid
+						if(!name.equals("")) { 
+							
+							if( name.contains(".")) {
+								p.put(name.substring(name.lastIndexOf(".")).replace(".", ""), name);
+								this.imports.add(p);
+							}else {
+								log.warn("The given import ("+name+") has not the correct format");
+								p.put(name,name);
+								this.imports.add(p);
+							}
+						
+						}else
+							log.warn("empty import tag...skipping immport ");
+							//throw new Exception("The given import ("+name+") has not the correct format");	
+					}
+				
+					
 				}
 				
 				this.macroList.add(

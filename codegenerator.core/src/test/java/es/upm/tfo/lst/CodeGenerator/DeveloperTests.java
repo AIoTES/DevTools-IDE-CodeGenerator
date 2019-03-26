@@ -15,18 +15,21 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
@@ -34,12 +37,17 @@ import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDatatypeDefinitionAxiom;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -51,6 +59,7 @@ import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 import uk.ac.manchester.cs.jfact.JFactFactory;
 import uk.ac.manchester.cs.jfact.JFactReasoner;
+import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
 /**
  * @author amedrano
@@ -90,7 +99,7 @@ public class DeveloperTests {
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
 		try {
 			OWLReasonerFactory reasonerFactory= new JFactFactory();
-			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/games.owl").openStream());
+			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
 			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
 			System.out.println("getDataPropertiesInSignature() "+ontology.getDataPropertiesInSignature().size());
 			System.out.println("getDatatypesInSignature() "+ontology.getDatatypesInSignature().size());
@@ -101,49 +110,7 @@ public class DeveloperTests {
 			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
 
 			
-			for (OWLClass cls : ontology.getClassesInSignature()) {
-//				reasoner.getSuperClasses(cls, false);	
-				for (OWLDataPropertyDomainAxiom data : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-					if(data.getDomain().equals(cls)) {
-						for (OWLDataPropertyRangeAxiom range : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {			
-							if(range.getProperty().equals(data.getProperty()))
-								System.out.println(cls.getIRI().getFragment()+"--"+
-								data.getProperty().toString().replace(cls.getIRI().getNamespace().toString(), "").replaceAll("<", "").replaceAll(">", "")+
-								"--"+range.getRange().toString().substring(range.getRange().toString().indexOf(":")).replace(":",""));
-							
-					}
-						
-					}	
-					
-				}
-			}
-
-			
 				
-			
-			
-			
-			
-		//	System.out.println(ontology.getClassesInSignature());
-			
-//			for (OWLClass cls : ontology.getClassesInSignature()) {
-//				System.out.println("class ->"+cls.getIRI().getFragment());
-//				System.out.println("cls dataprop size"+cls.getObjectPropertiesInSignature().size());
-//				for (OWLDataProperty prop: cls.getDataPropertiesInSignature()) {
-//					System.out.println("class= "+cls.getIRI().getFragment()+"prop: "+prop.getIRI().getFragment());
-//					
-//				}
-				//System.out.println("cls obj size "+cls.getObjectPropertiesInSignature().size());
-//				for (OWLObjectProperty prop: cls.getObjectPropertiesInSignature()) {
-//					System.out.println("class= "+cls.getIRI().getFragment()+"obj-prop: "+prop.getIRI().getFragment());
-//				}
-//				for (Node<OWLNamedIndividual> node: reasoner.getInstances(cls, true )) {
-//					for (OWLNamedIndividual entity : node.getEntities()) {
-//						entity.getDataPropertiesInSignature().stream().forEach(y->System.out.println("entity "+entity.getIRI().getFragment()+" dataprop "+y.getIRI().getFragment()));
-//					}
-//				}				
-//			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			
@@ -152,13 +119,23 @@ public class DeveloperTests {
 	}
 
 	@Test
-	public void ontologyAccessExample() {
-		OWLOntology ontology;
-		OWLClass c;
+	public void ontologyAccessExample() throws Exception {
+		OWLOntology ontology=null;
+		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
 		OWLNamedIndividual v;
-		
-		 
-		//c.getIRI().getNamespace()
+		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		System.out.println("AxiomType.DIFFERENT_INDIVIDUALS");
+		for (OWLDifferentIndividualsAxiom item : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
+			System.out.println(item);
+		}
+		System.out.println("AxiomType.SAME_INDIVIDUAL");
+		for (OWLSameIndividualAxiom item : ontology.getAxioms(AxiomType.SAME_INDIVIDUAL)) {
+			System.out.println("same individuals "+item);
+		}
+		System.out.println("ontology.getIndividualsInSignature()");
+		for (OWLNamedIndividual data: ontology.getIndividualsInSignature()) {
+				System.out.println(data); 
+		}
 		
 	}
 
@@ -207,9 +184,7 @@ public class DeveloperTests {
 		
 	}
 	
-	
-	
-	
-	
+
+		
 }
 
