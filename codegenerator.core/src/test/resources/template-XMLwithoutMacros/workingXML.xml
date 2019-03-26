@@ -49,8 +49,8 @@
 				<for>class</for>
 				<output>classes/${class.getIRI().getShortForm()}</output>
 				<imports>
-					<package>package.example.one</package>
-					<package>package.example.two</package>
+					<FullyQualifiedName>12</FullyQualifiedName>
+					<FullyQualifiedName>package.example.two</FullyQualifiedName>
 				</imports>
 			</macro>
 			<macro>
@@ -84,7 +84,7 @@
 				<for>ontology</for>
 				<output>ontologyOutput</output>
 				<imports>
-					<FullyQualifiedName></FullyQualifiedName>
+					<FullyQualifiedName>invalidStringFormatToReferAStaticClass</FullyQualifiedName>
 				</imports>
 
 			</macro>
@@ -94,7 +94,7 @@
 				<for>project</for>
 				<output>projectOutput</output>
 				<imports>
-					<package>d</package>
+					<FullyQualifiedName>d</FullyQualifiedName>
 				</imports>
 			</macro>
 
