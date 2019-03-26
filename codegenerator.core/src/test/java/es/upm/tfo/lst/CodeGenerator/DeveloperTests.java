@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +47,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -97,7 +99,7 @@ public class DeveloperTests {
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
 		try {
 			OWLReasonerFactory reasonerFactory= new JFactFactory();
-			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/games-complete.owl").openStream());
+			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
 			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
 			System.out.println("getDataPropertiesInSignature() "+ontology.getDataPropertiesInSignature().size());
 			System.out.println("getDatatypesInSignature() "+ontology.getDatatypesInSignature().size());
@@ -182,9 +184,7 @@ public class DeveloperTests {
 		
 	}
 	
-	
-	
-	
-	
+
+		
 }
 

@@ -53,6 +53,7 @@ import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -371,24 +372,14 @@ public class GenerateProject {
 					//TODO añadir en velocity
 				}
 
-				for (OWLClass cls : ontology.getClassesInSignature()) {
-					this.processInstances(c,ontology);
-				}
 			}
+			//procesar instancias
+
+			
 		} else {
 			update(i++);
-			
-			// get instances using axioms
-			for (OWLNamedIndividual individual : ontology.getIndividualsInSignature()) {
-				
-			}
-			
-			for (OWLClass cls : ontology.getClassesInSignature()) {
-				this.processInstances(cls, ontology);
-			}
-
 		}
-
+		this.processInstances(c, ontology);
 	}
 
 	/**
@@ -400,13 +391,12 @@ public class GenerateProject {
 	private void processInstances(OWLClass cls,OWLOntology ontology) throws Exception {
 		this.text = "";
 		
-		List<MacroModel> instancesModelArray = this.mainModel.getInstanceMacros();
-		//instances.addAll(reasoner.getInstances(c, true).getFlattened());
+
 		
-		if (!instancesModelArray.isEmpty()) {
+		if (!this.mainModel.getInstanceMacros().isEmpty()) {
 			
-			for (MacroModel instancesMacro : instancesModelArray) {
-				for (OWLNamedIndividual inst : ontology.getIndividualsInSignature()) {
+			for (MacroModel instancesMacro : this.mainModel.getInstanceMacros()) {
+				for (OWLDifferentIndividualsAxiom inst : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
 					//initialize and merge current context with base context
 					this.context = new VelocityContext(this.baseContext);
 					this.addImportsToContext(instancesMacro);
@@ -445,7 +435,7 @@ public class GenerateProject {
 	 * @param ontology {@link OWLOntology}
 	 * @throws Exception
 	 */
-	private void processObjectProperties(OWLNamedIndividual individual, OWLOntology ontology)throws Exception {
+	private void processObjectProperties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
 
 		this.text = "";
 		
@@ -493,7 +483,7 @@ public class GenerateProject {
 	 * @param ontology
 	 * @throws Exception 
 	 */
-	private void processDataPropeties(OWLNamedIndividual individual, OWLOntology ontology) throws Exception {
+	private void processDataPropeties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology) throws Exception {
 		
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
