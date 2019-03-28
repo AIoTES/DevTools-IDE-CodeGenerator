@@ -24,7 +24,7 @@
         <module>codegenerator.rest.plugin</module>
 		<module>codegenerator.rest.karaf</module>
 		<module>codegenerator.template.html</module>
-		<module>codegenerator.JsonLDGenerator</module>
+	
   </modules>
 	<build>
 		<pluginManagement>
