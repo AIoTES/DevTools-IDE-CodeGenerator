@@ -61,10 +61,7 @@
 	<dependency>
 		<groupId>net.sourceforge.owlapi</groupId>
 		<artifactId>owlapi-distribution</artifactId>
-		<!-- <version>5.1.7  / 4.0.4</version> -->
-		<!-- <version>5.1.5</version>  problems to load.  java.lang.ClassNotFoundException: gnu.trove.set.hash.THashSet -->
-		<!-- <version>5.1.7</version> -->
-		<version>4.5.6</version> <!-- 4.5.6 works ok, but couldnt load imported ontologies -->
+		<version>4.5.6</version> 
 	</dependency>
 
 	<dependency>
@@ -81,10 +78,7 @@
 	    <version>4.0.4</version>
 	</dependency>
 
-
-
   </dependencies>
-
 
      <build>
         <plugins>
@@ -97,34 +91,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
-<!-- 				<plugin> -->
-<!--      <groupId>org.mock-server</groupId> -->
-<!--      <artifactId>mockserver-maven-plugin</artifactId> -->
-<!--      <version>5.5.1</version> -->
-<!--      <configuration> -->
-<!--         <serverPort>1080</serverPort> -->
-<!--         <logLevel>DEBUG</logLevel> -->
-<!--      </configuration> -->
-<!--      <executions> -->
-<!--          <execution> -->
-<!--              <id>process-test-classes</id> -->
-<!--              <phase>process-test-classes</phase> -->
-<!--              <goals> -->
-<!--                  <goal>runForked</goal> -->
-<!--              </goals> -->
-<!--          </execution> -->
-<!--          <execution> -->
-<!--              <id>verify</id> -->
-<!--              <phase>verify</phase> -->
-<!--              <goals> -->
-<!--                  <goal>stopForked</goal> -->
-<!--              </goals> -->
-<!--          </execution> -->
-<!--      </executions> -->
-<!--  </plugin> -->
-
-
 
         </plugins>
     </build>

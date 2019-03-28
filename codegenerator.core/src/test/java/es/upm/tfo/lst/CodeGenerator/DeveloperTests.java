@@ -90,33 +90,7 @@ public class DeveloperTests {
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
 	}
-	
-	@Test
-	public void classAccessExample() {
-		
-		OWLOntology ontology=null;
-		 
-		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();
-		try {
-			OWLReasonerFactory reasonerFactory= new JFactFactory();
-			ontology = ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
-			OWLReasoner reasoner =reasonerFactory.createReasoner(ontology);
-			System.out.println("getDataPropertiesInSignature() "+ontology.getDataPropertiesInSignature().size());
-			System.out.println("getDatatypesInSignature() "+ontology.getDatatypesInSignature().size());
-			System.out.println("getAxioms "+ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE).size());
-			System.out.println("DATA_PROPERTY_ASSERTION "+ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION).size());
-			System.out.println("DATA_PROPERTY_DOMAIN "+ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN).size());
-			System.out.println("DATA_PROPERTY_RANGE "+ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE).size());
-			System.out.println("DATATYPE_DEFINITION "+ontology.getAxioms(AxiomType.DATATYPE_DEFINITION).size());
 
-			
-				
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-		}
-
-	}
 
 	@Test
 	public void ontologyAccessExample() throws Exception {
@@ -139,50 +113,7 @@ public class DeveloperTests {
 		
 	}
 
-	@Test
-	public void JsonGeneratorTests() {
-		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
-		 OWLOntology t = this.ontologyLoader.loadOntology(this.ontologyBasePath+"games.owl");
-		 OWLReasonerFactory reasonerFactory= new JFactFactory();
-		 this.reasoner = reasonerFactory.createReasoner(t);
-		 Map <String, String> data = new HashMap<String, String>();
-		 Set< Map <String, String>  > lista = new HashSet<Map<String,String>>();
-		 for (OWLClass cls : t.getClassesInSignature()) {
-			 System.out.println(cls.getIRI().getFragment());
-			  Set<OWLDataPropertyRangeAxiom> g = t.getAxioms(AxiomType.DATA_PROPERTY_RANGE); //para obtener data  type con el nombre de la propiedad
-			  Set<OWLDataPropertyDomainAxiom> k = t.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
-		  
 
-			 for (OWLDataPropertyDomainAxiom axiom : k) {
-
-				 if (axiom.getClassesInSignature().contains(cls) ) {
-					 for (OWLDataProperty map : axiom.getDataPropertiesInSignature()) {
-						 for (OWLDataPropertyRangeAxiom item : g) {
-							 if(item.containsEntityInSignature(map )) {
-								 System.out.println(item.getDataPropertiesInSignature().toString().replace("[", " ").replace("]", " ")+":"+item.getDatatypesInSignature().toString().replace("[", " ").replace("]", " "));
-							 }
-							}
-
-
-					}
-					
-				 }
-
-			 }
-			 
-
-		 }
-	}
-	
-	@Test
-	public void DefaultVelocityTemplateTest() {
-		
-	}
-	
-	@Test
-	public  void SQLTemplateTest() {
-		
-	}
 	
 
 		

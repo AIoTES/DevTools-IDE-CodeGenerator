@@ -6,7 +6,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 	<organization>
-		<name>Universidad Politécnica de Madrid</name>
+		<name>Universidad Politï¿½cnica de Madrid</name>
 		<url>http://www.upm.es</url>
 	</organization> 
   <licenses>
@@ -24,6 +24,7 @@
         <module>codegenerator.rest.plugin</module>
 		<module>codegenerator.rest.karaf</module>
 		<module>codegenerator.template.html</module>
+		<module>codegenerator.JsonLDGenerator</module>
   </modules>
 	<build>
 		<pluginManagement>
