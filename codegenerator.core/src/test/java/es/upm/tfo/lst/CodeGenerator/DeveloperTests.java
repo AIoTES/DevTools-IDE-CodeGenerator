@@ -98,18 +98,19 @@ public class DeveloperTests {
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
 		OWLNamedIndividual v;
 		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
-		System.out.println("AxiomType.DIFFERENT_INDIVIDUALS");
-		for (OWLDifferentIndividualsAxiom item : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
-			System.out.println(item);
-		}
-		System.out.println("AxiomType.SAME_INDIVIDUAL");
-		for (OWLSameIndividualAxiom item : ontology.getAxioms(AxiomType.SAME_INDIVIDUAL)) {
-			System.out.println("same individuals "+item);
-		}
-		System.out.println("ontology.getIndividualsInSignature()");
-		for (OWLNamedIndividual data: ontology.getIndividualsInSignature()) {
-				System.out.println(data); 
-		}
+//		System.out.println("AxiomType.DIFFERENT_INDIVIDUALS");
+//		for (OWLDifferentIndividualsAxiom item : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
+//			System.out.println(item);
+//		}
+//		System.out.println("AxiomType.SAME_INDIVIDUAL");
+//		for (OWLSameIndividualAxiom item : ontology.getAxioms(AxiomType.SAME_INDIVIDUAL)) {
+//			System.out.println("same individuals "+item);
+//		}
+//		System.out.println("ontology.getIndividualsInSignature()");
+//		for (OWLNamedIndividual data: ontology.getIndividualsInSignature()) {
+//				System.out.println(data); 
+//		}
+		
 		
 	}
 
