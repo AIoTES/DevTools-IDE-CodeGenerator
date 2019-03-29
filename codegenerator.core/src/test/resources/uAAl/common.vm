@@ -1,0 +1,43 @@
+## define common variables such as
+#macro( license )##
+#if ($isASL2)##
+/*
+	Copyright $Date.getYear() $License-holder
+
+	See the NOTICE file distributed with this work for additional
+	information regarding copyright ownership
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	  http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+ */
+#end##
+#end##
+#macro( package $ontology)##
+${PackageBase}.${ontology.getOntologyID().getOntologyIRI().get().getFragment().toLowerCase()}
+#end##
+#macro( className $class)## TODO ensure first letter is upper case
+${class.getIRI().getFragment()}
+#end##
+#macro( propVar $prop)##
+PROP_${prop.getProperty().getNamedProperty().getIRI().getFragment().toUpperCase()}
+#end##
+#macro( ontClassName $ontology)##
+##TODO ensure first letter is upper case.
+${ontology.getOntologyID().getOntologyIRI().get().getFragment()}Ontology
+#end##
+#macro( ontFactory $ontology)##
+##TODO ensure first letter is upper case.
+${ontology.getOntologyID().getOntologyIRI().get().getFragment()}Factory
+#end##
+#macro( isEnumerationAxiom $axiom)##
+
+#end##

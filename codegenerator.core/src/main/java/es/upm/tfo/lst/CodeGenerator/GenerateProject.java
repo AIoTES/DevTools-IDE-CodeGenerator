@@ -39,7 +39,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.apache.velocity.runtime.directive.Macro;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
@@ -817,5 +816,16 @@ public class GenerateProject {
 
 		}
 	}
+
+	
+	/**
+	 * method to get all imported ontologies plus actual ontology
+	 * @return {@link Set} < {@link OWLOntology} > of ontologies
+	 */
+	public Set<OWLOntology> getOntologies2BProcesed() {
+		return ontologies2BProcesed;
+	}
+
+	
 
 }
