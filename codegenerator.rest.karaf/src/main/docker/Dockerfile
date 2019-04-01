@@ -4,6 +4,7 @@ LABEL maintainer="amedrano@lst.tfo.upm.es"
 
 RUN mkdir /karaf
 COPY assembly/ /karaf/
+RUN chmod +x /karaf/bin/*
 
 VOLUME ["/karaf/data"]
 
