@@ -49,29 +49,29 @@
 				<template>classes.vm</template>
 				<for>class</for>
 				<output>classes/${class.getIRI().getShortForm()}</output>
-				<imports>
-					<FullyQualifiedName>package.example.one</FullyQualifiedName>
-					<FullyQualifiedName>package.example.two</FullyQualifiedName>
-				</imports>
+<!-- 				<imports> -->
+<!-- 					<FullyQualifiedName>package.example.one</FullyQualifiedName> -->
+<!-- 					<FullyQualifiedName>package.example.two</FullyQualifiedName> -->
+<!-- 				</imports> -->
 			</macro>
 			<macro>
 				<template>classes2.vm</template>
 				<for>class</for>
 				<output>classes2/${class.getIRI().getFragment()}</output>
-				<imports>
-					<FullyQualifiedName>com.test.upm.protege.plugin</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.rest.plugin.StaticExample</FullyQualifiedName>
-					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName>
-				</imports>
+<!-- 				<imports> -->
+<!-- 					<FullyQualifiedName>com.test.upm.protege.plugin</FullyQualifiedName> -->
+<!-- 					<FullyQualifiedName>com.test.upm.rest.plugin.StaticExample</FullyQualifiedName> -->
+<!-- 					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName> -->
+<!-- 				</imports> -->
 			</macro>
 
 			 <macro>
 				<template>enumerations.vm</template>
 				<for>enumeration</for>
 				<output>enumerationsDirectory</output>
-				<imports>
-					<FullyQualifiedName>org.apache.velocity.imports</FullyQualifiedName>
-				</imports>
+<!-- 				<imports> -->
+<!-- 					<FullyQualifiedName>org.apache.velocity.imports</FullyQualifiedName> -->
+<!-- 				</imports> -->
 			</macro>
 			<macro>
 				<template>instances.vm</template>
@@ -86,9 +86,9 @@
 				<template>ontology.vm</template>
 				<for>ontology</for>
 				<output>ontologyOutput</output>
-				<imports>
-					<FullyQualifiedName>com.test.upm.codegenerator.test</FullyQualifiedName>
-				</imports>
+<!-- 				<imports> -->
+<!-- 					<FullyQualifiedName>com.test.upm.codegenerator.test</FullyQualifiedName> -->
+<!-- 				</imports> -->
 
 			</macro>
 
@@ -96,9 +96,9 @@
 				<template>project.vm</template>
 				<for>project</for>
 				<output>projectOutput</output>
-				<imports>
-					<FullyQualifiedName>com.test.upm.codegenerator.test.projectTestStaticImport</FullyQualifiedName>
-				</imports>
+<!-- 				<imports> -->
+<!-- 					<FullyQualifiedName>com.test.upm.codegenerator.test.projectTestStaticImport</FullyQualifiedName> -->
+<!-- 				</imports> -->
 			</macro>
 
 
