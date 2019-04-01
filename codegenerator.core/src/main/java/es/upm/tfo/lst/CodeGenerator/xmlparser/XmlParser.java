@@ -147,6 +147,7 @@ public class XmlParser {
 				}
 			} else {
 				log.fatal("given path cant be processed as a valid template");
+				//throw new Exception("given path cant be processed as a valid template");
 				return null;
 			}
 
