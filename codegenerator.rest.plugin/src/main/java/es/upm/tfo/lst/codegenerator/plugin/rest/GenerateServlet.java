@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -98,7 +99,8 @@ public class GenerateServlet extends HttpServlet {
 				try {
 					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
 				} catch (Exception e) {
-					resp.getWriter().println(e.getMessage());
+					resp.sendError(400, e.getMessage());
+					return;
 					// e.printStackTrace();
 				}
 
