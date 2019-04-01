@@ -156,7 +156,7 @@ public class GenerateServlet extends HttpServlet {
 				}
 				boolean result;
 
-				outO.addProperty("output", outputAlias);
+				outO.addProperty("output", outputAlias+"/"+out);
 				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().println(outO.toString());
 			}
