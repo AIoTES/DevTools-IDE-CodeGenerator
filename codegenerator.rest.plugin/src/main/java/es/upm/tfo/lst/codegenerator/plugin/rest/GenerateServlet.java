@@ -61,7 +61,7 @@ public class GenerateServlet extends HttpServlet {
 	private static final String VAR = "variables";
 	private static final String CONTENT_TYPE = "Content-Type";
 	private File tempFolder;
-	private String outputAlias, outDir;
+	private String outputAlias, outDir,out ;
 	private VelocityContext velocityContext;
 	private VelocityEngine vel_eng;
 	private Template template;
@@ -141,7 +141,7 @@ public class GenerateServlet extends HttpServlet {
 				}
 
 				// set Output
-				String out = Integer.toHexString(sreq.hashCode());
+				out = Integer.toHexString(sreq.hashCode());
 				File outFile = new File(tempFolder, out);
 				// Files.deleteIfExists(outFile.toPath());
 				this.deleteFolder(outFile);
@@ -168,6 +168,10 @@ public class GenerateServlet extends HttpServlet {
 		String line, req_data, aux;
 		URL urlToFile;
 		req_data = req.getRequestURI().replaceAll(servletName, "");
+		if(!req_data.contains(out)) {
+			resp.getWriter().write("Permission denied. You dont have permissions to access to this directory");
+			return;
+		}
 		urlToFile = this.getServletContext().getResource(req_data);
 
 		try {
