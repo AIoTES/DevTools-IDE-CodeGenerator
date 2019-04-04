@@ -5,15 +5,3 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.protege.owl.codegeneration.WrappedIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
-
-
-##TODO: add superclasses and interfaces
-public class ${class.getIRI().getFragment()} extends .... implements ....(){
-
-public ${class.getIRI().getFragment()} (){
-super();
-}
-
-##//OBJECT PROPERTIES  GETTERS AND SETTERS
-
-}

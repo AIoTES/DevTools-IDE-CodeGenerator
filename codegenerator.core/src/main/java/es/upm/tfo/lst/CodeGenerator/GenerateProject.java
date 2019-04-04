@@ -169,9 +169,9 @@ public class GenerateProject {
 			try {
 				this.initVelocity();
 				this.baseContext.put("ontologyCompleteList",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
-				this.baseContext.put("output", this.outputFolder);
+				//this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
-
+				this.baseContext.put("project",this);
 				this.addVariablesToBaseContext();
 
 				if (this.mainModel.getProjectMacros().isEmpty())

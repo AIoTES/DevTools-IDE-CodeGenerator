@@ -8,3 +8,16 @@
 		#end
 	#end
 #end
+
+
+
+##TODO: add superclasses and interfaces
+public class ${class.getIRI().getFragment()} extends .... implements ....(){
+
+public ${class.getIRI().getFragment()} (){
+super();
+}
+
+##//OBJECT PROPERTIES  GETTERS AND SETTERS
+
+}
