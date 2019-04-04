@@ -105,7 +105,7 @@ public class GenerateProject {
 
 	private ReasonerWrapper wrapper = null;
 	private TemplateDataModel mainModel = null;
-	private VelocityContext context, baseContext;
+	private VelocityContext  baseContext;
 	private VelocityEngine vel_eng;
 	private FileWriter fr;
 	private Template template;
@@ -428,7 +428,7 @@ public class GenerateProject {
 					this.processDataPropeties(individual,  ontology);
 				}	
 			}
-			context=null;
+			
 		} else {
 			//maybe need class/individuals too?
 			this.processObjectProperties(null,  ontology);
@@ -453,7 +453,7 @@ public class GenerateProject {
 				VelocityContext context = new VelocityContext(this.baseContext);
 
 				if(individual != null)
-					this.context.put("individual",individual);
+					context.put("individual",individual);
 
 				this.addImportsToContext(context, macroObjectProperties);
 				text = new String(this.processOutputString(macroObjectProperties.getOutput()));
@@ -500,7 +500,7 @@ public class GenerateProject {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				
 				if(individual!=null)
-					this.context.put("instance","null");
+					context.put("instance","null");
 				
 				this.addImportsToContext(context,macroDataPropeties);
 				text = new String( this.processOutputString(macroDataPropeties.getOutput()));
@@ -820,14 +820,7 @@ public class GenerateProject {
 	 * To add the imports of static classes into context
 	 * @param model
 	 */
-	private void addImportsToContext(MacroModel model) {
-		for (Map<String, String> key : model.getImports()) {
-			for (String k : key.keySet()) {
-				this.context.put(k, new FieldMethodizer(key.get(k)) );
-			}
 
-		}
-	}
 	private void addImportsToContext(VelocityContext context, MacroModel model) {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
