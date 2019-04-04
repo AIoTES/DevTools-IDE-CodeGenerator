@@ -44,7 +44,7 @@ public class CompleteTest  {
 	private final String ontologyBasePath="src/test/resources/ontologies/";
 	private final String sql="src/test/resources/template/SQL/sql.vm";
 	
-	private final String jsonCoordinator="src/test/resources/context/coordinator.xml";
+	
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
 	private final String baseOutput="target/completeTest/";
 	private static ClientAndServer mockServer;
@@ -82,7 +82,7 @@ public class CompleteTest  {
 		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 try {
 
-			 this.model=this.parser.generateXMLCoordinator(this.jsonCoordinator);
+			 this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
 				
 				this.genPro.setMainModel(this.model);
 				
