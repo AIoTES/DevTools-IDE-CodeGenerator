@@ -15,11 +15,17 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.util.Set;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -60,25 +66,31 @@ public class DeveloperTests {
 
 
 	@Test
-	public void ontologyAccessExample() throws Exception {
+	public void imports() throws Exception {
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
-		OWLNamedIndividual v;
-		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
-//		System.out.println("AxiomType.DIFFERENT_INDIVIDUALS");
-//		for (OWLDifferentIndividualsAxiom item : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
-//			System.out.println(item);
-//		}
-//		System.out.println("AxiomType.SAME_INDIVIDUAL");
-//		for (OWLSameIndividualAxiom item : ontology.getAxioms(AxiomType.SAME_INDIVIDUAL)) {
-//			System.out.println("same individuals "+item);
-//		}
-//		System.out.println("ontology.getIndividualsInSignature()");
-//		for (OWLNamedIndividual data: ontology.getIndividualsInSignature()) {
-//				System.out.println(data); 
-//		}
+		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/Equimetrix.owl").openStream());
 		
+		Set<OWLDataPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
+		Set<OWLDataPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
+		System.out.println(rng.size());
 		
+		for (OWLAxiom axiom : ontology.getAxioms()) {
+			if(axiom.isOfType(AxiomType.DECLARATION) && axiom.getSignature().iterator().next().isOWLClass() ) {
+				OWLClass cls=axiom.getSignature().iterator().next().asOWLClass();
+				System.out.println("clase "+cls.getIRI().getFragment());
+				for (OWLDataPropertyDomainAxiom owlDataPropertyDomainAxiom : ax) {
+					if(owlDataPropertyDomainAxiom.getDomain().asOWLClass().equals(cls)) {
+						System.out.println("prop name: "+owlDataPropertyDomainAxiom.getProperty().asOWLDataProperty().getIRI());
+						for (OWLDataPropertyRangeAxiom owlDataPropertyRangeAxiom : rng) {
+								System.out.println("range of prop "+owlDataPropertyRangeAxiom.getRange());
+						}
+						
+					}
+					
+				}
+			}
+		}
 	}
 
 
