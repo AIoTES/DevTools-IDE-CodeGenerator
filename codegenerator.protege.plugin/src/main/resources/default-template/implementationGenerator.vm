@@ -1,0 +1,97 @@
+#**
+this template is only for class, so only needs a reference to actual ontology and actual class.
+in the stack process of CodeGenerator core
+this template will be applied to each class into queue of ontologies to be procesed
+**#
+
+#parse("common.vm")
+#set($axioms = $ontology.getAxioms())
+#set($obj_props = $ontology.getAxioms($AxiomType.OBJECT_PROPERTIE_DOMAIN))
+#set($data_props = $ontology.getAxioms($AxiomType.DATA_PROPERTIE_DOMAIN))
+
+##MACRO TO PROCESS OBJECT PROPERTIES
+#macro(objectProps $cls)
+#foreach($prop in $obj_props)
+
+#if($prop.isOfType($AxiomType.DECLARATION) && $prop.getSignature().iterator().next().isOWLClass() && $cls.equals($prop.getSignature().iterator().next().asOWLClass() )
+#set($prop_aux = $prop.getProperty().asOWLDataProperty() )
+public Collection<? extends WrappedIndividual> get ${prop_aux.getIRI().getFragment()} () {
+        return getDelegate().getPropertyValues(getOwlIndividual(),Vocabulary.OBJECT_PROPERTY_GAMENAME, WrappedIndividualImpl.class);
+    }
+
+    public boolean has ${prop_aux.getIRI().getFragment()}() {
+	   return !get ${prop_aux.getIRI().getFragment()}().isEmpty();
+    }
+
+    public void add ${prop_aux.getIRI().getFragment()}(WrappedIndividual new ${prop_aux.getIRI().getFragment()}) {
+        getDelegate().addPropertyValue(getOwlIndividual(),
+                                       Vocabulary.OBJECT_PROPERTY_${prop_aux.getIRI().getFragment().toUpperCase()},
+                                       newGameName);
+    }
+
+    public void removeGameName(WrappedIndividual old ${prop_aux.getIRI().getFragment()}) {
+        getDelegate().removePropertyValue(getOwlIndividual(),
+                                          Vocabulary.OBJECT_PROPERTY_ ${prop_aux.getIRI().getFragment().toUpperCase()},
+                                          old ${prop_aux.getIRI().getFragment()});
+    }
+#end
+#end
+#end
+##MACRO TO PROCESS DATA PROPERTIES
+#macro(dataProps $cls)
+#foreach($prop in $obj_props)
+#if($prop.isOfType($AxiomType.DECLARATION) && $prop.getSignature().iterator().next().isOWLClass() && $cls.equals($prop.getSignature().iterator().next().asOWLClass() )
+#set($prop_aux = $prop.getProperty().asOWLDataProperty() )
+ /* ***************************************************
+     * Data Property http://ontology.universAAL.org/Equimetrix.owl#completed
+     */
+     
+    public Collection<? extends Object> getCompleted() {
+		return getDelegate().getPropertyValues(getOwlIndividual(), Vocabulary.DATA_PROPERTY_COMPLETED, Object.class);
+    }
+
+    public boolean hasCompleted() {
+		return !getCompleted().isEmpty();
+    }
+
+    public void addCompleted(Object newCompleted) {
+	    getDelegate().addPropertyValue(getOwlIndividual(), Vocabulary.DATA_PROPERTY_COMPLETED, newCompleted);
+    }
+
+    public void removeCompleted(Object oldCompleted) {
+		getDelegate().removePropertyValue(getOwlIndividual(), Vocabulary.DATA_PROPERTY_COMPLETED, oldCompleted);
+    }
+#end
+#end
+   
+#end
+
+#macro(generateClass)
+
+#foreach($t in $axioms)
+#if($t.isOfType($AxiomType.DECLARATION) && $t.getSignature().iterator().next().isOWLClass() )
+#set($cls=$t.getSignature().iterator().next().asOWLClass()) 
+
+#if($cls.equals($class))
+public class Default ${cls.getIRI().getFragment()} extends WrappedIndividualImpl implements ${cls.getIRI().getFragment()} {
+    public Default ${cls.getIRI().getFragment()}(CodeGenerationInference inference, IRI iri) {
+        super(inference, iri);
+	}
+	#objectProps($cls)
+	#dataProps($cls)
+#end
+
+
+
+#end
+#end
+
+
+#end
+
+
+
+##generated
+
+#generateClass()
+}##end of class bracket
