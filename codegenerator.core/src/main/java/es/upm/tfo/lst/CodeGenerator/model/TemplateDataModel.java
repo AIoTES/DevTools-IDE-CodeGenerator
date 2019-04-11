@@ -90,7 +90,7 @@ public class TemplateDataModel {
 	 *         not defined
 	 */
 	public List<MacroModel> getClassMacros() {
-		return this.getMacroList("class");
+		return this.getMacroList("Class");
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getOntologyMacros() {
-		return this.getMacroList("ontology");
+		return this.getMacroList("Ontology");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getInstanceMacros() {
-		return this.getMacroList("instance");
+		return this.getMacroList("NamendIndividual");
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getEnumerationMacros() {
-		return this.getMacroList("enumeration");
+		return this.getMacroList("Enumeration");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class TemplateDataModel {
 	 *         Null if not defined
 	 */
 	public List<MacroModel> getProjectMacros() {
-		return this.getMacroList("project");
+		return this.getMacroList("Project");
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class TemplateDataModel {
 	 */
 	private List<MacroModel> getMacroList(String type) {
 
-		return this.macroList.stream().filter(t -> t.getTemplateFor().equals(type)).collect(Collectors.toList());
+		return this.macroList.stream().filter(t -> t.getTemplateFor().equalsIgnoreCase(type)).collect(Collectors.toList());
 
 	}
 	

@@ -105,9 +105,6 @@ public class CompleteTest  {
 		assertTrue(genPro.getErrors().isEmpty());
 		}
 
-
-
-
 	@Test
 	public void webTemplateTest() throws IOException {
 		 System.out.println("\n------------------------------web template with local ontology--------------------------------------\n");

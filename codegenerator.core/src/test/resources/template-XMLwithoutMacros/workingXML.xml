@@ -43,62 +43,6 @@
 			</variable>
 
 		</variables>
-		<macros>
-			<macro>
-				<template>classes.vm</template>
-				<for>class</for>
-				<output>classes/${class.getIRI().getShortForm()}</output>
-				<imports>
-					<FullyQualifiedName>12</FullyQualifiedName>
-					<FullyQualifiedName>package.example.two</FullyQualifiedName>
-				</imports>
-			</macro>
-			<macro>
-				<template>classes2.vm</template>
-				<for>class</for>
-				<output>classes2/${class.getIRI().getFragment()}</output>
-				<imports>
-					<FullyQualifiedName>com.test.upm.codegenerator</FullyQualifiedName>
-				</imports>
-			</macro>
 
-			 <macro>
-				<template>enumerations.vm</template>
-				<for>enumeration</for>
-				<output>enumerationsDirectory</output>
-				<imports>
-					<FullyQualifiedName>d</FullyQualifiedName>
-				</imports>
-			</macro>
-			<macro>
-				<template>instances.vm</template>
-				<for>instance</for>
-				<output>instancesDirectory/${instance.getIRI().getFragment()}</output>
-				<imports>
-					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName>
-				</imports>
-			</macro>
-
-				<macro>
-				<template>ontology.vm</template>
-				<for>ontology</for>
-				<output>ontologyOutput</output>
-				<imports>
-					<FullyQualifiedName>invalidStringFormatToReferAStaticClass</FullyQualifiedName>
-				</imports>
-
-			</macro>
-
-			<macro>
-				<template>project.vm</template>
-				<for>project</for>
-				<output>projectOutput</output>
-				<imports>
-					<FullyQualifiedName>d</FullyQualifiedName>
-				</imports>
-			</macro>
-
-
-		</macros>
 </Template>
 

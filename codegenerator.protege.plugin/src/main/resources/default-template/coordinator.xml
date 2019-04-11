@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Template
+		xmlns="http://www.example.org/prueba2"
+		xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
+		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
+		<template-name>Protege Defalul Template to CodeGenerato plugin</template-name>
+		<template-version>1.0</template-version>
+		<template-description>error</template-description>
+		<template-author>
+			<author-name>Edaurdo</author-name>
+			<author-email>ebuhid@lst.tfo.upm.es</author-email>
+		</template-author>
+
+		<variables>
+			<variable>
+				<name>package</name>
+				<default>lst.tfo.upm.es</default>
+				<required>true</required>
+				<description>"variable to set the base package"</description>
+			</variable>
+
+			<variable>
+				<name>targetOS</name>
+				<default>Linux</default>
+				<required>false</required>
+				<description>"variable containing target operating system"</description>
+			</variable>
+
+			<variable>
+				<name>templateCount</name>
+				<default>0</default>
+				<required>false</required>
+				<description>"variable to set template count"</description>
+			</variable>
+
+			<variable>
+				<name>ontologyCount</name>
+				<default>0</default>
+				<required>false</required>
+				<description>"variable to set ontology count"</description>
+			</variable>
+
+		</variables>
+		<macros>
+			<macro>
+				<template>project.vm</template>
+				<for>project</for>
+				<output>projectOutput</output> 
+			</macro>
+			<macro>
+				<template>implementationGenerator.vm</template>
+				<for>Class</for>
+				<output>implementation/${class.getIRI().getFragment()}</output>  		
+					<imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+					<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
+				</imports>  
+			</macro>
+			<macro>
+				<template>interfaceGenerator.vm</template>
+				<for>Class</for>
+				<output>interfaces/${class.getIRI().getFragment()}</output> 
+				<imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+					<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
+				</imports> 
+			</macro>
+
+			<macro>
+				<template>namendIndividuals.vm</template>
+				<for>NamendIndividual</for>
+				<output>OWLNamendIndividualsDirectory/${instance.getIRI().getFragment()}</output>
+			</macro>
+			
+			<macro>
+				<template>AnnotationProperty.vm</template>
+				<for>AnnotationProperty</for>
+				<output>AnnotationProperty/${AnnotationProperty.getIRI().getFragment()}</output>
+			</macro>
+			
+			<macro>
+				<template>namendIndividuals.vm</template>
+				<for>NamendIndividual</for>
+				<output>OWLNamendIndividualsDirectory/${instance.getIRI().getFragment()}</output>
+			</macro>
+			
+			<macro>
+				<template>ontology.vm</template>
+				<for>Ontology</for>
+				<output>ontologyOutput/${ontology.getIRI().getFragment()}</output>
+					<imports>     
+						<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+						<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
+					</imports> 
+			</macro>
+
+
+
+
+		</macros>
+</Template>
+

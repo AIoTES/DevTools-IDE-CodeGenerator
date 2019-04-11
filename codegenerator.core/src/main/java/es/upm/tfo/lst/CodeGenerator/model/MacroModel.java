@@ -76,21 +76,13 @@ public class MacroModel {
 		this.node=node;
 	}
 
-
-	
-
-
 	public Set<Map<String, String>> getImports() {
 		return imports;
 	}
 
-
-
 	public void setImports(Set<Map<String, String>> imports) {
 		this.imports = imports;
 	}
-
-
 
 	/**
 	 *

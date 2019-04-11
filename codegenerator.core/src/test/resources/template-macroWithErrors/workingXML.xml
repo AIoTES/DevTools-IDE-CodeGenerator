@@ -48,6 +48,9 @@
 				<template>classes.vm</template>
 				<for>class</for>
 				<output>clasesOutput</output>
+				<imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+				</imports> 
 			</macro>
 		
 		</macros>

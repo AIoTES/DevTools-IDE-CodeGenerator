@@ -8,7 +8,18 @@ this template will be applied to each class into queue of ontologies to be proce
 #set($axioms = $ontology.getAxioms())
 #set($obj_props = $ontology.getAxioms($AxiomType.OBJECT_PROPERTIE_DOMAIN))
 #set($data_props = $ontology.getAxioms($AxiomType.DATA_PROPERTIE_DOMAIN))
+##MACRO TO GENERATE GETTER AND SETTER OF A SINGLE VARIABLE
+#macro(gettter_setter $var)
+//setter
+public Void set $var(String my $var){
+        this.$var = my $var;
+}
+//getter
+public String get $var(){
+        return this.$var;
+}
 
+#end
 ##MACRO TO PROCESS OBJECT PROPERTIES
 #macro(objectProps $cls)
 #foreach($prop in $obj_props)
@@ -37,6 +48,7 @@ public Collection<? extends WrappedIndividual> get ${prop_aux.getIRI().getFragme
 #end
 #end
 #end
+
 ##MACRO TO PROCESS DATA PROPERTIES
 #macro(dataProps $cls)
 #foreach($prop in $obj_props)
@@ -66,8 +78,28 @@ public Collection<? extends WrappedIndividual> get ${prop_aux.getIRI().getFragme
    
 #end
 
-#macro(generateClass)
 
+#macro(CodeGeneratorAdditions)
+/*
+*from this point, the following  code is an example of the potential of the CodeGenerator
+*/
+
+//extra variables added by the user and it default value
+private String $varname=" $varname.getValue()";
+private String $varname =" $varname.getValue()";
+private String $varname =" $varname.getValue()";
+private String $varname =" $varname.getValue()";
+
+//getters and setters of this variables
+#gettter_setter($varname)
+#gettter_setter($varname)
+#gettter_setter($varname)
+#gettter_setter($varname)
+
+#end
+
+
+#macro(generateClass)
 #foreach($t in $axioms)
 #if($t.isOfType($AxiomType.DECLARATION) && $t.getSignature().iterator().next().isOWLClass() )
 #set($cls=$t.getSignature().iterator().next().asOWLClass()) 
@@ -81,17 +113,12 @@ public class Default ${cls.getIRI().getFragment()} extends WrappedIndividualImpl
 	#dataProps($cls)
 #end
 
-
-
 #end
 #end
 
-
 #end
 
-
-
-##generated
-
+##********************************
 #generateClass()
+#CodeGeneratorAdditions()
 }##end of class bracket

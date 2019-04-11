@@ -379,7 +379,7 @@ public class GenerateProject {
 		} else {
 			update(i++);
 		}
-		this.processInstances(c, ontology);
+		this.processNamedIndividual(c, ontology);
 	}
 
 	/**
@@ -388,7 +388,7 @@ public class GenerateProject {
 	 * @param ontology {@link OWLOntology} 
 	 * @throws Exception
 	 */
-	private void processInstances(OWLClass cls,OWLOntology ontology) throws Exception {
+	private void processNamedIndividual(OWLClass cls,OWLOntology ontology) throws Exception {
 		String text = null;
 
 		if (!this.mainModel.getInstanceMacros().isEmpty()) {
@@ -423,7 +423,7 @@ public class GenerateProject {
 						}
 					}else
 						log.warn("empty output tag in instancesMacro...skipping...");
-					//maybe need class to?
+					//maybe need class too?
 					this.processObjectProperties(individual,  ontology);
 					this.processDataPropeties(individual,  ontology);
 				}	
@@ -547,7 +547,12 @@ public class GenerateProject {
 		
 	}
 	
-	private static Properties defaultVelocityProperties() {
+	//TODO: define this step
+	private void processAnnotations(OWLOntology ontology, OWLClass cls) {
+		
+	}
+	
+private static Properties defaultVelocityProperties() {
 		Properties props = new Properties();
 		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 		return props;

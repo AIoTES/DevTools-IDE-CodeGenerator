@@ -15,9 +15,11 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.math.MathContext;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.velocity.runtime.parser.node.MathUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -26,6 +28,8 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -39,7 +43,6 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  *
  */
 public class DeveloperTests {
-
 	private  XmlParser parser=null;
 	private TemplateDataModel model=null;
 	private GenerateProject genPro=null;
@@ -66,11 +69,10 @@ public class DeveloperTests {
 
 
 	@Test
-	public void imports() throws Exception {
+	public void dataprops() throws Exception {
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
-		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/Equimetrix.owl").openStream());
-		
+		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
 		Set<OWLDataPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
 		Set<OWLDataPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
 		System.out.println(rng.size());
@@ -88,6 +90,31 @@ public class DeveloperTests {
 						
 					}
 					
+				}
+			}
+		}
+	}
+	
+	@Test
+	public void objprops() throws Exception {
+		OWLOntology ontology=null;
+		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
+		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		
+		Set<OWLObjectPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN);
+		Set<OWLObjectPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.OBJECT_PROPERTY_RANGE);
+		System.out.println(rng.size());
+		
+		for (OWLAxiom axiom : ontology.getAxioms()) {
+			if(axiom.isOfType(AxiomType.DECLARATION) && axiom.getSignature().iterator().next().isOWLClass() ) {
+				OWLClass cls=axiom.getSignature().iterator().next().asOWLClass();
+				
+				System.out.println("clase "+cls.getIRI().getFragment().toUpperCase());
+				
+				for (OWLObjectPropertyDomainAxiom owlDataPropertyDomainAxiom : ax) {
+						if(owlDataPropertyDomainAxiom.getDomain().equals(cls)) {
+							System.out.println(owlDataPropertyDomainAxiom.getProperty().asOWLObjectProperty().getIRI().getFragment());
+						}
 				}
 			}
 		}

@@ -8,8 +8,7 @@
 		<template-description>error</template-description>
 		<template-author>
 			<author-name>eduardo</author-name>
-			<author-email>buhid</author-email>	
-			<author-phone>123523</author-phone>
+			<author-email>ebuhid@lst.tfo.upm.es</author-email>	
 		</template-author>
 			<variables>
 					<variable>
@@ -44,58 +43,67 @@
 
 		</variables>
 		<macros>
-			<macro>
-				<template>classes.vm</template>
-				<for>class</for>
-				<output>classes/${class.getIRI().getShortForm()}</output>
-			</macro>
-			<macro>
-				<template>classes2.vm</template>
-				<for>class</for>
-				<output>classes2/${ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace(".","")}</output>
-				 
-			</macro>
-			
-			<macro>
-				<template>propertyValues.vm</template>
-				<for>objectProperties</for>
-				<output>propertiesValuesOut</output>
-				
-			</macro>
-			 <macro>
-				<template>enumerations.vm</template>
-				<for>enumeration</for>
-				<output>enumerationsDirectory</output>
-			</macro>
-			<macro>
-				<template>instances.vm</template>
-				<for>instance</for>
-				<output>instancesDirectory</output>
-			</macro>
-				<macro>
-				<template>ontology.vm</template>
-				<for>ontology</for>
-				<output>ontologyOutput</output>
-			 
-			</macro>
-			
-			 
+		
 			<macro>
 				<template>project.vm</template>
 				<for>project</for>
 				<output>projectOutput</output>
 			</macro>
-			  
+			
 			<macro>
-				<template>subclass.vm</template>
-				<for>subclass</for>
-				<output>subclassDirectory</output>
+				<template>ontology.vm</template>
+				<for>Ontology</for>
+				<output>ontologyOutput</output>
+				 <imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+				</imports> 
 			</macro>
 			<macro>
-				<template>superclass.vm</template>
-				<for>superclass</for>
-				<output>superclassDirectory</output>
-			</macro>			
+				<template>classes.vm</template>
+				<for>Class</for>
+				<output>classes/${class.getIRI().getShortForm()}</output>
+				<imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+				</imports> 
+			</macro>
+			<macro>
+				<template>classes2.vm</template>
+				<for>Class</for>
+				<output>classes2/${ontology.getOntologyID().getOntologyIRI().get().getShortForm().replace(".","")}</output>
+				<imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+				</imports>  
+			</macro>
+			
+			<macro>
+				<template>ObjectProperties.vm</template>
+				<for>objectProperties</for>
+				<output>propertiesValuesOut</output>
+				
+			</macro>
+
+			<macro>
+				<template>NamedIndividual.vm</template>
+				<for>NamedIndividual</for>
+				<output>instancesDirectory</output>
+			</macro>
+				 
+			<macro>
+				<template>project.vm</template>
+				<for>project</for>
+				<output>projectOutput</output>
+			</macro>
+			<macro>
+				<template>ontology.vm</template>
+				<for>ontology</for>
+				<output>ontologyOutput</output>
+				 <imports>     
+					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
+				</imports> 
+			</macro>
+			
+		
+		
 			
 		</macros>
 </Template>
