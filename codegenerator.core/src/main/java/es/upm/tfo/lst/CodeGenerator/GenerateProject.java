@@ -22,6 +22,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,7 +119,7 @@ public class GenerateProject {
 	private List<Exception> arrayOfExceptions = null;
 	private URL urlBasePath = null;
 	private Properties props;
-	private Set<OWLOntology> ontologies2BProcesed = new HashSet<>();
+	private List<OWLOntology> ontologies2BProcesed = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process = 0;
 	public ProgessCallbackPublisher GenConf;
@@ -733,11 +735,23 @@ private static Properties defaultVelocityProperties() {
 	 * @param recursive {@link Boolean} value indicating recursive load
 	 */
 	public void addOntology(OWLOntology ont, boolean recursive) {
+		
+		
+		
 		if (recursive) {
 			ontologies2BProcesed.addAll(ont.getImports());
 		}
 		ontologies2BProcesed.add(ont);
+		
+		Collections.sort(ontologies2BProcesed, new Comparator<OWLOntology>() {
 
+			@Override
+			public int compare(OWLOntology o1, OWLOntology o2) {
+				if(o1.getImports().contains(o2)) return -1;
+				else if(o1.getImports().contains(o2)) return 1;
+				else return 0;
+			}
+		});
 	}
 	/**
 	 *   
@@ -839,9 +853,10 @@ private static Properties defaultVelocityProperties() {
 	 * method to get all imported ontologies plus actual ontology
 	 * @return {@link Set} < {@link OWLOntology} > of ontologies
 	 */
-	public Set<OWLOntology> getOntologies2BProcesed() {
+	public List<OWLOntology> getOntologies2BProcesed() {
 		return ontologies2BProcesed;
 	}
+	
 
 	
 
