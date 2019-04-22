@@ -141,6 +141,9 @@ public class TemplateDataModel {
 	public List<MacroModel> getDataProperties(){
 		return this.getMacroList("dataProperties");
 	}
+	public List<MacroModel> getAnnotationsMacros(){
+		return this.getMacroList("annotations");
+	}
 	
 	/**
 	 * If in XML file exists two or more variables with same name (optional or
