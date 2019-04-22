@@ -308,22 +308,18 @@ public class GenerateProject {
 				}else 
 					log.warn("empty output tag in ontologyModel...skipping...");
 
+				this.processAnnotations(ontology);
+				
 				for (OWLAxiom axiom : ontology.getAxioms()) {
 					if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
 						OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
 						this.processClass(cls, ontology);
 					}
 				}
-				
-				
-//				for (OWLClass c : ontology.getClassesInSignature()) {
-//					this.processClass(c, ontology);
-//				}
+
 			}
 		} else {
-//			for (OWLClass c : ontology.getClassesInSignature()) {
-//				this.processClass(c, ontology);
-//			}
+
 			for (OWLAxiom axiom : ontology.getAxioms()) {
 				if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
 					OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
@@ -550,8 +546,55 @@ public class GenerateProject {
 	}
 	
 	//TODO: define this step
-	private void processAnnotations(OWLOntology ontology, OWLClass cls) {
+	private void processAnnotations(OWLOntology ontology) throws Exception{
+		String text=null;
+		List<MacroModel> annotationsModelArray = this.mainModel.getAnnotationsMacros();
 		
+		if (!annotationsModelArray.isEmpty()) {
+			
+			for (MacroModel annotationModel : annotationsModelArray) {
+				
+				VelocityContext context = new VelocityContext(this.baseContext);
+				context.put("ontology", ontology);
+				text = new String(this.processOutputString(annotationModel.getOutput()));
+				File outputFolder = new File(this.outputFolder + text);
+				
+				if (!outputFolder.getParentFile().exists())
+					outputFolder.getParentFile().mkdir();
+				
+				this.addImportsToContext(context,annotationModel);
+
+				if (!text.equals("")) {
+					try {
+						// throw ResourceNotFoundException
+						template = vel_eng.getTemplate(annotationModel.getTemplateName());
+						// throw IOE
+						this.fr = new FileWriter(this.outputFolder + text, true);
+						template.merge(context, fr);
+						fr.close();
+						outputFolder=null;
+						context=null;
+						text=null;
+					} catch (Exception e) {
+						log.fatal("cant merge velocity template with velocity context", e);
+						this.arrayOfExceptions.add(e);
+						throw e;
+					}
+				}else
+					log.warn("empty or errors in output tag content in annotationModel...skipping...");
+
+			}
+		} 
+//		else {
+//			for (OWLOntology ont : this.ontologies2BProcesed) {
+//				this.reasoner = this.reasonerFactory.createReasoner(ont);
+//				this.wrapper.setReasoner(this.reasoner);
+//				this.baseContext.put("reasoner", this.wrapper);
+//				this.processOntology(ont);
+//			}
+//
+//		}
+	
 	}
 	
 private static Properties defaultVelocityProperties() {
@@ -735,9 +778,7 @@ private static Properties defaultVelocityProperties() {
 	 * @param recursive {@link Boolean} value indicating recursive load
 	 */
 	public void addOntology(OWLOntology ont, boolean recursive) {
-		
-		
-		
+
 		if (recursive) {
 			ontologies2BProcesed.addAll(ont.getImports());
 		}
