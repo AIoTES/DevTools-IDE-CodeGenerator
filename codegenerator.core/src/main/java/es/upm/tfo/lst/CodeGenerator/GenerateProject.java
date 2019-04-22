@@ -400,7 +400,7 @@ public class GenerateProject {
 				for (OWLDifferentIndividualsAxiom individual : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
 					//initialize tenplate object with template given in XML file
 					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
-					context.put("individual", individual);
+					context.put("NamedIndividual", individual);
 					text =new String(this.processOutputString(instancesMacro.getOutput()));
 					File outputFolder = new File(this.outputFolder +text);
 					if (!outputFolder.getParentFile().exists())
@@ -449,10 +449,7 @@ public class GenerateProject {
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (MacroModel macroObjectProperties : this.mainModel.getObjectProperties()) {
 				VelocityContext context = new VelocityContext(this.baseContext);
-
-				if(individual != null)
-					context.put("individual",individual);
-
+				context.put("NamedIndividual",individual);
 				this.addImportsToContext(context, macroObjectProperties);
 				text = new String(this.processOutputString(macroObjectProperties.getOutput()));
 				File outputFolder = new File(this.outputFolder + text);
@@ -494,12 +491,8 @@ public class GenerateProject {
 		String text =null;
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
-
 				VelocityContext context = new VelocityContext(this.baseContext);
-				
-				if(individual!=null)
-					context.put("instance","null");
-				
+				context.put("NamedIndividual",individual);
 				this.addImportsToContext(context,macroDataPropeties);
 				text = new String( this.processOutputString(macroDataPropeties.getOutput()));
 				File outputFolder = new File(this.outputFolder + text);
