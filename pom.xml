@@ -23,7 +23,6 @@
         <module>codegenerator.maven.plugin</module>
         <module>codegenerator.rest.plugin</module>
 		<module>codegenerator.rest.karaf</module>
-		<module>codegenerator.template.html</module>
 	
   </modules>
 	<build>
