@@ -207,13 +207,12 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processProject() throws Exception {
+		log.debug("processing project");
 		String text=null;
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacros();
 		
 		if (!projectModelArray.isEmpty()) {
-			
 			for (MacroModel projectModel : projectModelArray) {
-				
 				VelocityContext context = new VelocityContext(this.baseContext);
 				text = new String(this.processOutputString(projectModel.getOutput()));
 				File outputFolder = new File(this.outputFolder + text);
@@ -241,19 +240,9 @@ public class GenerateProject {
 					}
 				}else
 					log.warn("empty or errors in output tag content in projectModel...skipping...");
-
-				// update(1);
-//
-//				for (OWLOntology ontology : this.ontologies2BProcesed) {
-//
-//					this.reasoner = this.reasonerFactory.createReasoner(ontology);
-//					this.wrapper.setReasoner(this.reasoner);
-//					this.baseContext.put("reasoner", this.wrapper);
-//					this.processOntology(ontology);
-//				}
 			}
-		} 
-		else {
+		}
+			
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
@@ -261,7 +250,7 @@ public class GenerateProject {
 				this.processOntology(ontology);
 			}
 
-		}
+		
 
 	}
 
@@ -274,15 +263,16 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processOntology(OWLOntology ontology) throws Exception {
-		// local variables
+		
 		String text = null;
 		List<MacroModel> ontologyModelArray = this.mainModel.getOntologyMacros();
-		this.baseContext.put("ontology", ontology);
+		//this.baseContext.put("ontology", ontology);
 		if (!ontologyModelArray.isEmpty()) {
 			
 			for (MacroModel ontologyModel : ontologyModelArray) {
 
 				VelocityContext context = new VelocityContext(this.baseContext);
+				context.put("ontology", ontology);
 				this.addImportsToContext(context,ontologyModel);
 				text = new String(this.processOutputString(ontologyModel.getOutput()));
 				File outputFolder = new File(this.outputFolder + text);
@@ -341,13 +331,15 @@ public class GenerateProject {
 		int i = 0;
 		String text = null;
 		List<MacroModel> classModelArray = this.mainModel.getClassMacros();
-		this.baseContext.put("class", c);
+		//this.baseContext.put("class", c);
 		if (!classModelArray.isEmpty()) {
 			//initialize context and merge it with base context
 			
 			for (MacroModel macroModel : classModelArray) {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
+				baseContext.put("class", c);
+				baseContext.put("ontolog", ontology);
 				this.addImportsToContext(context,macroModel);
 				text = new String(this.processOutputString(macroModel.getOutput()));
 				File outputFile = new File(this.outputFolder + text);
@@ -395,6 +387,8 @@ public class GenerateProject {
 			for (MacroModel instancesMacro : this.mainModel.getInstanceMacros()) {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
+				baseContext.put("class", cls);
+				baseContext.put("ontology",ontology);
 				this.addImportsToContext(context, instancesMacro);
 				
 				for (OWLDifferentIndividualsAxiom individual : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
@@ -443,12 +437,12 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processObjectProperties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
-
 		String text = null;
 		
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (MacroModel macroObjectProperties : this.mainModel.getObjectProperties()) {
 				VelocityContext context = new VelocityContext(this.baseContext);
+				context.put("ontology",ontology);
 				context.put("NamedIndividual",individual);
 				this.addImportsToContext(context, macroObjectProperties);
 				text = new String(this.processOutputString(macroObjectProperties.getOutput()));
@@ -493,6 +487,8 @@ public class GenerateProject {
 			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("NamedIndividual",individual);
+				context.put("ontology",ontology);
+
 				this.addImportsToContext(context,macroDataPropeties);
 				text = new String( this.processOutputString(macroDataPropeties.getOutput()));
 				File outputFolder = new File(this.outputFolder + text);
@@ -540,6 +536,7 @@ public class GenerateProject {
 	
 	//TODO: define this step
 	private void processAnnotations(OWLOntology ontology) throws Exception{
+		System.out.println("processAnnotations");
 		String text=null;
 		List<MacroModel> annotationsModelArray = this.mainModel.getAnnotationsMacros();
 		
