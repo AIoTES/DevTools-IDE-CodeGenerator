@@ -42,7 +42,6 @@ public class CompleteTest  {
 	private final static String templateBasePath="src/test/resources/template-complex/";
 	private final String webTemplatePath="http://localhost:"+ Integer.toString(MOCK_PORT)+"/template/complexXml.xml";
 	private final String ontologyBasePath="src/test/resources/ontologies/";
-	private final String sql="src/test/resources/template/SQL/sql.vm";
 	
 	
 	private final String webOntology ="https://protege.stanford.edu/ontologies/pizza/pizza.owl";
