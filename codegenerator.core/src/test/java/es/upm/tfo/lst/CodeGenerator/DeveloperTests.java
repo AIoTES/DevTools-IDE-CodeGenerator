@@ -28,6 +28,8 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -57,6 +59,7 @@ public class DeveloperTests {
 	private final String sqlOutput="src/test/resources/SQL/output/";
 	private final String baseOutput="target/completeTest/";
 	private String[] array;
+
 	
 	
 	@Before
@@ -65,6 +68,7 @@ public class DeveloperTests {
 		this.parser = new XmlParser();
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
+		this.ontologyLoader=new OntologyLoader();
 	}
 
 
@@ -72,7 +76,8 @@ public class DeveloperTests {
 	public void dataprops() throws Exception {
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
-		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		//ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/BiodiversityOntologies/bco/2016-12-14/bco.owl");
 		Set<OWLDataPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
 		Set<OWLDataPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
 		System.out.println(rng.size());
@@ -120,6 +125,18 @@ public class DeveloperTests {
 		}
 	}
 
+	@Test
+	public void test1()throws Exception {
+		
+		OWLOntology ontology=null;
+		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
+		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/BiodiversityOntologies/bco/2016-12-14/bco.owl");
+			 
+	for (OWLDifferentIndividualsAxiom item:  ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
+		System.out.println(item);
+	}		
+		
+	}
 
 	
 
