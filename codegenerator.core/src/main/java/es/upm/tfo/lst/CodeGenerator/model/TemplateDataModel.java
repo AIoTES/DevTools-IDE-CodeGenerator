@@ -108,7 +108,7 @@ public class TemplateDataModel {
 	 *         macros, Null if not defined
 	 */
 	public List<MacroModel> getInstanceMacros() {
-		return this.getMacroList("NamendIndividual");
+		return this.getMacroList("NamedIndividual");
 	}
 
 	/**
@@ -135,9 +135,12 @@ public class TemplateDataModel {
 	 *         iteration macros, Null if not defined
 	 */
 	public List<MacroModel> getObjectProperties() {
-		return this.getMacroList("objectProperties");
+		return this.getMacroList("objectProperty");
 	}
-
+	
+	public List<MacroModel> getNamedIndividual() {
+		return this.getMacroList("NamedIndividual");
+	}
 	public List<MacroModel> getDataProperties(){
 		return this.getMacroList("dataProperties");
 	}
