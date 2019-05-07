@@ -214,7 +214,7 @@ public class GenerateProject {
 		if (!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
 				VelocityContext context = new VelocityContext(this.baseContext);
-				text = new String(this.processOutputString(projectModel.getOutput()));
+				text = new String(this.processOutputString(projectModel.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
 				
 				if (!outputFolder.getParentFile().exists())
@@ -274,7 +274,8 @@ public class GenerateProject {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("ontology", ontology);
 				this.addImportsToContext(context,ontologyModel);
-				text = new String(this.processOutputString(ontologyModel.getOutput()));
+				text = new String(this.processOutputString(ontologyModel.getOutput(),context));
+				log.debug("text "+text);
 				File outputFolder = new File(this.outputFolder + text);
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
@@ -338,10 +339,12 @@ public class GenerateProject {
 			for (MacroModel macroModel : classModelArray) {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
-				baseContext.put("class", c);
-				baseContext.put("ontolog", ontology);
+				context.put("class", c);
+				context.put("ontolog", ontology);
 				this.addImportsToContext(context,macroModel);
-				text = new String(this.processOutputString(macroModel.getOutput()));
+				System.err.println(macroModel.getOutput());
+				text = new String(this.processOutputString(macroModel.getOutput(),context));
+				log.debug(text);
 				File outputFile = new File(this.outputFolder + text);
 				
 				if (!outputFile.getParentFile().exists())
@@ -387,15 +390,15 @@ public class GenerateProject {
 			for (MacroModel instancesMacro : this.mainModel.getInstanceMacros()) {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
-				baseContext.put("class", cls);
-				baseContext.put("ontology",ontology);
+				context.put("class", cls);
+				context.put("ontology",ontology);
 				this.addImportsToContext(context, instancesMacro);
 				
 				for (OWLDifferentIndividualsAxiom individual : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
 					//initialize tenplate object with template given in XML file
 					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
 					context.put("NamedIndividual", individual);
-					text =new String(this.processOutputString(instancesMacro.getOutput()));
+					text =new String(this.processOutputString(instancesMacro.getOutput(),context));
 					File outputFolder = new File(this.outputFolder +text);
 					if (!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
@@ -445,7 +448,7 @@ public class GenerateProject {
 				context.put("ontology",ontology);
 				context.put("NamedIndividual",individual);
 				this.addImportsToContext(context, macroObjectProperties);
-				text = new String(this.processOutputString(macroObjectProperties.getOutput()));
+				text = new String(this.processOutputString(macroObjectProperties.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
 
 				if (!outputFolder.getParentFile().exists())
@@ -490,7 +493,7 @@ public class GenerateProject {
 				context.put("ontology",ontology);
 
 				this.addImportsToContext(context,macroDataPropeties);
-				text = new String( this.processOutputString(macroDataPropeties.getOutput()));
+				text = new String( this.processOutputString(macroDataPropeties.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
 
 				if (!outputFolder.getParentFile().exists())
@@ -516,9 +519,6 @@ public class GenerateProject {
 
 			}
 		}
-		/*
-		 *a esto se puede acceder directamente desde la template, no hace falta agregarlo al velocityContext
-		 */
 //		
 //		for (OWLDataPropertyDomainAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
 ////			System.out.println("DATA_PROPERTY_DOMAIN "+item);
@@ -546,7 +546,7 @@ public class GenerateProject {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("ontology", ontology);
-				text = new String(this.processOutputString(annotationModel.getOutput()));
+				text = new String(this.processOutputString(annotationModel.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
 				
 				if (!outputFolder.getParentFile().exists())
@@ -587,7 +587,7 @@ public class GenerateProject {
 	
 	}
 	
-private static Properties defaultVelocityProperties() {
+	private static Properties defaultVelocityProperties() {
 		Properties props = new Properties();
 		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 		return props;
@@ -700,7 +700,7 @@ private static Properties defaultVelocityProperties() {
 	 * @param VelocityContext containig needed references
 	 * @return {@link String } value, result of the process
 	 */
-	private String processOutputString(String toProcess) {
+	private String processOutputString(String toProcess,VelocityContext ctx) {
 		String t = "--";
 		try {
 			StringWriter fw = new StringWriter();
@@ -717,7 +717,7 @@ private static Properties defaultVelocityProperties() {
 			te.setData(sn);
 			te.initDocument();
 
-			te.merge(new VelocityContext(), fw);
+			te.merge(ctx, fw);
 			t = fw.toString();
 			fw.close();
 		} catch (Exception a) {
