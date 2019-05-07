@@ -170,6 +170,7 @@ public class GenerateProject {
 		if (this.control()) {
 			try {
 				this.initVelocity();
+				
 				//this.baseContext.put("ontologyCompleteList",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
 				//this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
@@ -207,7 +208,6 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processProject() throws Exception {
-		log.debug("processing project");
 		String text=null;
 		List<MacroModel> projectModelArray = this.mainModel.getProjectMacros();
 		
@@ -275,7 +275,6 @@ public class GenerateProject {
 				context.put("ontology", ontology);
 				this.addImportsToContext(context,ontologyModel);
 				text = new String(this.processOutputString(ontologyModel.getOutput(),context));
-				log.debug("text "+text);
 				File outputFolder = new File(this.outputFolder + text);
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
@@ -340,11 +339,9 @@ public class GenerateProject {
 				
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("class", c);
-				context.put("ontolog", ontology);
+				context.put("ontology", ontology);
 				this.addImportsToContext(context,macroModel);
-				System.err.println(macroModel.getOutput());
 				text = new String(this.processOutputString(macroModel.getOutput(),context));
-				log.debug(text);
 				File outputFile = new File(this.outputFolder + text);
 				
 				if (!outputFile.getParentFile().exists())
