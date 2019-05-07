@@ -104,7 +104,7 @@ public class GenerateProject {
 	public interface ProgessCallbackPublisher {
 		void updateProgress(int done);
 	}
-
+	private VelocityContext auxiliarContext=null;
 	private ReasonerWrapper wrapper = null;
 	private TemplateDataModel mainModel = null;
 	private VelocityContext  baseContext;
@@ -340,6 +340,7 @@ public class GenerateProject {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("class", c);
 				context.put("ontology", ontology);
+				this.auxiliarContext = context;
 				this.addImportsToContext(context,macroModel);
 				text = new String(this.processOutputString(macroModel.getOutput(),context));
 				File outputFile = new File(this.outputFolder + text);
@@ -366,9 +367,8 @@ public class GenerateProject {
 			}
 		
 			
-		} else {
-			update(i++);
-		}
+		} 
+		
 		this.processNamedIndividual(c, ontology);
 	}
 
@@ -384,18 +384,19 @@ public class GenerateProject {
 		if (!this.mainModel.getInstanceMacros().isEmpty()) {
 			//initialize and merge current context with base context
 
-			for (MacroModel instancesMacro : this.mainModel.getInstanceMacros()) {
+			VelocityContext context = new VelocityContext(this.baseContext);
+			context.put("class", cls);
+			context.put("ontology",ontology);
+			for (MacroModel namedIndividualMacro : this.mainModel.getNamedIndividual()) {
 				
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("class", cls);
-				context.put("ontology",ontology);
-				this.addImportsToContext(context, instancesMacro);
+				this.addImportsToContext(context, namedIndividualMacro);
 				
 				for (OWLDifferentIndividualsAxiom individual : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
 					//initialize tenplate object with template given in XML file
-					template = vel_eng.getTemplate(instancesMacro.getTemplateName()); 
-					context.put("NamedIndividual", individual);
-					text =new String(this.processOutputString(instancesMacro.getOutput(),context));
+					template = vel_eng.getTemplate(namedIndividualMacro.getTemplateName());
+					//context.put("NamedIndividual", individual);
+					this.auxiliarContext.put("NamedIndividual", individual);
+					text =new String(this.processOutputString(namedIndividualMacro.getOutput(),this.auxiliarContext));
 					File outputFolder = new File(this.outputFolder +text);
 					if (!outputFolder.getParentFile().exists())
 						outputFolder.getParentFile().mkdirs();
@@ -403,7 +404,8 @@ public class GenerateProject {
 					if(!text.equals("")) {
 						try {
 							this.fr = new FileWriter(this.outputFolder + text, true);
-							template.merge(context, fr);
+							//template.merge(context, fr);
+							template.merge(auxiliarContext,fr);
 							fr.close();
 							outputFolder=null;
 							text=null;
