@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.anakia.Escape;
 import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -606,7 +607,7 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		
+		this.baseContext.put("esc", Escape.class);
 
 		try {
 			URL source = new URL(this.mainModel.getBaseTemplatePath());
