@@ -15,21 +15,22 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
-import java.math.MathContext;
 import java.util.Set;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.velocity.runtime.parser.node.MathUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -130,16 +131,27 @@ public class DeveloperTests {
 		
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
-		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/BiodiversityOntologies/bco/2016-12-14/bco.owl");
-			 
-	for (OWLDifferentIndividualsAxiom item:  ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
-		System.out.println(item);
-	}		
+		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/monarch-initiative/GENO-ontology/develop/src/ontology/geno.owl");
+
+//		OWLOntology ontology=null;
+//		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
+//		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
 		
-	}
-
+	for (OWLObjectPropertyDomainAxiom item:  ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN)) {
+			for (OWLEntity signature: item.getSignature() ) {
+				System.out.println(signature);
+			}
+	}	
 	
-
+	System.out.println("----------");
+	for (OWLObjectPropertyRangeAxiom item:  ontology.getAxioms(AxiomType.OBJECT_PROPERTY_RANGE)) {
+			System.out.println(item);
+	} 
+	System.out.println("-----OWLDataPropertyRangeAxiom-----");
+	for (OWLDataPropertyDomainAxiom item:  ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+		System.out.println(item);
+} 
+	}
 		
 }
 
