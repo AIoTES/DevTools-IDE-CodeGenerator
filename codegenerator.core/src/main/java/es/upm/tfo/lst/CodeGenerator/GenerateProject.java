@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.anakia.Escape;
 import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -418,15 +419,15 @@ public class GenerateProject {
 					}else
 						log.warn("empty output tag in instancesMacro...skipping...");
 					//maybe need class too?
-					this.processObjectProperties(individual,  ontology);
-					this.processDataPropeties(individual,  ontology);
+					this.processObjectProperties(cls,individual,  ontology);
+					this.processDataPropeties(cls,individual,  ontology);
 				}	
 			}
 			
 		} else {
 			//maybe need class/individuals too?
-			this.processObjectProperties(null,  ontology);
-			this.processDataPropeties(null,  ontology);
+			this.processObjectProperties(cls,null,  ontology);
+			this.processDataPropeties(cls,null,  ontology);
 			
 
 		}
@@ -438,7 +439,7 @@ public class GenerateProject {
 	 * @param ontology {@link OWLOntology}
 	 * @throws Exception
 	 */
-	private void processObjectProperties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
+	private void processObjectProperties(OWLClass cls,OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
 		String text = null;
 		
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
@@ -446,6 +447,7 @@ public class GenerateProject {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("ontology",ontology);
 				context.put("NamedIndividual",individual);
+				context.put("class", cls);
 				this.addImportsToContext(context, macroObjectProperties);
 				text = new String(this.processOutputString(macroObjectProperties.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
@@ -483,14 +485,14 @@ public class GenerateProject {
 	 * @param ontology
 	 * @throws Exception 
 	 */
-	private void processDataPropeties(OWLDifferentIndividualsAxiom individual, OWLOntology ontology) throws Exception {
+	private void processDataPropeties(OWLClass cls,OWLDifferentIndividualsAxiom individual, OWLOntology ontology) throws Exception {
 		String text =null;
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
 				VelocityContext context = new VelocityContext(this.baseContext);
 				context.put("NamedIndividual",individual);
 				context.put("ontology",ontology);
-
+				context.put("class",cls);
 				this.addImportsToContext(context,macroDataPropeties);
 				text = new String( this.processOutputString(macroDataPropeties.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + text);
@@ -606,7 +608,7 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		
+		this.baseContext.put("esc", Escape.class);
 
 		try {
 			URL source = new URL(this.mainModel.getBaseTemplatePath());
