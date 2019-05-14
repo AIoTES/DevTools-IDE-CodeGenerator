@@ -156,17 +156,19 @@ public class DeveloperTests {
 			}
 		}		
 		
+		for (OWLObjectPropertyDomainAxiom item:  ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN)) {
+			for (OWLEntity signature: item.getSignature() ) {
+				System.out.println(signature);
+			}
+	}
+		
 	}
 
 //		OWLOntology ontology=null;
 //		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
 //		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
 		
-	for (OWLObjectPropertyDomainAxiom item:  ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN)) {
-			for (OWLEntity signature: item.getSignature() ) {
-				System.out.println(signature);
-			}
-	}	
+	
 	
 	
 		
