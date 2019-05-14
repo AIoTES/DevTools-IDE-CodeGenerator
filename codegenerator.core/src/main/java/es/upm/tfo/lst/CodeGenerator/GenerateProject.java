@@ -214,12 +214,16 @@ public class GenerateProject {
 		
 		if (!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
+				log.debug("PackageBase "+this.baseContext.get("PackageBase"));
 				VelocityContext context = new VelocityContext(this.baseContext);
+				
 				text = new String(this.processOutputString(projectModel.getOutput(),context));
+				
 				File outputFolder = new File(this.outputFolder + text);
+				log.debug("processed output "+outputFolder.getAbsolutePath());
 				
 				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdir();
+					outputFolder.getParentFile().mkdirs();
 				
 				this.addImportsToContext(context,projectModel);
 
@@ -350,7 +354,7 @@ public class GenerateProject {
 					outputFile.getParentFile().mkdirs();
 				if (!text.equals("")) {
 					template = vel_eng.getTemplate(macroModel.getTemplateName());
-					// TODO heare throws IOE
+				
 					try {
 						this.fr = new FileWriter(this.outputFolder + text, true);
 						template.merge(context, fr);
@@ -702,9 +706,12 @@ public class GenerateProject {
 	 * @return {@link String } value, result of the process
 	 */
 	private String processOutputString(String toProcess,VelocityContext ctx) {
+		log.debug("has packagebase? "+ctx.containsKey("PackageBase"));
+		log.debug("packagebase content="+ctx.get("PackageBase"));
 		String t = "--";
+		
 		try {
-			StringWriter fw = new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 			StringResourceRepository rep = StringResourceLoader.getRepository();
 			
 			Template te = new Template();
@@ -718,9 +725,9 @@ public class GenerateProject {
 			te.setData(sn);
 			te.initDocument();
 
-			te.merge(ctx, fw);
-			t = fw.toString();
-			fw.close();
+			te.merge(ctx, stringWriter);
+			t = stringWriter.toString();
+			stringWriter.close();
 		} catch (Exception a) {
 			log.fatal("cant process name ", a);
 		}

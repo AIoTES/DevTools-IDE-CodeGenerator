@@ -18,23 +18,34 @@ package es.upm.tfo.lst.CodeGenerator;
 import java.math.MathContext;
 import java.util.Set;
 
+import javax.swing.text.html.parser.Entity;
+
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.net.SimpleSocketServer;
 import org.apache.velocity.runtime.parser.node.MathUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
 import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
@@ -77,20 +88,24 @@ public class DeveloperTests {
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
 		//ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
-		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/BiodiversityOntologies/bco/2016-12-14/bco.owl");
+		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/monarch-initiative/GENO-ontology/develop/src/ontology/geno.owl");
 		Set<OWLDataPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN);
 		Set<OWLDataPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE);
-		System.out.println(rng.size());
+	System.out.println(ax.size());
+	System.out.println(rng.size());
 		
 		for (OWLAxiom axiom : ontology.getAxioms()) {
 			if(axiom.isOfType(AxiomType.DECLARATION) && axiom.getSignature().iterator().next().isOWLClass() ) {
 				OWLClass cls=axiom.getSignature().iterator().next().asOWLClass();
-				System.out.println("clase "+cls.getIRI().getFragment());
+				//System.out.println("clase "+cls.getIRI().getFragment());
 				for (OWLDataPropertyDomainAxiom owlDataPropertyDomainAxiom : ax) {
+					System.out.println(owlDataPropertyDomainAxiom );
 					if(owlDataPropertyDomainAxiom.getDomain().asOWLClass().equals(cls)) {
+						System.out.println("clase "+cls.getIRI().getFragment());
+						System.out.println("domain "+owlDataPropertyDomainAxiom.getDomain());
 						System.out.println("prop name: "+owlDataPropertyDomainAxiom.getProperty().asOWLDataProperty().getIRI());
 						for (OWLDataPropertyRangeAxiom owlDataPropertyRangeAxiom : rng) {
-								System.out.println("range of prop "+owlDataPropertyRangeAxiom.getRange());
+								System.out.println("range of prop "+owlDataPropertyRangeAxiom);
 						}
 						
 					}
@@ -108,38 +123,45 @@ public class DeveloperTests {
 		
 		Set<OWLObjectPropertyDomainAxiom> ax = ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN);
 		Set<OWLObjectPropertyRangeAxiom> rng = ontology.getAxioms(AxiomType.OBJECT_PROPERTY_RANGE);
-		System.out.println(rng.size());
+		System.out.println(ax.size());
 		
 		for (OWLAxiom axiom : ontology.getAxioms()) {
 			if(axiom.isOfType(AxiomType.DECLARATION) && axiom.getSignature().iterator().next().isOWLClass() ) {
 				OWLClass cls=axiom.getSignature().iterator().next().asOWLClass();
 				
-				System.out.println("clase "+cls.getIRI().getFragment().toUpperCase());
-				
+				//System.out.println("clase "+cls.getIRI().getFragment().toUpperCase());
 				for (OWLObjectPropertyDomainAxiom owlDataPropertyDomainAxiom : ax) {
-						if(owlDataPropertyDomainAxiom.getDomain().equals(cls)) {
+//					System.out.println(owlDataPropertyDomainAxiom.getDomain().asOWLClass().getIRI()+"         "+cls.getIRI());
+						if(owlDataPropertyDomainAxiom.getDomain().asOWLClass().getIRI().equals(cls.getIRI())) {
 							System.out.println(owlDataPropertyDomainAxiom.getProperty().asOWLObjectProperty().getIRI().getFragment());
+							//System.out.println(owlDataPropertyDomainAxiom);
 						}
 				}
+				
+				
+				
 			}
 		}
 	}
 
 	@Test
-	public void test1()throws Exception {
+	public void individuals()throws Exception {
 		
 		OWLOntology ontology=null;
 		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
-		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/BiodiversityOntologies/bco/2016-12-14/bco.owl");
-			 
-	for (OWLDifferentIndividualsAxiom item:  ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
-		System.out.println(item);
-	}		
+		ontology= ontologyLoader.loadOntology("https://raw.githubusercontent.com/monarch-initiative/GENO-ontology/develop/src/ontology/geno.owl");
+			 System.out.println( ontology.getIndividualsInSignature().size());
+		for (OWLDifferentIndividualsAxiom item:  ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
+			System.out.println("item "+item.getIndividuals().size());
+			for (OWLIndividual string : item.getIndividuals()) {
+				System.out.println(string.getSignature());
+			}
+		}		
 		
 	}
 
 	
-
+	
 		
 }
 
