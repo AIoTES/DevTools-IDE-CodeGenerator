@@ -15,14 +15,11 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
-import java.math.MathContext;
 import java.util.Set;
 
 import javax.swing.text.html.parser.Entity;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.net.SimpleSocketServer;
-import org.apache.velocity.runtime.parser.node.MathUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -37,6 +34,7 @@ import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -160,6 +158,15 @@ public class DeveloperTests {
 		
 	}
 
+//		OWLOntology ontology=null;
+//		OWLOntologyManager ontManager = OWLManager.createOWLOntologyManager();		
+//		ontology= ontManager.loadOntologyFromOntologyDocument(this.getClass().getClassLoader().getResource("ontologies/pizza.owl").openStream());
+		
+	for (OWLObjectPropertyDomainAxiom item:  ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN)) {
+			for (OWLEntity signature: item.getSignature() ) {
+				System.out.println(signature);
+			}
+	}	
 	
 	
 		
