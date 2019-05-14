@@ -706,8 +706,7 @@ public class GenerateProject {
 	 * @return {@link String } value, result of the process
 	 */
 	private String processOutputString(String toProcess,VelocityContext ctx) {
-		log.debug("has packagebase? "+ctx.containsKey("PackageBase"));
-		log.debug("packagebase content="+ctx.get("PackageBase"));
+
 		String t = "--";
 		
 		try {
