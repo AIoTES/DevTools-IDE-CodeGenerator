@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,6 +63,8 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+
+import com.github.jsonldjava.utils.Obj;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
@@ -214,14 +217,11 @@ public class GenerateProject {
 		
 		if (!projectModelArray.isEmpty()) {
 			for (MacroModel projectModel : projectModelArray) {
-				log.debug("PackageBase "+this.baseContext.get("PackageBase"));
+				
 				VelocityContext context = new VelocityContext(this.baseContext);
-				
 				text = new String(this.processOutputString(projectModel.getOutput(),context));
-				
 				File outputFolder = new File(this.outputFolder + text);
-				log.debug("processed output "+outputFolder.getAbsolutePath());
-				
+			
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
 				
@@ -268,61 +268,24 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processOntology(OWLOntology ontology) throws Exception {
+		HashMap<String, Object> toAdd = new HashMap<>();
 		
-		String text = null;
-		List<MacroModel> ontologyModelArray = this.mainModel.getOntologyMacros();
-		//this.baseContext.put("ontology", ontology);
-		if (!ontologyModelArray.isEmpty()) {
+		toAdd.put("ontology", ontology);
+		
+		if (!this.mainModel.getOntologyMacros().isEmpty()) {
+			log.debug("applying macros for ontologies");
+			this.applyMacro(toAdd, this.mainModel.getOntologyMacros() ,true);
+		} 
 			
-			for (MacroModel ontologyModel : ontologyModelArray) {
-
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("ontology", ontology);
-				this.addImportsToContext(context,ontologyModel);
-				text = new String(this.processOutputString(ontologyModel.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + text);
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
-
-				if (!text.equals("")) {
-					template = vel_eng.getTemplate(ontologyModel.getTemplateName());
-					// throws IOE
-					try {
-						this.fr = new FileWriter(this.outputFolder + text, true);
-						template.merge(context, fr);
-						fr.close();
-						text=null;
-						context=null;
-						outputFolder=null;
-					} catch (Exception e) {
-						this.arrayOfExceptions.add(e);
-						log.fatal("cant merge velocity template with velocity context", e);
-						throw e;
-					}
-
-				}else 
-					log.warn("empty output tag in ontologyModel...skipping...");
-
-				this.processAnnotations(ontology);
-				
-				for (OWLAxiom axiom : ontology.getAxioms()) {
-					if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
-						OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
-						this.processClass(cls, ontology);
-					}
-				}
-
-			}
-		} else {
-
 			for (OWLAxiom axiom : ontology.getAxioms()) {
 				if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
 					OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
 					this.processClass(cls, ontology);
 				}
 			}
-		}
-
+		
+		this.processNamedIndividual(ontology);
+		this.processAnnotations(ontology);
 	}
 
 	/**
@@ -333,48 +296,19 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processClass(OWLClass c, OWLOntology ontology) throws Exception {
-		int i = 0;
-		String text = null;
+		HashMap<String, Object> toAdd = new HashMap<>();
+		toAdd.put("ontology", ontology);
+		toAdd.put("class", c);
 		List<MacroModel> classModelArray = this.mainModel.getClassMacros();
-		//this.baseContext.put("class", c);
-		if (!classModelArray.isEmpty()) {
-			//initialize context and merge it with base context
-			
-			for (MacroModel macroModel : classModelArray) {
-				
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("class", c);
-				context.put("ontology", ontology);
-				this.auxiliarContext = context;
-				this.addImportsToContext(context,macroModel);
-				text = new String(this.processOutputString(macroModel.getOutput(),context));
-				File outputFile = new File(this.outputFolder + text);
-				
-				if (!outputFile.getParentFile().exists())
-					outputFile.getParentFile().mkdirs();
-				if (!text.equals("")) {
-					template = vel_eng.getTemplate(macroModel.getTemplateName());
-				
-					try {
-						this.fr = new FileWriter(this.outputFolder + text, true);
-						template.merge(context, fr);
-						fr.close();
-						outputFile=null;
-						context=null;
-						text=null;
-					} catch (Exception e) {
-						this.arrayOfExceptions.add(e);
-						log.fatal("cant merge velocity template with velocity context", e);
-						throw e;
-					}
-				}
 
-			}
-		
+		if (!classModelArray.isEmpty()) {
 			
-		} 
+			this.applyMacro(toAdd, classModelArray, true);
 		
-		this.processNamedIndividual(c, ontology);
+		} 
+		this.processObjectProperties(c,  ontology);
+		this.processDataPropeties(c,  ontology);
+		
 	}
 
 	/**
@@ -383,59 +317,13 @@ public class GenerateProject {
 	 * @param ontology {@link OWLOntology} 
 	 * @throws Exception
 	 */
-	private void processNamedIndividual(OWLClass cls,OWLOntology ontology) throws Exception {
-		String text = null;
-
-		if (!this.mainModel.getInstanceMacros().isEmpty()) {
-			//initialize and merge current context with base context
-
-			VelocityContext context = new VelocityContext(this.baseContext);
-			context.put("class", cls);
-			context.put("ontology",ontology);
-			for (MacroModel namedIndividualMacro : this.mainModel.getNamedIndividual()) {
-				
-				this.addImportsToContext(context, namedIndividualMacro);
-				
-				for (OWLDifferentIndividualsAxiom individual : ontology.getAxioms(AxiomType.DIFFERENT_INDIVIDUALS)) {
-					//initialize tenplate object with template given in XML file
-					template = vel_eng.getTemplate(namedIndividualMacro.getTemplateName());
-					//context.put("NamedIndividual", individual);
-					this.auxiliarContext.put("NamedIndividual", individual);
-					text =new String(this.processOutputString(namedIndividualMacro.getOutput(),this.auxiliarContext));
-					File outputFolder = new File(this.outputFolder +text);
-					if (!outputFolder.getParentFile().exists())
-						outputFolder.getParentFile().mkdirs();
-					// TODO throws IOE
-					if(!text.equals("")) {
-						try {
-							this.fr = new FileWriter(this.outputFolder + text, true);
-							//template.merge(context, fr);
-							template.merge(auxiliarContext,fr);
-							fr.close();
-							outputFolder=null;
-							text=null;
-							context=null;
-						} catch (Exception e) {
-							this.arrayOfExceptions.add(e);
-							log.fatal("cant merge velocity template with velocity context", e);
-							throw e;
-						}
-					}else
-						log.warn("empty output tag in instancesMacro...skipping...");
-					//maybe need class too?
-					this.processObjectProperties(cls,individual,  ontology);
-					this.processDataPropeties(cls,individual,  ontology);
-				}	
-			}
-			
-		} else {
-			//maybe need class/individuals too?
-			this.processObjectProperties(cls,null,  ontology);
-			this.processDataPropeties(cls,null,  ontology);
-			
-
+	private void processNamedIndividual(OWLOntology ontology) throws Exception {
+		HashMap<String, Object> toAdd = new HashMap<>();
+	
+		if (!this.mainModel.getNamedIndividualMacros().isEmpty()) {
+			this.applyMacro(toAdd, this.mainModel.getNamedIndividualMacros(), true);
 		}
-		// update(4);
+	
 	}
 	/**
 	 * 
@@ -443,41 +331,13 @@ public class GenerateProject {
 	 * @param ontology {@link OWLOntology}
 	 * @throws Exception
 	 */
-	private void processObjectProperties(OWLClass cls,OWLDifferentIndividualsAxiom individual, OWLOntology ontology)throws Exception {
-		String text = null;
+	private void processObjectProperties(OWLClass cls, OWLOntology ontology)throws Exception {
 		
+		HashMap<String, Object> toAdd = new HashMap<>();
+		toAdd.put("class", cls);
+		toAdd.put("ontology", ontology);
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
-			for (MacroModel macroObjectProperties : this.mainModel.getObjectProperties()) {
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("ontology",ontology);
-				context.put("NamedIndividual",individual);
-				context.put("class", cls);
-				this.addImportsToContext(context, macroObjectProperties);
-				text = new String(this.processOutputString(macroObjectProperties.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + text);
-
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
-
-				if (!text.equals("")) {
-					try {
-						this.fr = new FileWriter(this.outputFolder + text, true);
-						template = vel_eng.getTemplate(macroObjectProperties.getTemplateName());
-						template.merge(context, fr);
-						fr.close();
-						outputFolder=null;
-						text=null;
-						context=null;
-					} catch (Exception e) {
-						this.arrayOfExceptions.add(e);
-						log.fatal("cant merge velocity template with velocity context", e);
-						throw e;
-					}
-
-				}else
-					log.warn("empty output tag in macroObjectProperties...skipping...");
-
-			}
+			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 		}
 
 
@@ -489,106 +349,28 @@ public class GenerateProject {
 	 * @param ontology
 	 * @throws Exception 
 	 */
-	private void processDataPropeties(OWLClass cls,OWLDifferentIndividualsAxiom individual, OWLOntology ontology) throws Exception {
-		String text =null;
+	private void processDataPropeties(OWLClass cls, OWLOntology ontology) throws Exception {
+		HashMap<String, Object> toAdd = new HashMap<>();
+		toAdd.put("class", cls);
+		toAdd.put("ontology", ontology);
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
-			for (MacroModel macroDataPropeties : this.mainModel.getDataProperties()) {
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("NamedIndividual",individual);
-				context.put("ontology",ontology);
-				context.put("class",cls);
-				this.addImportsToContext(context,macroDataPropeties);
-				text = new String( this.processOutputString(macroDataPropeties.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + text);
-
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
-
-				if (!text.equals("")) {
-					try {
-						this.fr = new FileWriter(this.outputFolder + this.text, true);
-						template = vel_eng.getTemplate(macroDataPropeties.getTemplateName());
-						template.merge(context, fr);
-						fr.close();
-						text=null;
-						context=null; 
-						outputFolder=null;	
-					} catch (Exception e) {
-						this.arrayOfExceptions.add(e);
-						log.fatal("cant merge velocity template with velocity context", e);
-						throw e;
-					}
-
-				}else
-					log.warn("empty output tag in macroDataPropeties...skipping...");
-
-			}
+			
+			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
+			
 		}
-//		
-//		for (OWLDataPropertyDomainAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
-////			System.out.println("DATA_PROPERTY_DOMAIN "+item);
-//		}
-//		System.out.println("------");
-//		for (OWLDataPropertyAssertionAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION)) {
-////			System.out.println("DATA_PROPERTY_ASSERTION "+item);
-//		}
-//		System.out.println("------");
-//		for (OWLDataPropertyRangeAxiom item : ontology.getAxioms(AxiomType.DATA_PROPERTY_RANGE)) {
-////			System.out.println("DATA_PROPERTY_RANGE "+item);
-//		}
 		
 	}
 	
 	//TODO: define this step
 	private void processAnnotations(OWLOntology ontology) throws Exception{
-		System.out.println("processAnnotations");
-		String text=null;
-		List<MacroModel> annotationsModelArray = this.mainModel.getAnnotationsMacros();
+		HashMap<String, Object> toAdd = new HashMap<>();
 		
-		if (!annotationsModelArray.isEmpty()) {
-			
-			for (MacroModel annotationModel : annotationsModelArray) {
-				
-				VelocityContext context = new VelocityContext(this.baseContext);
-				context.put("ontology", ontology);
-				text = new String(this.processOutputString(annotationModel.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + text);
-				
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdir();
-				
-				this.addImportsToContext(context,annotationModel);
-
-				if (!text.equals("")) {
-					try {
-						// throw ResourceNotFoundException
-						template = vel_eng.getTemplate(annotationModel.getTemplateName());
-						// throw IOE
-						this.fr = new FileWriter(this.outputFolder + text, true);
-						template.merge(context, fr);
-						fr.close();
-						outputFolder=null;
-						context=null;
-						text=null;
-					} catch (Exception e) {
-						log.fatal("cant merge velocity template with velocity context", e);
-						this.arrayOfExceptions.add(e);
-						throw e;
-					}
-				}else
-					log.warn("empty or errors in output tag content in annotationModel...skipping...");
-
-			}
+		toAdd.put("ontology", ontology);
+		
+		if (!this.mainModel.getAnnotationsMacros().isEmpty()) {
+			this.applyMacro(toAdd,this.mainModel.getAnnotationsMacros(), true);
 		} 
-//		else {
-//			for (OWLOntology ont : this.ontologies2BProcesed) {
-//				this.reasoner = this.reasonerFactory.createReasoner(ont);
-//				this.wrapper.setReasoner(this.reasoner);
-//				this.baseContext.put("reasoner", this.wrapper);
-//				this.processOntology(ont);
-//			}
-//
-//		}
+
 	
 	}
 	
@@ -895,7 +677,65 @@ public class GenerateProject {
 		return ontologies2BProcesed;
 	}
 	
-
+	/**
+	 * Method to apply all the macros provided in XML to the corresponding bucle of process 
+	 * @param varsToAdd {@link Map<{@link String}, {@link Object}> } with key-value to add into {@link VelocityContext}
+	 * @param macro_to_apply {@link List< {@link MacroModel}> with all of macros to be applied
+	 * @param  appendState boolean value indicating if the process will be append file content
+	 * @return boolean value. True if the process was ended successful or false if not
+	 * @throws Exception 
+	 */
+	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
+		
+		boolean state = true;
+		
+		String processedOutput;
+		try {
+			for (MacroModel macro : macro_to_apply) {
+				
+				VelocityContext context = new VelocityContext(this.baseContext);		
+				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
+				File outputFolder = new File(this.outputFolder + processedOutput);
+			
+				if (!outputFolder.getParentFile().exists())
+					outputFolder.getParentFile().mkdirs();
+				
+				
+				this.setupCurrentContextContent(context, varsToAdd, macro);	
+				if (!processedOutput.equals("")) {
+					try {
+						// throw ResourceNotFoundException
+						template = vel_eng.getTemplate(macro.getTemplateName());
+						// throw IOE
+						this.fr = new FileWriter(this.outputFolder + processedOutput, appendState);
+						template.merge(context, fr);
+						fr.close();
+						outputFolder=null;
+						context=null;
+					} catch (Exception e) {
+						log.fatal("cant merge velocity template with velocity context", e);
+						this.arrayOfExceptions.add(e);
+						throw e;
+					}
+				}else
+					log.warn("empty or errors in output tag content in projectModel...skipping...");
+			}
+		}catch (Exception e) {
+			log.debug(e.getMessage());
+			state = false;
+			throw e;
+		}
+		return state;
+		}
+	
+	
+	private void setupCurrentContextContent(VelocityContext context, Map<String, Object> toAdd, MacroModel currentMacro) {
+		
+		for (Entry<String, Object> map : toAdd.entrySet()) {
+			context.put(map.getKey(), map.getValue());
+		}
+		this.addImportsToContext(context,currentMacro);
+	}
 	
 
 }
