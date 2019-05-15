@@ -212,40 +212,11 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processProject() throws Exception {
-		String text=null;
-		List<MacroModel> projectModelArray = this.mainModel.getProjectMacros();
-		
-		if (!projectModelArray.isEmpty()) {
-			for (MacroModel projectModel : projectModelArray) {
-				
-				VelocityContext context = new VelocityContext(this.baseContext);
-				text = new String(this.processOutputString(projectModel.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + text);
-			
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
-				
-				this.addImportsToContext(context,projectModel);
+		HashMap<String, Object> toAdd = new HashMap<>();
 
-				if (!text.equals("")) {
-					try {
-						// throw ResourceNotFoundException
-						template = vel_eng.getTemplate(projectModel.getTemplateName());
-						// throw IOE
-						this.fr = new FileWriter(this.outputFolder + text, true);
-						template.merge(context, fr);
-						fr.close();
-						outputFolder=null;
-						context=null;
-						text=null;
-					} catch (Exception e) {
-						log.fatal("cant merge velocity template with velocity context", e);
-						this.arrayOfExceptions.add(e);
-						throw e;
-					}
-				}else
-					log.warn("empty or errors in output tag content in projectModel...skipping...");
-			}
+		if (!this.mainModel.getProjectMacros().isEmpty()) {
+			
+			this.applyMacro(toAdd, this.mainModel.getProjectMacros(), true);
 		}
 			
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
@@ -254,9 +225,6 @@ public class GenerateProject {
 				this.baseContext.put("reasoner", this.wrapper);
 				this.processOntology(ontology);
 			}
-
-		
-
 	}
 
 	/**
@@ -299,11 +267,9 @@ public class GenerateProject {
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 		toAdd.put("class", c);
-		List<MacroModel> classModelArray = this.mainModel.getClassMacros();
 
-		if (!classModelArray.isEmpty()) {
-			
-			this.applyMacro(toAdd, classModelArray, true);
+		if (! this.mainModel.getClassMacros().isEmpty()) {
+			this.applyMacro(toAdd,  this.mainModel.getClassMacros(), true);
 		
 		} 
 		this.processObjectProperties(c,  ontology);
@@ -489,7 +455,7 @@ public class GenerateProject {
 	 */
 	private String processOutputString(String toProcess,VelocityContext ctx) {
 
-		String t = "--";
+		String t = "PROCESSINGERROR";
 		
 		try {
 			StringWriter stringWriter = new StringWriter();
@@ -693,15 +659,14 @@ public class GenerateProject {
 		try {
 			for (MacroModel macro : macro_to_apply) {
 				
-				VelocityContext context = new VelocityContext(this.baseContext);		
+				VelocityContext context = new VelocityContext(this.baseContext);
+				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
 				File outputFolder = new File(this.outputFolder + processedOutput);
 			
 				if (!outputFolder.getParentFile().exists())
 					outputFolder.getParentFile().mkdirs();
 				
-				
-				this.setupCurrentContextContent(context, varsToAdd, macro);	
 				if (!processedOutput.equals("")) {
 					try {
 						// throw ResourceNotFoundException
@@ -718,7 +683,7 @@ public class GenerateProject {
 						throw e;
 					}
 				}else
-					log.warn("empty or errors in output tag content in projectModel...skipping...");
+					log.warn("empty tag or errors in output tag content in projectModel...skipping...");
 			}
 		}catch (Exception e) {
 			log.debug(e.getMessage());
@@ -731,9 +696,13 @@ public class GenerateProject {
 	
 	private void setupCurrentContextContent(VelocityContext context, Map<String, Object> toAdd, MacroModel currentMacro) {
 		
-		for (Entry<String, Object> map : toAdd.entrySet()) {
-			context.put(map.getKey(), map.getValue());
+		if(!toAdd.isEmpty()) {
+		
+			for (Entry<String, Object> map : toAdd.entrySet()) {
+				context.put(map.getKey(), map.getValue());
+			}	
 		}
+		
 		this.addImportsToContext(context,currentMacro);
 	}
 	

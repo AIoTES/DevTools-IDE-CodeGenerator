@@ -14,5 +14,3 @@ $outputBaseDir.getName() | $outputBaseDir.getDescription() | $outputBaseDir.isRe
 ---------------------
 
 project output from user interface->  $output
-imports 
-$projectTestStaticImport

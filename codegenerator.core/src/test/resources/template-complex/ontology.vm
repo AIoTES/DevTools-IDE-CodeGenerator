@@ -7,6 +7,5 @@ variables given in XML
 #vars()
 reasoner name $reasoner.getReasoner()
 project output from user interface->  $output
- d.$ontoldogy.getClassesInSignature().size()
- package imports
- $test
+ 
+ 

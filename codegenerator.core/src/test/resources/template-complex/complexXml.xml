@@ -49,12 +49,12 @@
 			<macro>
 				<template>project.vm</template>
 				<for>project</for>
-				<output>projectOutput</output>
+				<output>ProjectOutput</output>
 			</macro>
 			<macro>
 				<template>ontology.vm</template>
 				<for>Ontology</for>
-				<output>ontologyOutput</output>
+				<output>${ontology.getOntologyID()}</output>
 				<imports>     
 					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
 				</imports> 
@@ -63,7 +63,7 @@
 			<macro>
 				<template>classes.vm</template>
 				<for>Class</for>
-				<output>classes/${class.getIRI().getShortForm()}</output>
+				<output>classes/${class.getIRI().getFragment()}</output>
 				<imports>     
 					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
 				</imports> 
@@ -86,7 +86,7 @@
 			<macro>
 				<template>NamedIndividuals.vm</template>
 				<for>NamedIndividual</for>
-				<output>instancesDirectory/${instance.getIRI().getFragment()}</output>
+				<output>NamedIndividual/${NamedIndividual.getIRI().getFragment()}</output>
 
 			</macro>
 		</macros>
