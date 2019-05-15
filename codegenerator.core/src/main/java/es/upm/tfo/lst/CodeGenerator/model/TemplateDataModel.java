@@ -138,7 +138,7 @@ public class TemplateDataModel {
 		return this.getMacroList("objectProperty");
 	}
 	
-	public List<MacroModel> getNamedIndividual() {
+	public List<MacroModel> getNamedIndividualMacros() {
 		return this.getMacroList("NamedIndividual");
 	}
 	public List<MacroModel> getDataProperties(){
