@@ -54,7 +54,7 @@
 			<macro>
 				<template>ontology.vm</template>
 				<for>Ontology</for>
-				<output>${ontology.getOntologyID()}</output>
+				<output>ontology</output>
 				<imports>     
 					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
 				</imports> 
