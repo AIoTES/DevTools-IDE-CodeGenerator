@@ -210,7 +210,7 @@ public class TemplateDataModel {
 	 * Modify existing variable value.
 	 */
 	public void modifyVariable(String name, String value) {
-		this.arrayVars.get(name).setValue(value);
+		this.arrayVars.get(name).setDefaultValue(value);
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class TemplateDataModel {
 	public void showVariables() {
 		Set<String> aux = this.arrayVars.keySet();
 		for (String t : aux) {
-			System.out.println(this.arrayVars.get(t).getValue());
+			System.out.println(this.arrayVars.get(t).getDefaultValue());
 		}
 	}
 
