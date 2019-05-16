@@ -99,16 +99,16 @@ public class XmlParser {
 	public TemplateDataModel generateXMLCoordinator(String xmlPath) throws Exception {
 
 		boolean flag = false;
-		System.out.println("generate XML coordinator from path: " + xmlPath);
+		log.debug("generating XML coordinator from path: " + xmlPath);
 		try {
-			// xml source has the full URL to xml file
+			
 			this.xmlSource = new URL(xmlPath);
 			flag = true;
 		} catch (Exception a) {
-			System.out.println("couldnt interpret current path as URL " + a.getMessage());
-			// flag=false;
+			log.debug("couldnt interpret current path as URL " + a.getMessage());
+		
 		}
-		// if the flag is true, means the xml file could be processed ok
+		// if flag is true, means the xml file could be processed ok
 		if (flag) {
 			log.debug("generating XML coordinator  from url= " + this.xmlSource);
 			this.isLocal = false;
@@ -175,7 +175,7 @@ public class XmlParser {
 			this.javaXMLModel = new TemplateDataModel();
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			log.debug("readXML " + xmlSource.getPath());
+			log.debug("reading XML file from=" + xmlSource.getPath());
 
 			// IOException - If any IO errors occur.
 			// SAXException - If any parse errors occur.
@@ -200,17 +200,12 @@ public class XmlParser {
 				t = (Element) this.templateAuthor.item(0);
 
 				
-				//processing node variables
+				//adding node variables to the project
 				for (int y = 0; y < this.nodeVariable.getLength(); y++) {
 					Element b = (Element) this.nodeVariable.item(y);
-
-					this.variableList
-							.put(b.getElementsByTagName("name").item(0).getTextContent(),
-									new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
-											b.getElementsByTagName("description").item(0).getTextContent(),
-											b.getElementsByTagName("required").item(0).getTextContent()
-													.equalsIgnoreCase("true"),
-											b.getElementsByTagName("default").item(0).getTextContent()));
+					Variable aux = new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
+							b.getElementsByTagName("description").item(0).getTextContent(),b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),b.getElementsByTagName("default").item(0).getTextContent());
+					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(),aux);
 
 				}
 				
