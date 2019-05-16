@@ -174,15 +174,18 @@ public class GenerateProject {
 		if (this.control()) {
 			try {
 				this.initVelocity();
+				log.debug("adding date");
+				log.debug(this.variables.keySet().size());
 				
-				//this.baseContext.put("ontologyCompleteList",this.ontologies2BProcesed.stream().collect(Collectors.toList()));
-				//this.baseContext.put("output", this.outputFolder);
 				this.baseContext.put("date", new Date());
+				this.baseContext.put("project",this);
+				for (String value : this.variables.keySet()) {
+					System.out.println(value);
+					this.baseContext.put(value, this.variables.get(value));
+				}
 				
 				//TODO: control variables to not be null after parse this to context
-				this.baseContext.put("project",this);
-				this.addVariablesToBaseContext();
-
+				
 				if (this.mainModel.getProjectMacros().isEmpty())
 					log.warn("doesn't exist macro to project");
 				if (this.mainModel.getOntologyMacros().isEmpty())
@@ -501,7 +504,7 @@ public class GenerateProject {
 					new Variable(varName, "Undeclared variable, added automatically.", false, varValue));
 		}
 
-		this.mainModel.getArrayVars().get(varName).setValue(varValue);
+		this.mainModel.getArrayVars().get(varName).setDefaultValue(varValue);
 		return true;
 	}
 
@@ -583,7 +586,15 @@ public class GenerateProject {
 	 */
 	private void addVariablesToBaseContext() {
 		log.debug("adding variables into base context...");
-		this.variables.keySet().stream().forEach(t -> this.baseContext.put(t, this.variables.get(t)));
+		for (String value : this.variables.keySet()) {
+			System.out.println(value);
+			this.baseContext.put(value, this.variables.get(value));
+		}
+		
+		
+//		this.variables.keySet().stream().forEach(t -> {
+//			this.baseContext.put(t, this.variables.get(t));
+//				});
 
 	}
 
