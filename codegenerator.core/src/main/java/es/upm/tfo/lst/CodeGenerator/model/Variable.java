@@ -15,6 +15,10 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator.model;
 
+import javax.sound.sampled.Line;
+
+import com.google.common.reflect.Parameter;
+
 /**
  * Class to represent a variable item in given XML file.
  *
@@ -23,32 +27,35 @@ package es.upm.tfo.lst.CodeGenerator.model;
  *
  */
 public class Variable {
-	private String name, defaultValue;
+	private String name, defaultValue,description;
 	private boolean required;
-	private String value, description;
-
+	
 	/**
-	 *
-	 * @param {@link String } name name of variable
-	 * @param {@link String } required: True if variable is required, false if
-	 *        variable is optional
-	 * @param {@link String } defaultValue: default content of variable
+	 * 
+	 * @param name
+	 * @param required
+	 * @param defaultValue
 	 */
-	public Variable(String name, String description, boolean required, String defaultValue) {
-		this.name = name;
-		this.required = required;
-		this.defaultValue = defaultValue;
-		this.value = null;
-		this.description = description;
-	}
-
 	public Variable(String name, boolean required, String defaultValue) {
 		this.name = name;
 		this.required = required;
 		this.defaultValue = defaultValue;
-		this.value = null;
 
 	}
+
+	/**
+	 *
+	 * @param {@link String } name name of variable
+	 * @param {@link String } required: True if variable is required, false if variable is optional
+	 * @param {@link String } defaultValue: default content of variable
+	 * @param {@link String}  description: a little description from the purpose of this variable
+	 */
+	public Variable(String name, String description, boolean required, String defaultValue) {
+		this(name,required,defaultValue);
+		this.description = description;
+	}
+
+
 
 	public String getDescription() {
 		return description;
@@ -82,16 +89,13 @@ public class Variable {
 		return this.defaultValue;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public String getValue() {
+		return this.getDefaultValue();
+	}
+	public void setDefaultValue(String value) {
+		this.defaultValue = value;
 	}
 
-	public String getValue() {
-		if (value == null && defaultValue != null) {
-			return defaultValue;
-		}
-		return value;
-	}
 
 	@Override
 	public String toString() {
@@ -108,4 +112,11 @@ public class Variable {
 		return name.equals(this.getName());
 	}
 
+	/**
+	 * to print all variable content as string
+	 * @return
+	 */
+	public String print() {
+		return "name="+this.name+" default value="+this.defaultValue+" required="+this.required+" ";
+	}
 }
