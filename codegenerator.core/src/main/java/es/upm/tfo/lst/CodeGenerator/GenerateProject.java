@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2018 Universidad Politécnica de Madrid UPM
+- * Copyright 2018 Universidad Politécnica de Madrid UPM
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,10 +285,19 @@ public class GenerateProject {
 	 */
 	private void processNamedIndividual(OWLOntology ontology) throws Exception {
 		HashMap<String, Object> toAdd = new HashMap<>();
-	
-		if (!this.mainModel.getNamedIndividualMacros().isEmpty()) {
-			this.applyMacro(toAdd, this.mainModel.getNamedIndividualMacros(), true);
+		toAdd.put("ontology", ontology);
+
+		
+		for (OWLDeclarationAxiom individual : ontology.getAxioms(AxiomType.DECLARATION)) {
+			for (OWLNamedIndividual iterable_element : individual.getIndividualsInSignature()) {
+				toAdd.put("NamedIndividual", iterable_element);
+				if (!this.mainModel.getNamedIndividualMacros().isEmpty()) {
+					this.applyMacro(toAdd, this.mainModel.getNamedIndividualMacros(), true);
+				}
+			}
 		}
+		
+		
 	
 	}
 	/**
@@ -303,6 +312,11 @@ public class GenerateProject {
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
+			for (OWLDeclarationAxiom iterable_element : ontology.getAxioms(AxiomType.DECLARATION)) {
+				for (OWLObjectProperty iterable_element2 : iterable_element.getObjectPropertiesInSignature()) {
+					toAdd.put(iterable_element2.getIRI().getFragment(), iterable_element2 );
+				}
+			}
 			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 		}
 
