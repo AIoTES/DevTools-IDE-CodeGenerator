@@ -206,7 +206,8 @@ public class XmlParser {
 					Variable aux = new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
 							b.getElementsByTagName("description").item(0).getTextContent(),b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),b.getElementsByTagName("default").item(0).getTextContent());
 					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(),aux);
-
+					log.debug("b.getElementsByTagName(\"name\").item(0).getTextContent()"+b.getElementsByTagName("name").item(0).getTextContent());
+						log.debug("aux.print()="+aux.print());
 				}
 				
 				this.javaXMLModel.setVars(this.variableList);
