@@ -174,14 +174,17 @@ public class GenerateProject {
 		if (this.control()) {
 			try {
 				this.initVelocity();
-				log.debug("adding date");
-				log.debug(this.variables.keySet().size());
+				
+				
 				
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
-				for (String value : this.variables.keySet()) {
-					System.out.println(value);
-					this.baseContext.put(value, this.variables.get(value));
+				
+				
+				for (String var_name : this.mainModel.getArrayVars().keySet()) {
+
+					
+					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());	
 				}
 				
 				//TODO: control variables to not be null after parse this to context
