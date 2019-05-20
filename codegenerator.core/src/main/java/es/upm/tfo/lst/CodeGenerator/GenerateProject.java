@@ -247,7 +247,7 @@ public class GenerateProject {
 		toAdd.put("ontology", ontology);
 		
 		if (!this.mainModel.getOntologyMacros().isEmpty()) {
-			log.debug("applying macros for ontologies");
+
 			this.applyMacro(toAdd, this.mainModel.getOntologyMacros() ,true);
 		} 
 			
@@ -317,13 +317,15 @@ public class GenerateProject {
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
+		
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (OWLDeclarationAxiom iterable_element : ontology.getAxioms(AxiomType.DECLARATION)) {
 				for (OWLObjectProperty iterable_element2 : iterable_element.getObjectPropertiesInSignature()) {
-					toAdd.put(iterable_element2.getIRI().getFragment(), iterable_element2 );
+					toAdd.put("ObjectProperty", iterable_element2);
+					this.applyMacro(toAdd, this.mainModel.getObjectProperties(), false);
 				}
 			}
-			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
+			
 		}
 
 
@@ -340,7 +342,7 @@ public class GenerateProject {
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
-			
+			//for each data property
 			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 			
 		}
