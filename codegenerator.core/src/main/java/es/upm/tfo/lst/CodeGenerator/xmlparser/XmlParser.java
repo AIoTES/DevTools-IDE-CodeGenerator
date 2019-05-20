@@ -99,13 +99,13 @@ public class XmlParser {
 	public TemplateDataModel generateXMLCoordinator(String xmlPath) throws Exception {
 
 		boolean flag = false;
-		log.debug("generating XML coordinator from path: " + xmlPath);
+		log.debug("reading XML coordinator from path: " + xmlPath);
 		try {
 			
 			this.xmlSource = new URL(xmlPath);
 			flag = true;
 		} catch (Exception a) {
-			log.debug("couldnt interpret current path as URL " + a.getMessage());
+			log.debug("couldnt interpret current path as URL->" + a.getMessage());
 		
 		}
 		// if flag is true, means the xml file could be processed ok
@@ -175,7 +175,7 @@ public class XmlParser {
 			this.javaXMLModel = new TemplateDataModel();
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			log.debug("reading XML file from=" + xmlSource.getPath());
+
 
 			// IOException - If any IO errors occur.
 			// SAXException - If any parse errors occur.
@@ -206,8 +206,8 @@ public class XmlParser {
 					Variable aux = new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
 							b.getElementsByTagName("description").item(0).getTextContent(),b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),b.getElementsByTagName("default").item(0).getTextContent());
 					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(),aux);
-					log.debug("b.getElementsByTagName(\"name\").item(0).getTextContent()"+b.getElementsByTagName("name").item(0).getTextContent());
-						log.debug("aux.print()="+aux.print());
+
+
 				}
 				
 				this.javaXMLModel.setVars(this.variableList);
@@ -228,7 +228,7 @@ public class XmlParser {
 						p = new HashMap<String, String>();
 
 						if (name != null) {
-							log.debug("name " + name);
+
 							//TODO control characters. Maybe throw an error indicating if the given string to imports is not valid
 							if (!name.equals("")) {
 
