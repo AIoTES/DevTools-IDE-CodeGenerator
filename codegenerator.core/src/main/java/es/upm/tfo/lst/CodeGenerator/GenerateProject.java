@@ -20,19 +20,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -51,20 +53,13 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
-import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
-import org.semanticweb.owlapi.model.OWLDifferentIndividualsAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-
-import com.github.jsonldjava.utils.Obj;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
@@ -481,26 +476,36 @@ public class GenerateProject {
 		
 		try {
 			StringWriter stringWriter = new StringWriter();
-			StringResourceRepository rep = StringResourceLoader.getRepository();
+		//	StringResourceRepository rep = StringResourceLoader.getRepository();
 			
-			Template te = new Template();
-			RuntimeServices rs = RuntimeSingleton.getRuntimeServices();
-			StringReader sr = new StringReader(toProcess);
-			SimpleNode sn = rs.parse(sr, "s");
-			rep = new StringResourceRepositoryImpl();
-			StringResourceLoader.setRepository(StringResourceLoader.REPOSITORY_NAME_DEFAULT, rep);
-
-			te.setRuntimeServices(rs);
-			te.setData(sn);
-			te.initDocument();
-
-			te.merge(ctx, stringWriter);
+			//Template te = new Template();
+			log.debug(this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess)));
+			
+			log.debug("processed "+stringWriter.toString().replace("\n", ""));		
+			
+//			RuntimeServices rs = RuntimeSingleton.getRuntimeServices();
+//			StringReader sr = new StringReader(toProcess);
+////			URLResourceLoader rl = new URLResourceLoader();
+////			ExtendedProperties exp = new ExtendedProperties();
+////			exp.setInclude(this.mainModel.getBaseTemplatePath());
+////			rl.init(exp);	
+////			te.setResourceLoader(rl);
+//			SimpleNode sn = rs.parse(sr, "s");
+//			rep = new StringResourceRepositoryImpl();
+//			
+//			StringResourceLoader.setRepository(StringResourceLoader.REPOSITORY_NAME_DEFAULT, rep);
+//			te.setRuntimeServices(rs);
+//			te.setData(sn);
+//			te.initDocument();
+//		
+//			te.merge(ctx, stringWriter);
 			t = stringWriter.toString();
 			stringWriter.close();
+
 		} catch (Exception a) {
 			log.fatal("cant process name ", a);
 		}
-		return t;
+		return t.replace("\n", "");
 	}
 
 	/**
@@ -683,29 +688,40 @@ public class GenerateProject {
 	 */
 	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
 		
+		VelocityEngine engine= new VelocityEngine();
+		
 		boolean state = true;
 		
 		String processedOutput;
 		try {
 			for (MacroModel macro : macro_to_apply) {
-				
+				log.debug("output to process="+macro.getOutput());
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
-				File outputFolder = new File(this.outputFolder + processedOutput);
+				log.debug("processed="+processedOutput);
+				File outputDirectory = new File(this.outputFolder + processedOutput);
 			
-				if (!outputFolder.getParentFile().exists())
-					outputFolder.getParentFile().mkdirs();
+				if (!outputDirectory.getParentFile().exists()) {
+					log.debug("creating "+outputDirectory.getParentFile()+" state "+outputDirectory.getParentFile().mkdirs());
+				}else {
+					log.debug("exists "+outputDirectory);
+				}
+	
+					
 				
 				if (!processedOutput.equals("")) {
 					try {
 						// throw ResourceNotFoundException
 						template = vel_eng.getTemplate(macro.getTemplateName());
 						// throw IOE
-						this.fr = new FileWriter(this.outputFolder + processedOutput, appendState);
-						template.merge(context, fr);
+						log.debug("to write "+this.outputFolder+ processedOutput);
+						FileWriter fr = new FileWriter("./"+this.outputFolder + processedOutput, appendState);
+						ArrayList<String > a =new ArrayList<>();
+						a.add("./common.vm");
+						template.merge(context, fr, a);
 						fr.close();
-						outputFolder=null;
+						outputDirectory=null;
 						context=null;
 					} catch (Exception e) {
 						log.fatal("cant merge velocity template with velocity context", e);
