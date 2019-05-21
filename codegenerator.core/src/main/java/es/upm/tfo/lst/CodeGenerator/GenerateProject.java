@@ -214,7 +214,7 @@ public class GenerateProject {
 	 */
 	private void processProject() throws Exception {
 		HashMap<String, Object> toAdd = new HashMap<>();
-
+		toAdd.put("project", this);
 		if (!this.mainModel.getProjectMacros().isEmpty()) {
 			
 			this.applyMacro(toAdd, this.mainModel.getProjectMacros(), true);
@@ -224,6 +224,7 @@ public class GenerateProject {
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
 				this.baseContext.put("reasoner", this.wrapper);
+				this.baseContext.put("Date", Date.class);
 				this.processOntology(ontology);
 			}
 	}
@@ -664,7 +665,6 @@ public class GenerateProject {
 	 */
 	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
 		
-		VelocityEngine engine= new VelocityEngine();
 		
 		boolean state = true;
 		
