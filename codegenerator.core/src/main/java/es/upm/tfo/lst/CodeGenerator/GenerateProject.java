@@ -207,6 +207,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processProject() throws Exception {
+		log.debug("processing Project");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("project", this);
 		if (!this.mainModel.getProjectMacros().isEmpty()) {
@@ -231,6 +232,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processOntology(OWLOntology ontology) throws Exception {
+		log.debug("processing ontology");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		
 		toAdd.put("ontology", ontology);
@@ -259,6 +261,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processClass(OWLClass c, OWLOntology ontology) throws Exception {
+		log.debug("processing class");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 		toAdd.put("class", c);
@@ -279,6 +282,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processNamedIndividual(OWLOntology ontology) throws Exception {
+		log.debug("processing NamedIndividuals");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 
@@ -302,7 +306,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processObjectProperties(OWLClass cls, OWLOntology ontology)throws Exception {
-		
+		log.debug("processing ObjectProperties");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
@@ -327,6 +331,7 @@ public class GenerateProject {
 	 * @throws Exception 
 	 */
 	private void processDataPropeties(OWLClass cls, OWLOntology ontology) throws Exception {
+		log.debug("processing DataProperties");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
@@ -340,6 +345,7 @@ public class GenerateProject {
 	
 	//TODO: define this step
 	private void processAnnotations(OWLOntology ontology) throws Exception{
+		log.debug("processing Annotations");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		
 		toAdd.put("ontology", ontology);
@@ -663,7 +669,7 @@ public class GenerateProject {
 		String processedOutput;
 		try {
 			for (MacroModel macro : macro_to_apply) {
-				
+				log.debug("applying macro...");
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
