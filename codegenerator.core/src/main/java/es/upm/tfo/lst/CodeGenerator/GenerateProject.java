@@ -668,27 +668,22 @@ public class GenerateProject {
 		String processedOutput;
 		try {
 			for (MacroModel macro : macro_to_apply) {
-				log.debug("output to process="+macro.getOutput());
+				
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
-				log.debug("processed="+processedOutput);
+				
 				File outputDirectory = new File(this.outputFolder + processedOutput);
 			
 				if (!outputDirectory.getParentFile().exists()) {
-					log.debug("creating "+outputDirectory.getParentFile()+" state "+outputDirectory.getParentFile().mkdirs());
-				}else {
-					log.debug("exists "+outputDirectory);
+					outputDirectory.getParentFile().mkdirs();
 				}
 	
-					
-				
 				if (!processedOutput.equals("")) {
 					try {
 						// throw ResourceNotFoundException
 						template = vel_eng.getTemplate(macro.getTemplateName());
 						// throw IOE
-						log.debug("to write "+this.outputFolder+ processedOutput);
 						FileWriter fr = new FileWriter("./"+this.outputFolder + processedOutput, appendState);
 						template.merge(context, fr);
 						fr.close();
