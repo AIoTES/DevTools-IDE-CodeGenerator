@@ -188,7 +188,8 @@ public class GenerateProject {
 					log.warn("doesn't exist macro to instances");
 				if (this.mainModel.getObjectProperties().isEmpty())
 					log.warn("doesn't exist macro to object properties");
-
+				if (this.mainModel.getDataProperties().isEmpty())
+					log.warn("doesn't exist macro to DataProperties");
 				this.processProject();
 			} catch (Exception a) {
 				log.fatal("fatal error ", a);
@@ -586,7 +587,6 @@ public class GenerateProject {
 	private void addVariablesToBaseContext() {
 		log.debug("adding variables into base context...");
 		for (String value : this.variables.keySet()) {
-			System.out.println(value);
 			this.baseContext.put(value, this.variables.get(value));
 		}
 		
@@ -624,7 +624,7 @@ public class GenerateProject {
 		for (OWLOntology o : this.ontologies2BProcesed) {
 			this.total2Process += o.getClassesInSignature().size();
 		}
-		System.out.println("total of classes to process " + this.total2Process);
+		
 	}
 
 	public int getTotal2Process() {
