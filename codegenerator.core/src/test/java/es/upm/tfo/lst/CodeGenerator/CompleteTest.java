@@ -16,7 +16,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.mock.action.ExpectationResponseCallback;
@@ -62,23 +64,36 @@ public class CompleteTest  {
                    .withCallbackClass(TestExpectationResponseCallback.class.getName())
            );
 	}
-	
+    @Rule public TestName name = new TestName();
+
 	@Before
 	public void init() {
 		PropertyConfigurator.configure("src/test/resources/log4jConfigFile/log4j.properties");
 		this.parser = new XmlParser();
 		this.ontologyLoader = new OntologyLoader();
 		this.genPro = new GenerateProject();
+		System.out.flush();
+		System.err.flush();
+		System.err.println("================= Start of " + name.getMethodName() + " =================");
 	}
 
-
+	@AfterClass
+	public static void stopMockServer() {
+		System.out.println("stopping mock server...");
+	    mockServer.stop();
+	}
+	
+	@After
+	public void end() {
+		System.out.flush();
+		System.err.flush();
+		System.err.println("================= End of " + name.getMethodName() + " =================");
+	}
+	
+	
 	@Test
 	public void localCompleteTest() {
 
-		System.out.println(this.mockServer.isRunning());
-
-
-		 System.out.println("\n------------------------------complete  test--------------------------------------\n");
 		 try {
 
 			 this.model=this.parser.generateXMLCoordinator(this.templateBasePath+"complexXml.xml");
@@ -106,8 +121,7 @@ public class CompleteTest  {
 
 	@Test
 	public void webTemplateTest() throws IOException {
-		 System.out.println("\n------------------------------web template with local ontology--------------------------------------\n");
-		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
+		 
 		try{
 			 	this.model=this.parser.generateXMLCoordinator(webTemplatePath);
 				this.genPro = new GenerateProject();
@@ -139,8 +153,7 @@ public class CompleteTest  {
 	@Test
 	public void webTemplateCompleteTest() throws IOException {
 
-		 System.out.println("\n------------------------------online template and ontology--------------------------------------\n");
-		 System.out.println("mock server is runnung? "+this.mockServer.isRunning());
+		
 		try{
 			this.model=this.parser.generateXMLCoordinator(webTemplatePath);	
 			this.genPro = new GenerateProject();
@@ -165,11 +178,7 @@ public class CompleteTest  {
 
 	}
 
-	@AfterClass
-	public static void stopMockServer() {
-		System.out.println("stopping mock server...");
-	    mockServer.stop();
-	}
+
 
 	private static String readFile(String nameFile) throws IOException {
 		StringBuilder sb=new StringBuilder();
