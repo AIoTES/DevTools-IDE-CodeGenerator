@@ -169,9 +169,6 @@ public class GenerateProject {
 		if (this.control()) {
 			try {
 				this.initVelocity();
-				
-				
-				
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
 				
@@ -318,7 +315,7 @@ public class GenerateProject {
 			for (OWLDeclarationAxiom iterable_element : ontology.getAxioms(AxiomType.DECLARATION)) {
 				for (OWLObjectProperty iterable_element2 : iterable_element.getObjectPropertiesInSignature()) {
 					toAdd.put("ObjectProperty", iterable_element2);
-					this.applyMacro(toAdd, this.mainModel.getObjectProperties(), false);
+					this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 				}
 			}
 			
