@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Template
-		xmlns="http://www.example.org/prueba2"
-		xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
-		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
+	xmlns="http://www.example.org/CodeGeneratorTool" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"	
+  	xs:schemaLocation="http://www.example.org/CodeGeneratorTool schema.xsd">
 		<template-name>Template1</template-name>
-		<template-version>1</template-version>
-		<template-description>Example template</template-description>
+		<template-version>1.1</template-version>
+		<template-description>Test Template</template-description>
 		<template-author>
-			<author-name>eduardo</author-name>
-			<author-email>buhid</author-email>
-			<author-phone>123523</author-phone>
-		</template-author>
-
+			  	<name>Eduardo Buhid</name>
+			  	<email>ebuhid@lst.tfo.upm.es</email>
+			  	<roles>developer</roles>
+			  	<organization>LifesTech</organization>
+			  	<organizationUrl>https://www.lst.tfo.upm.es/</organizationUrl>
+			  	<timezone>(GMT+01:00)</timezone>
+		 </template-author>
 		<variables>
 		
-			<variable>
-				<name>targetOS</name>
-				<default>Linux</default>
-				<required>false</required>
-				<description>"variable containing target operating system"</description>
 
-			</variable>
 
 			<variable>
 				<name>templateCount</name>
