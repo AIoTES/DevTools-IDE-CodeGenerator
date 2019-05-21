@@ -172,10 +172,7 @@ public class GenerateProject {
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
 				
-				
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
-
-					
 					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());	
 				}
 				
@@ -221,7 +218,6 @@ public class GenerateProject {
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
 				this.baseContext.put("reasoner", this.wrapper);
-				this.baseContext.put("Date", Date.class);
 				this.processOntology(ontology);
 			}
 	}
@@ -469,15 +465,14 @@ public class GenerateProject {
 	 * @return {@link String } value, result of the process
 	 */
 	private String processOutputString(String toProcess,VelocityContext ctx) {
-		String t = "PROCESSINGERROR";
+		String t = "-";
 		try {
 			StringWriter stringWriter = new StringWriter();	
-			log.debug(this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess)));			
-			log.debug("processed string="+stringWriter.toString().replace("\n", ""));		
+			this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess));			
 			t = stringWriter.toString();
 			stringWriter.close();
 		} catch (Exception a) {
-			log.fatal("cant process name ", a);
+			log.fatal("cant proces="+toProcess, a);
 		}
 		return t.replace("\n", "");
 	}
@@ -684,7 +679,7 @@ public class GenerateProject {
 						// throw ResourceNotFoundException
 						template = vel_eng.getTemplate(macro.getTemplateName());
 						// throw IOE
-						FileWriter fr = new FileWriter("./"+this.outputFolder + processedOutput, appendState);
+						FileWriter fr = new FileWriter(this.outputFolder + processedOutput, appendState);
 						template.merge(context, fr);
 						fr.close();
 						outputDirectory=null;
