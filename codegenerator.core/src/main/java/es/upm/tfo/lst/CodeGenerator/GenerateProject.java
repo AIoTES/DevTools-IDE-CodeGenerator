@@ -471,37 +471,13 @@ public class GenerateProject {
 	 * @return {@link String } value, result of the process
 	 */
 	private String processOutputString(String toProcess,VelocityContext ctx) {
-
 		String t = "PROCESSINGERROR";
-		
 		try {
-			StringWriter stringWriter = new StringWriter();
-		//	StringResourceRepository rep = StringResourceLoader.getRepository();
-			
-			//Template te = new Template();
-			log.debug(this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess)));
-			
-			log.debug("processed "+stringWriter.toString().replace("\n", ""));		
-			
-//			RuntimeServices rs = RuntimeSingleton.getRuntimeServices();
-//			StringReader sr = new StringReader(toProcess);
-////			URLResourceLoader rl = new URLResourceLoader();
-////			ExtendedProperties exp = new ExtendedProperties();
-////			exp.setInclude(this.mainModel.getBaseTemplatePath());
-////			rl.init(exp);	
-////			te.setResourceLoader(rl);
-//			SimpleNode sn = rs.parse(sr, "s");
-//			rep = new StringResourceRepositoryImpl();
-//			
-//			StringResourceLoader.setRepository(StringResourceLoader.REPOSITORY_NAME_DEFAULT, rep);
-//			te.setRuntimeServices(rs);
-//			te.setData(sn);
-//			te.initDocument();
-//		
-//			te.merge(ctx, stringWriter);
+			StringWriter stringWriter = new StringWriter();	
+			log.debug(this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess)));			
+			log.debug("processed string="+stringWriter.toString().replace("\n", ""));		
 			t = stringWriter.toString();
 			stringWriter.close();
-
 		} catch (Exception a) {
 			log.fatal("cant process name ", a);
 		}
