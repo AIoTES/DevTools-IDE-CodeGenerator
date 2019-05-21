@@ -2,8 +2,8 @@
 
 <schema
 	xmlns="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="http://www.example.org/prueba2" 
-	xmlns:ts="http://www.example.org/prueba2">
+	targetNamespace="http://www.example.org/CodeGeneratorTool" 
+	xmlns:ts="http://www.example.org/CodeGeneratorTool">
 
 
 
@@ -13,7 +13,7 @@
     			<element name="template-name" type="string" maxOccurs="1" minOccurs="1"></element>
     			<element name="template-version" type="string" maxOccurs="1" minOccurs="1"></element>
     			<element name="template-description" type="string"></element>
-    			<element name="template-author" type="ts:author"></element>
+    			<element name="template-author" type="ts:Developer"/>
     			<element name="variables" maxOccurs="1" minOccurs="1">
     				<complexType>
     					<sequence>
@@ -24,6 +24,7 @@
     			<element  name="macros" maxOccurs="1" minOccurs="1">
     				<complexType>
 					<sequence>
+				
 						<element name="macro" type="ts:macro"  maxOccurs="unbounded" minOccurs="1"></element>    					 
 					</sequence>	
     				</complexType>
@@ -35,13 +36,6 @@
     
 
 
-<complexType name="author">
-	<sequence>
-		<element name="author-name" type="string" />
-		<element name="author-email" type="string"/>
-		<element name="author-phone" type="string"/>
-	</sequence>
-</complexType>    
 
 
 
