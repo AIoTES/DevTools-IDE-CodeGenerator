@@ -3,9 +3,9 @@
 		xmlns="http://www.example.org/prueba2"
 		xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
 		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
-		<template-name>template1</template-name>
+		<template-name>Template1</template-name>
 		<template-version>1</template-version>
-		<template-description>error</template-description>
+		<template-description>Example template</template-description>
 		<template-author>
 			<author-name>eduardo</author-name>
 			<author-email>buhid</author-email>
@@ -13,13 +13,7 @@
 		</template-author>
 
 		<variables>
-			<variable>
-				<name>outputBaseDir</name>
-				<default></default>
-				<required>false</required>
-				<description>"variable to set outputBaseDir"</description>
-			</variable>
-
+		
 			<variable>
 				<name>targetOS</name>
 				<default>Linux</default>
