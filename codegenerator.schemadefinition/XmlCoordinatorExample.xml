@@ -7,14 +7,12 @@
   	<template-version>1.0</template-version>
 	<template-description>template to test XSD Schema</template-description>
   	<template-author>
-	  	<name>Eduardo</name>
+	  	<name>Eduardo Buhid</name>
 	  	<email>ebuhid@lst.tfo.upm.es</email>
 	  	<roles>developer</roles>
-	  	<organization>Lifes Tech</organization>
-	  	<id>000000</id>
+	  	<organization>LifesTech</organization>
 	  	<organizationUrl>https://www.lst.tfo.upm.es/</organizationUrl>
 	  	<timezone>(GMT+01:00)</timezone>
-	  	
   </template-author>
   <variables>
   	<variable>
