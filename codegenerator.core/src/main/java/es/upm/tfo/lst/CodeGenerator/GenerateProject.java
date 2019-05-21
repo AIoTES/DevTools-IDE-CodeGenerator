@@ -717,9 +717,7 @@ public class GenerateProject {
 						// throw IOE
 						log.debug("to write "+this.outputFolder+ processedOutput);
 						FileWriter fr = new FileWriter("./"+this.outputFolder + processedOutput, appendState);
-						ArrayList<String > a =new ArrayList<>();
-						a.add("./common.vm");
-						template.merge(context, fr, a);
+						template.merge(context, fr);
 						fr.close();
 						outputDirectory=null;
 						context=null;
