@@ -142,7 +142,7 @@ public class TemplateDataModel {
 		return this.getMacroList("NamedIndividual");
 	}
 	public List<MacroModel> getDataProperties(){
-		return this.getMacroList("dataProperties");
+		return this.getMacroList("DataProperty");
 	}
 	public List<MacroModel> getAnnotationsMacros(){
 		return this.getMacroList("annotations");
