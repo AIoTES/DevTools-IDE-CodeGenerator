@@ -60,7 +60,7 @@ public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private URL xmlSource = null;
-	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription, templateAuthor;
+	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription, template_author_information;
 	private Map<String, Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
@@ -167,7 +167,7 @@ public class XmlParser {
 	 *                  load
 	 */
 	private void readXML() throws Exception {
-		
+		log.debug("starting XML parseer process");
 		Element t;
 
 		try {
@@ -184,36 +184,39 @@ public class XmlParser {
 
 			try {
 				this.nodeVariable = doc.getElementsByTagName("variable");
-				this.templateAuthor = doc.getElementsByTagName("template-author");
+				this.template_author_information = doc.getElementsByTagName("template-author");
 				this.templateName = doc.getElementsByTagName("template-name");
 				this.templateVersion = doc.getElementsByTagName("template-version");
 				this.templateDescription = doc.getElementsByTagName("template-description");
+	
 				
 				t = (Element) this.templateName.item(0);
-
-				this.javaXMLModel.setName(t.getFirstChild().getTextContent());
+				this.javaXMLModel.setTemplateName(t.getFirstChild().getTextContent());
 				t = (Element) this.templateVersion.item(0);
-				this.javaXMLModel.setVersion(t.getFirstChild().getTextContent());
+				this.javaXMLModel.setTemplateVersion(t.getFirstChild().getTextContent());
 				t = (Element) this.templateDescription.item(0);
-				this.javaXMLModel.setDescription(t.getFirstChild().getTextContent());
-				// xml tags not obligatory
-				t = (Element) this.templateAuthor.item(0);
-
+				this.javaXMLModel.setTemplateDescription(t.getFirstChild().getTextContent());
 				
-				//adding node variables to the project
+
+				log.debug("this.template_author_information.getLength()="+this.template_author_information.getLength());
+				
+				//adding author information to project
+				for (int y = 0; y < this.template_author_information.getLength(); y++) {
+					Element b = (Element) this.nodeVariable.item(y);
+				}
+				
+				log.debug("adding variables into Model");
 				for (int y = 0; y < this.nodeVariable.getLength(); y++) {
 					Element b = (Element) this.nodeVariable.item(y);
 					Variable aux = new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
 							b.getElementsByTagName("description").item(0).getTextContent(),b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),b.getElementsByTagName("default").item(0).getTextContent());
 					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(),aux);
-
-
 				}
 				
 				this.javaXMLModel.setVars(this.variableList);
 
 			} catch (Exception e) {
-				log.warn("some optionals tags into XML coordinator file isn't set");
+				log.warn("some optionals tags into XML coordinator file isn't set"+e.getLocalizedMessage());
 			}
 
 			this.nodeMacro = doc.getElementsByTagName("macro");
