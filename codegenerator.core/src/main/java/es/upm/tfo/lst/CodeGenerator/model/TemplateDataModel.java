@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public class TemplateDataModel {
 
-	private String name, version, description, baseTemplatePath;
+	private String template_name="", template_version="",template_description="", baseTemplatePath,author="",author_email="",author_role="",organization_url="";
 
 	private Map<String, Variable> arrayVars;
 	private List<MacroModel> macroList;
@@ -41,29 +41,62 @@ public class TemplateDataModel {
 		this.arrayVars = new HashMap<>();
 	}
 
-	public String getName() {
-		return name;
+	public String getTemplateName() {
+		return template_name;
 	}
 
-	public void setName(String name) {
-
-		this.name = name;
+	
+	public String getAuthor() {
+		return author;
 	}
 
-	public String getVersion() {
-		return version;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public String getAuthor_email() {
+		return author_email;
 	}
 
-	public String getDescription() {
-		return description;
+	public void setAuthor_email(String author_email) {
+		this.author_email = author_email;
 	}
 
-	public void setDescription(String desription) {
-		this.description = desription;
+	public String getAuthor_role() {
+		return author_role;
+	}
+
+	public void setAuthor_role(String author_role) {
+		this.author_role = author_role;
+	}
+
+	public String getOrganization_url() {
+		return organization_url;
+	}
+
+	public void setOrganization_url(String organization_url) {
+		this.organization_url = organization_url;
+	}
+
+	public void setTemplateName(String name) {
+
+		this.template_name = name;
+	}
+
+	public String getTemplateVersion() {
+		return template_version;
+	}
+
+	public void setTemplateVersion(String version) {
+		this.template_version = version;
+	}
+
+	public String getTemplateDescription() {
+		return template_description;
+	}
+
+	public void setTemplateDescription(String desription) {
+		this.template_description = desription;
 	}
 
 	/**
@@ -268,8 +301,8 @@ public class TemplateDataModel {
 
 	@Override
 	public String toString() {
-		return "TemplateName=" + this.name + "\n template version=" + this.version + "\n template description="
-				+ this.description + "\n variables count=" + this.macroList.size();
+		return "TemplateName=" + this.template_name + "\n template version=" + this.template_version + "\n template description="
+				+ this.template_description + "\n variables count=" + this.macroList.size();
 
 	}
 
