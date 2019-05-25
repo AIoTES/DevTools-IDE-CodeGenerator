@@ -3,13 +3,16 @@
 		xmlns="http://www.example.org/prueba2" 
 		xmlns:x="http://www.w3.org/2001/XMLSchema-instance" 
 		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
-		<template-name>template1</template-name>
-		<template-version>1</template-version>
-		<template-description>error</template-description>
+		<template-name>HTMLExample</template-name>
+		<template-version>1.0</template-version>
+		<template-description>Template to generate a static HTML web page to show the workflow of CodeGenerator tool core</template-description>
 		<template-author>
-			<author-name>eduardo</author-name>
-			<author-email>buhid</author-email>	
-			<author-phone>123523</author-phone>
+			  	<name>Eduardo Buhid</name>
+			  	<email>ebuhid@lst.tfo.upm.es</email>
+			  	<roles>developer</roles>
+			  	<organization>LifesTech</organization>
+			  	<organizationUrl>https://www.lst.tfo.upm.es/</organizationUrl>
+			  	<timezone>(GMT+01:00)</timezone>
 		</template-author>
 		<variables>
 			<variable>
