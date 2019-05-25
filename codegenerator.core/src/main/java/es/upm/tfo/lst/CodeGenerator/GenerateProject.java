@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +32,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -43,13 +39,7 @@ import org.apache.velocity.anakia.Escape;
 import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.RuntimeSingleton;
-import org.apache.velocity.runtime.parser.node.SimpleNode;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
-import org.apache.velocity.runtime.resource.util.StringResourceRepository;
-import org.apache.velocity.runtime.resource.util.StringResourceRepositoryImpl;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -173,6 +163,7 @@ public class GenerateProject {
 				this.baseContext.put("project",this);
 				
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
+					log.debug("adding "+var_name+" variable");
 					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());	
 				}
 				
@@ -379,9 +370,10 @@ public class GenerateProject {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
 		this.baseContext.put("esc", Escape.class);
-
+		//this.baseContext.put("esc", EscapeTool.class);
 		try {
 			URL source = new URL(this.mainModel.getBaseTemplatePath());
+			
 //			props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
 //			props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
 //			props.put("url.resource.loader.cache", "true");
