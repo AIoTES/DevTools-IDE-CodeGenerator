@@ -3,16 +3,11 @@ package es.upm.tfo.lst.CodeGenerator;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
-import es.upm.tfo.lst.CodeGenerator.owl.OntologyLoader;
 import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 
 /**
