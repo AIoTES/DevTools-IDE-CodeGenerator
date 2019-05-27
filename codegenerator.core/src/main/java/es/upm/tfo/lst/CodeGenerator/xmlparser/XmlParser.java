@@ -17,6 +17,7 @@ package es.upm.tfo.lst.CodeGenerator.xmlparser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -96,67 +97,76 @@ public class XmlParser {
 	 * @return {@link TemplateDataModel} object representing XML file in Java code,
 	 *         or null if some problem occur in the process
 	 */
-	public TemplateDataModel generateXMLCoordinator(String xmlPath) throws Exception {
+	public TemplateDataModel generateXMLCoordinator(Object  xmlPath) throws Exception {
 
-		boolean flag = false;
-		log.debug("reading XML coordinator from path: " + xmlPath);
-		try {
+		if(xmlPath instanceof String  ) {
+			System.out.println("read from path");
+			boolean flag = false;
+			log.debug("reading XML coordinator from path: " + xmlPath);
+			try {
+				
+				this.xmlSource = new URL((String)xmlPath);
+				flag = true;
+			} catch (Exception a) {
+				log.debug("couldnt interpret current path as URL->" + a.getMessage());
 			
-			this.xmlSource = new URL(xmlPath);
-			flag = true;
-		} catch (Exception a) {
-			log.debug("couldnt interpret current path as URL->" + a.getMessage());
-		
-		}
-		// if flag is true, means the xml file could be processed ok
-		if (flag) {
-			log.debug("generating XML coordinator  from url= " + this.xmlSource);
-			this.isLocal = false;
-			// this.readWebTemplate(this.xmlSource);
-			try {
-				// this.xmlSource = new File(this.templatesTempDir.getPath()).toURI().toURL();
-				log.debug("setting up the father directory from given url");
-				// teplateBasePath has the father of the given url (father of xm file)
-				this.templateBasePath = this.xmlSource.toURI().resolve(".").toURL();
-			} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
-				log.fatal("problems reading URL", e);
 			}
-		} else {
-			log.debug("generating XML coordinator  from local file system= " + xmlPath);
-			this.isLocal = true;
-			log.warn("given URL isn't valid, trying to interpret as filesystem...given path=" + xmlPath);
-			try {
-				this.xmlSource = new File(xmlPath).toURI().toURL();
-				this.templateBasePath = xmlSource.toURI().resolve(".").toURL();
-			} catch (Exception e2) {
-				log.fatal("error processing xml from given path=" + xmlPath, e2);
-				throw e2;
-			}
-		}
-
-		if (this.xmlSource != null) {
-
-			this.readXML();
-			if (this.javaXMLModel != null) {
-				if (flag) {
-					log.debug("adding remote loader path to xml model " + this.templateBasePath);
-					this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
-				} else {
-					log.debug("adding local loader path to xml model " + this.templateBasePath.getPath());
-					this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+			// if flag is true, means the xml file could be processed ok
+			if (flag) {
+				log.debug("generating XML coordinator  from url= " + this.xmlSource);
+				this.isLocal = false;
+				// this.readWebTemplate(this.xmlSource);
+				try {
+					// this.xmlSource = new File(this.templatesTempDir.getPath()).toURI().toURL();
+					log.debug("setting up the father directory from given url");
+					// teplateBasePath has the father of the given url (father of xm file)
+					this.templateBasePath = this.xmlSource.toURI().resolve(".").toURL();
+				} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
+					log.fatal("problems reading URL", e);
 				}
 			} else {
+				log.debug("generating XML coordinator  from local file system= " + xmlPath);
+				this.isLocal = true;
+				log.warn("given URL isn't valid, trying to interpret as filesystem...given path=" + xmlPath);
+				try {
+					this.xmlSource = new File((String)xmlPath).toURI().toURL();
+					this.templateBasePath = xmlSource.toURI().resolve(".").toURL();
+				} catch (Exception e2) {
+					log.fatal("error processing xml from given path=" + xmlPath, e2);
+					throw e2;
+				}
+			}
+
+			if (this.xmlSource != null) {
+
+				this.readXML(this.xmlSource.openStream());
+				if (this.javaXMLModel != null) {
+					if (flag) {
+						log.debug("adding remote loader path to xml model " + this.templateBasePath);
+						this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+					} else {
+						log.debug("adding local loader path to xml model " + this.templateBasePath.getPath());
+						this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
+					}
+				} else {
+					log.fatal("given path cant be processed as a valid template");
+					//throw new Exception("given path cant be processed as a valid template");
+					return null;
+				}
+
+				return this.javaXMLModel;
+			} else {
 				log.fatal("given path cant be processed as a valid template");
-				//throw new Exception("given path cant be processed as a valid template");
 				return null;
 			}
 
+		}else {
+			System.out.println("read from stream");
+			this.readXML((InputStream) xmlPath);
+			this.javaXMLModel.setBaseTemplatePath("classpath");
 			return this.javaXMLModel;
-		} else {
-			log.fatal("given path cant be processed as a valid template");
-			return null;
+			//read all resources as astream from classpath and send it to core
 		}
-
 	}
 
 	/**
@@ -166,7 +176,7 @@ public class XmlParser {
 	 * @param xmlSource {@link String} representing the location from XML file to
 	 *                  load
 	 */
-	private void readXML() throws Exception {
+	private void readXML(InputStream is) throws Exception {
 		log.debug("starting XML parseer process");
 		Element t;
 
@@ -180,8 +190,8 @@ public class XmlParser {
 			// IOException - If any IO errors occur.
 			// SAXException - If any parse errors occur.
 			// IllegalArgumentException - When is is null
-			Document doc = docBuilder.parse(this.xmlSource.openStream());
-
+			//Document doc = docBuilder.parse(this.xmlSource.openStream());
+			Document doc = docBuilder.parse(is);
 			try {
 				this.nodeVariable = doc.getElementsByTagName("variable");
 				this.template_author_information = doc.getElementsByTagName("template-author");
@@ -216,7 +226,7 @@ public class XmlParser {
 				this.javaXMLModel.setVars(this.variableList);
 
 			} catch (Exception e) {
-				log.warn("some optionals tags into XML coordinator file isn't set"+e.getLocalizedMessage());
+				log.warn("some optionals tags into XML coordinator file isn't set="+e.getStackTrace());
 			}
 
 			this.nodeMacro = doc.getElementsByTagName("macro");
