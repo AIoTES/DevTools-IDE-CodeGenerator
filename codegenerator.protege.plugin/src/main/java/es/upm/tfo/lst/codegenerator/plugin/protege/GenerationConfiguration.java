@@ -122,8 +122,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				JOptionPane.showMessageDialog(null, mainMessage, title, JOptionPane.ERROR_MESSAGE);
 			}
 		 readFile();
-
-
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 656, 514);
@@ -239,34 +237,15 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					
 					
 					Properties props=null ;
-					if(sourceTextField.getEditor().getItem().toString().equals("default template")) {
+					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
 						props = new Properties();
 						props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
 						props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 						props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-						//props.setProperty("classpath.resource.loader.root", "/default-template");
+						//props.setProperty("classpath.resource.loader.root", "src/main/resources");
 
-					
-						//props to classpath
 					}
-//					else {
-//						//props relative
-//						try {
-//							System.out.println("mainModel.getBaseTemplatePath()="+mainModel.getBaseTemplatePath());
-//							URL source = new URL(mainModel.getBaseTemplatePath());
-//							props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
-//							props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
-//							props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
-//							props.setProperty("url.resource.loader.root", source.toString());	
-//						} catch (Exception e2) {
-//							e2.printStackTrace();
-//						}
-//					}
-						
-			
-				
 
-					
 					asyncProcess(props);
 				}
 			}
@@ -431,7 +410,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	
 	private void asyncProcess(Properties props) {
 		
-//		generate.setProps(props);
 		pb = new ProgressBar(this.proj.getTotal2Process());
 		
 		swingWorker = new SwingWorker<Integer, Void>(){
@@ -452,14 +430,10 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
-//					if(props != null) {
-//						proj.setProps(props);	
-//					}
+
 					String aux = outputTextfield.getEditor().getItem().toString();
 					
 					GenerateProject generate= new GenerateProject(mainModel,props);
-//					generate.setMainModel(mainModel);
-//					generate.setProps(props);
 					generate.setOutputFolder(outputTextfield.getEditor().getItem().toString());
 					generate.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
 					if(!aux.endsWith("/")) aux += "/";
