@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.plaf.synth.SynthScrollBarUI;
+
 import java.util.Properties;
 import java.util.Set;
 
@@ -39,6 +42,7 @@ import org.apache.velocity.anakia.Escape;
 import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -107,7 +111,7 @@ public class GenerateProject {
 	private String text = "";
 	private List<Exception> arrayOfExceptions = null;
 	private URL urlBasePath = null;
-	private Properties props;
+	private Properties props=null;
 	private List<OWLOntology> ontologies2BProcesed = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process = 0;
@@ -133,7 +137,7 @@ public class GenerateProject {
 	 * @param model {@link TemplateDataModel} object builded from XML given file.
 	 */
 	public GenerateProject(TemplateDataModel model) {
-		this(model, defaultVelocityProperties());
+		this(model,null);
 	}
 
 	/**
@@ -141,7 +145,7 @@ public class GenerateProject {
 	 * set it later, variables array will be empty.
 	 */
 	public GenerateProject() {
-		this(null, defaultVelocityProperties());
+		this(null, null);
 
 	}
 
@@ -363,6 +367,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void initVelocity() throws Exception {
+		
 		vel_eng = new VelocityEngine();
 		this.baseContext = new VelocityContext();
 		// adding separately each variable to velocity context
@@ -370,25 +375,35 @@ public class GenerateProject {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
 		this.baseContext.put("esc", Escape.class);
-		//this.baseContext.put("esc", EscapeTool.class);
-		try {
-			URL source = new URL(this.mainModel.getBaseTemplatePath());
-			
-//			props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
-//			props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
-//			props.put("url.resource.loader.cache", "true");
-
-			props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
-			props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
-			props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
-			props.setProperty("url.resource.loader.root", source.toString());
-		} catch (Exception a) {
-			log.warn(a);
-			props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
+		
+	//	vel_eng.init(this.props);
+		
+		
+		if(this.props != null ) {
+			vel_eng.init(this.props);
+		}else {
+			try {
+				URL source = new URL(this.mainModel.getBaseTemplatePath());
+				
+//				props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
+//				props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
+//				props.put("url.resource.loader.cache", "true");
+				this.props = new Properties();
+				props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
+				props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+				props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
+				props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
+				props.setProperty("url.resource.loader.root", source.toString());
+			} catch (Exception a) {
+				log.warn(a);
+				this.props = new Properties();
+				props.setProperty("url.resource.loader.description", "Velocity File Resource Loader");
+				props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+				props.put("file.resource.loader.path", this.mainModel.getBaseTemplatePath());
+			}
+			vel_eng.init(props);
 		}
-
-		vel_eng.init(props);
-
+		
 	}
 
 
@@ -418,9 +433,14 @@ public class GenerateProject {
 		boolean flag = false;
 		if (this.ontologies2BProcesed.size() > 0) {
 			if (this.mainModel != null) {
-
-				if (!(this.mainModel.getBaseTemplatePath().equals(""))
-						|| !(this.mainModel.getBaseTemplatePath() == null)) {
+					
+				if(this.mainModel.getBaseTemplatePath()==null)
+					System.out.println("null this.mainModel.getBaseTemplatePath()");
+				if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
+					System.out.println("classpath at least");
+				}
+				
+				if (!(this.mainModel.getBaseTemplatePath().equals("")) || !(this.mainModel.getBaseTemplatePath() == null)) {
 					if (this.mainModel.getMacroList().size() != 0) {
 						if (this.outputFolder != null) {
 							flag = true;
@@ -451,6 +471,7 @@ public class GenerateProject {
 		} else {
 			log.fatal("Main ontology couldn't be loaded");
 			this.arrayOfExceptions.add(new OntologyException("Main ontology couldn't be loaded"));
+			
 		}
 		return flag;
 	}
