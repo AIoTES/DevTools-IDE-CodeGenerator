@@ -3,12 +3,18 @@
 		xmlns="http://www.example.org/prueba2"
 		xmlns:x="http://www.w3.org/2001/XMLSchema-instance"
 		x:schemaLocation="http://www.example.org/prueba2 xsd.xsd">
-		<template-name>Protege Defalul Template to CodeGenerato plugin</template-name>
+			<template-name>HTMLExample</template-name>
 		<template-version>1.0</template-version>
+		<template-description>Template to generate a static HTML web page to show the workflow of CodeGenerator tool core</template-description>
 		<template-author>
-			<author-name>Edaurdo</author-name>
-			<author-email>ebuhid@lst.tfo.upm.es</author-email>
+			  	<name>Eduardo Buhid</name>
+			  	<email>ebuhid@lst.tfo.upm.es</email>
+			  	<roles>developer</roles>
+			  	<organization>LifesTech</organization>
+			  	<organizationUrl>https://www.lst.tfo.upm.es/</organizationUrl>
+			  	<timezone>(GMT+01:00)</timezone>
 		</template-author>
+		
 
 		<variables>
 			<variable>
@@ -22,11 +28,7 @@
 
 		</variables>
 		<macros>
-			<macro>
-				<template>project.vm</template>
-				<for>project</for>
-				<output>projectOutput</output> 
-			</macro>
+
 			<macro>
 				<template>implementationGenerator.vm</template>
 				<for>Class</for>
@@ -45,38 +47,6 @@
 					<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
 				</imports> 
 			</macro>
-
-			<macro>
-				<template>namendIndividuals.vm</template>
-				<for>NamendIndividual</for>
-				<output>OWLNamendIndividualsDirectory/${instance.getIRI().getFragment()}</output>
-			</macro>
-			
-			<macro>
-				<template>AnnotationProperty.vm</template>
-				<for>AnnotationProperty</for>
-				<output>AnnotationProperty/${AnnotationProperty.getIRI().getFragment()}</output>
-			</macro>
-			
-			<macro>
-				<template>namendIndividuals.vm</template>
-				<for>NamendIndividual</for>
-				<output>OWLNamendIndividualsDirectory/${instance.getIRI().getFragment()}</output>
-			</macro>
-			
-			<macro>
-				<template>ontology.vm</template>
-				<for>Ontology</for>
-				<output>ontologyOutput/${ontology.getIRI().getFragment()}</output>
-					<imports>     
-						<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
-						<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
-					</imports> 
-			</macro>
-
-
-
-
 		</macros>
 </Template>
 
