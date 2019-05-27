@@ -261,7 +261,7 @@ public class TemplateDataModel {
 	 * @return {@link String}
 	 */
 	public String getBaseTemplatePath() {
-		return baseTemplatePath;
+		return this.baseTemplatePath;
 	}
 
 	/**
