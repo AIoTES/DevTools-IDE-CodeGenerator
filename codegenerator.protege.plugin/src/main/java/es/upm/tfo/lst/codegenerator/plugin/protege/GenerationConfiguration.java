@@ -30,9 +30,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -54,6 +56,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -83,7 +88,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
     private List<String> templateArrayOptions;
     private List<String> outputArrayOptions;
     private File templateFileOptions=null,outputFileOptions=null;
-
+    private static final String def_temp="default";
     private int progress;
     private ProgressBar pb;
     private String xmlParentDir=null;
@@ -165,7 +170,14 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			public void actionPerformed(ActionEvent e) {
 				parser = new XmlParser();
 				try {
-					mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
+						mainModel=	parser.generateXMLCoordinator(getClass().getResourceAsStream("/coordinator.xml"));
+						mainModel.setBaseTemplatePath("classpath");
+					}else {
+						mainModel=	parser.generateXMLCoordinator(sourceTextField.getEditor().getItem().toString());
+						
+					}
+					
 				} catch (Exception e1) {
 					String message="";
 					if(e1 instanceof NullPointerException)
@@ -184,6 +196,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					variableTable.repaint();
 				}else {
 					//JOptionPane.showMessageDialog(null, "The selected file couldn't be loaded");
+					System.out.println("null main model");
 					parser = new XmlParser();
 				}
 
@@ -209,22 +222,52 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
 					//System.out.println(sourceTextField.getEditor().getItem().toString());
 					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
+					
 				}else {
 
-					OWLOntology owlOntology = null;
-					owlOntology = owlModelManager.getActiveOntology();
 
-					proj.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
-					proj.setMainModel(mainModel);
-					proj.setOutputFolder(sourceTextField.getEditor().toString());
+//					proj.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
+//					proj.setMainModel(mainModel);
+//					proj.setOutputFolder(sourceTextField.getEditor().toString());
 
-					String aux = outputTextfield.getEditor().getItem().toString();
-					if(!aux.endsWith("/")) aux += "/";
-					proj.setOutputFolder(aux);
+//					String aux = outputTextfield.getEditor().getItem().toString();
+//					if(!aux.endsWith("/")) aux += "/";
+//					proj.setOutputFolder(aux);
 
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
-					asyncProcess();
+					
+					
+					Properties props=null ;
+					if(sourceTextField.getEditor().getItem().toString().equals("default template")) {
+						props = new Properties();
+						props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
+						props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
+						props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+						//props.setProperty("classpath.resource.loader.root", "/default-template");
+
+					
+						//props to classpath
+					}
+//					else {
+//						//props relative
+//						try {
+//							System.out.println("mainModel.getBaseTemplatePath()="+mainModel.getBaseTemplatePath());
+//							URL source = new URL(mainModel.getBaseTemplatePath());
+//							props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
+//							props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
+//							props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
+//							props.setProperty("url.resource.loader.root", source.toString());	
+//						} catch (Exception e2) {
+//							e2.printStackTrace();
+//						}
+//					}
+						
+			
+				
+
+					
+					asyncProcess(props);
 				}
 			}
 		});
@@ -385,9 +428,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				//save data
 			}
 	}
-	private void asyncProcess() {
-
+	
+	private void asyncProcess(Properties props) {
+		
+//		generate.setProps(props);
 		pb = new ProgressBar(this.proj.getTotal2Process());
+		
 		swingWorker = new SwingWorker<Integer, Void>(){
 
 
@@ -397,7 +443,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				pb.setVisible(false);
 				if(proj.getErrors().isEmpty())
 					JOptionPane.showMessageDialog(null, "Code successfully generated");
-
+					
 				dispose();
 			}
 
@@ -406,9 +452,33 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
-					proj.process();
+//					if(props != null) {
+//						proj.setProps(props);	
+//					}
+					String aux = outputTextfield.getEditor().getItem().toString();
+					
+					GenerateProject generate= new GenerateProject(mainModel,props);
+//					generate.setMainModel(mainModel);
+//					generate.setProps(props);
+					generate.setOutputFolder(outputTextfield.getEditor().getItem().toString());
+					generate.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
+					if(!aux.endsWith("/")) aux += "/";
+					generate.setOutputFolder(aux);
+					generate.process();
+					/*
+					this.genPro.setMainModel(this.model)	
+					this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
+					this.genPro.setOutputFolder("target/completeTest/");
+					File f = new File(baseOutput);
+					f.mkdirs();
+					genPro.process();
+					 * */
+					//proj.process();
+					//generate.process();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage());
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+					
 				}
 				return null;
 			}
@@ -422,6 +492,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	private void readFile() {
 
 		 this.templateArrayOptions = new ArrayList<>();
+		 this.templateArrayOptions.add(def_temp);
 		 this.outputArrayOptions= new ArrayList<>();
 		try {
 			  BufferedReader br = new BufferedReader(new FileReader(this.templateFileOptions));
