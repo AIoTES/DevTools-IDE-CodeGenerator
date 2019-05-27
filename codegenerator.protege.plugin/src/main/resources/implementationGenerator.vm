@@ -24,8 +24,8 @@ public String get $var(){
 #macro(objectProps $cls)
 #foreach($prop in $obj_props)
 
-#if($prop.isOfType($AxiomType.DECLARATION) && $prop.getSignature().iterator().next().isOWLClass() && $cls.equals($prop.getSignature().iterator().next().asOWLClass() )
-#set($prop_aux = $prop.getProperty().asOWLDataProperty() )
+#if( $prop.isOfType($AxiomType.DECLARATION) && ${prop.getSignature().iterator().next().isOWLClass()} && ${cls.equals($prop.getSignature().iterator().next().asOWLClass())} )
+#set($prop_aux = ${prop.getProperty().asOWLDataProperty()} )
 public Collection<? extends WrappedIndividual> get ${prop_aux.getIRI().getFragment()} () {
         return getDelegate().getPropertyValues(getOwlIndividual(),Vocabulary.OBJECT_PROPERTY_GAMENAME, WrappedIndividualImpl.class);
     }
@@ -52,7 +52,7 @@ public Collection<? extends WrappedIndividual> get ${prop_aux.getIRI().getFragme
 ##MACRO TO PROCESS DATA PROPERTIES
 #macro(dataProps $cls)
 #foreach($prop in $obj_props)
-#if($prop.isOfType($AxiomType.DECLARATION) && $prop.getSignature().iterator().next().isOWLClass() && $cls.equals($prop.getSignature().iterator().next().asOWLClass() )
+#if(  ${prop.isOfType($AxiomType.DECLARATION)} && ${prop.getSignature().iterator().next().isOWLClass()} && ${cls.equals($prop.getSignature().iterator().next().asOWLClass())})
 #set($prop_aux = $prop.getProperty().asOWLDataProperty() )
  /* ***************************************************
      * Data Property http://ontology.universAAL.org/Equimetrix.owl#completed
@@ -121,4 +121,4 @@ public class Default ${cls.getIRI().getFragment()} extends WrappedIndividualImpl
 ##********************************
 #generateClass()
 #CodeGeneratorAdditions()
-}##end of class bracket
+}
