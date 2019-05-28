@@ -679,54 +679,69 @@ public class GenerateProject {
 	 * @throws Exception 
 	 */
 	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
-		VelocityContext context = new VelocityContext(this.baseContext);
-		File outputDirectory=null;
-		FileWriter fr=null;
+		
+		
 		boolean state = true;
 		
 		String processedOutput;
-		try {
-			for (MacroModel macro : macro_to_apply) {
-				log.debug("applying macro..."+macro.getTemplateName());
-				this.setupCurrentContextContent(context, varsToAdd, macro);
-				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
-				outputDirectory = new File(this.outputFolder + processedOutput);
-				//fr = new FileWriter(this.outputFolder + processedOutput, appendState);
-				//VelocityContext context = new VelocityContext(this.baseContext);
+		
+		if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
+			VelocityContext vel_context = new VelocityContext(this.baseContext);
+			for (MacroModel macroModel : macro_to_apply) {
 				
-				if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
-					String t = "-";
-					try {
-						
-						 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macro.getTemplateName())));
-						this.vel_eng.evaluate(context,  new FileWriter(this.outputFolder + processedOutput, appendState),macro.getTemplateName(),templateReader);			
-						fr.close();
-					} catch (Exception a) {
-						log.fatal("cant proces="+processedOutput, a);
-					}
-				}else {
+				String processed_string = this.processOutputString(macroModel.getOutput(),vel_context);
+				 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macroModel.getTemplateName())));
+				 File outputDirectory = new File(this.outputFolder + processed_string);
 					
 					if (!outputDirectory.getParentFile().exists()) {
 						outputDirectory.getParentFile().mkdirs();
 					}
-		
-					if (!processedOutput.equals("")) {
-						try {
-							// throw ResourceNotFoundException
-							template = vel_eng.getTemplate(macro.getTemplateName());						
-							template.merge(context, new FileWriter(this.outputFolder + processedOutput, appendState));
-							//fr.close();
-							outputDirectory=null;
-							context=null;
-						} catch (Exception e) {
-							log.fatal("cant merge velocity template with velocity context", e);
-							this.arrayOfExceptions.add(e);
-							throw e;
-						}
-					}else
-						log.warn("empty tag or errors in output tag content in projectModel...skipping...");
-				}
+				String t = "-";
+				try {
+					StringWriter stringWriter = new StringWriter();	
+					this.vel_eng.evaluate(vel_context , new FileWriter(outputDirectory), "tag1", templateReader);			
+					t = stringWriter.toString();
+					stringWriter.close();
+				} catch (Exception a) {
+					log.fatal("cant apply macro "+outputDirectory.getAbsolutePath());
+				}				
+			}
 
+		
+		}
+		
+		
+		
+		try {
+			for (MacroModel macro : macro_to_apply) {
+				log.debug("applying macro...");
+				VelocityContext context = new VelocityContext(this.baseContext);
+				this.setupCurrentContextContent(context, varsToAdd, macro);
+				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
+				
+				File outputDirectory = new File(this.outputFolder + processedOutput);
+			
+				if (!outputDirectory.getParentFile().exists()) {
+					outputDirectory.getParentFile().mkdirs();
+				}
+	
+				if (!processedOutput.equals("")) {
+					try {
+						// throw ResourceNotFoundException
+						template = vel_eng.getTemplate(macro.getTemplateName());
+						// throw IOE
+						FileWriter fr = new FileWriter(this.outputFolder + processedOutput, appendState);
+						template.merge(context, fr);
+						fr.close();
+						outputDirectory=null;
+						context=null;
+					} catch (Exception e) {
+						log.fatal("cant merge velocity template with velocity context", e);
+						this.arrayOfExceptions.add(e);
+						throw e;
+					}
+				}else
+					log.warn("empty tag or errors in output tag content in projectModel...skipping...");
 			}
 		}catch (Exception e) {
 			log.debug(e.getMessage());
@@ -735,13 +750,13 @@ public class GenerateProject {
 		}
 		return state;
 		}
+
 	
 	
 	private void setupCurrentContextContent(VelocityContext ctx, Map<String, Object> toAdd, MacroModel currentMacro) {
 
 		if(!toAdd.isEmpty()) {
-			
-			
+
 				for (Entry<String, Object> map : toAdd.entrySet()) {
 					ctx.put(map.getKey(), map.getValue());
 				}		
