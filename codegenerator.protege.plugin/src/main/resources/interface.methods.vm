@@ -1,0 +1,39 @@
+#macro(Methods $owlProperty)
+#set($range = ${reasoner.getReasoner().getObjectPropertyRange($owlProperty,true)})
+#if(${range.getNodes().iterator().hasNext()})
+#foreach($t in ${range.getNodes()})
+#set($propertyRange = $t)
+#end
+#end
+/* ***************************************************
+* Property ${owlProperty.getSignature().iterator().next().getIRI()}
+*/
+
+/**
+* Gets all property values for the owlProperty.${owlProperty.getSignature().iterator().next().getIRI().getFragment()}() property.<p>
+
+* @returns a collection of values for the owlProperty.${owlProperty.getSignature().iterator().next().getIRI().getFragment()}() property.
+*/
+Collection<? extends ${propertyRangeForClass}> getowlProperty.${owlProperty.getSignature().iterator().next().getIRI().getFragment()}()();
+
+/**
+* Checks if the class has a owlProperty.${owlProperty.getSignature().iterator().next().getIRI().getFragment()}() property value.<p>
+
+* @return true if there is a ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} property value.
+*/
+boolean has${owlProperty.getSignature().iterator().next().getIRI().getFragment()}();
+
+/**
+* Adds a ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} property value.<p>
+
+* @param new${owlProperty.getSignature().iterator().next().getIRI().getFragment()} the ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} property value to be added
+*/
+void add${owlProperty.getSignature().iterator().next()}(${owlProperty.getSignature().iterator().next().getIRI().getFragment()} new${owlProperty.getSignature().iterator().next().getIRI().getFragment()});
+
+/**
+* Removes a  ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} property value.<p>
+* @param old ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} the ${owlProperty.getSignature().iterator().next().getIRI().getFragment()} property value to be removed.
+*/
+void remove ${owlProperty.getSignature().iterator().next().getIRI().getFragment()}(${propertyRange} old${owlProperty.getSignature().iterator().next().getIRI().getFragment()});
+#end
+

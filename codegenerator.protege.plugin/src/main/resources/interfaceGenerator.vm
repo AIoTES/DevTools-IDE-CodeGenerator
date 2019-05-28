@@ -1,38 +1,31 @@
 ##necesito el nombre de la clase, la propiedad y el tipo de dato de la propiedad
-#set($axioms = $ontology.getAxioms())
+#set($axioms = ${ontology.getAxioms()})
 #set($data_props = $ontology.getAxioms($AxiomType.DATA_PROPERTY_DOMAIN))
-
-#macro(methods  $prop)
-#set($aux = $prop.getProperty().asOWLDataProperty() )
-/* ***************************************************
- * Property ${aux.getIRI()}
- */
-Collection <? extends Object > get ${prop.getDomain} ();
-boolean has ${aux.getIRI().getFragment()} ();
-void add ${aux.getIRI().getFragment()} (Object new ${aux.getIRI().getFragment()});
-void remove ${aux.getIRI().getFragment()} (Object new ${aux.getIRI().getFragment()});
+#macro(getSuperclass $child_class)
+#set($superclasses = ${reasoner.getReasoner().getSuperClasses($child_class,true)})
+#set($parent_stack = "")
+#foreach($parent in ${superclasses.getNodes()})
+#foreach($last_parent in ${parent.getEntities()})
+#set($parent_stack = $parent_stack + ${last_parent.getIRI().getFragment()} + ",")
+#end
+#end
+${parent_stack.substring(0,${parent_stack.lastIndexOf(",")})} ##
 #end
 
 #macro(generateInterface)
-#foreach($ax in $axioms)
-#if($ax.isOfType( $AxiomType.DECLARATION ) && $ax.getSignature().iterator().next().isOWLClass() )
-public interface ${ax.getIRI().getFragment()} implements "parent" {
-#set($cls=$ax.getSignature().iterator().next().asOWLClass()) 
-#foreach($df in $data_props)
-#if($df.getDomain().asOWLClass().equals($cls))
-#methods( $df )
+public interface ${class.getIRI().getFragment()} implements #getSuperclass($class) {
+#foreach( $f in ${ontology.getAxioms($AxiomType.DECLARATION)} )
+#if(${f.getEntity().isOWLObjectProperty()})
+#Methods(${f.getEntity().asOWLObjectProperty()})
 #end
 #end
+}
 #end
 
-#end
-#end
 #parse("common.vm")
-##por cada clase generar una interface
+#parse("interface.methods.vm")
+##generate a interface for each class
 #generateInterface()
 ##method list
 
 
-}## bracket end of interface
-
-}
