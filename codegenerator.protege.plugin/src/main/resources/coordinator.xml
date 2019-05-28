@@ -18,21 +18,18 @@
 
 		<variables>
 			<variable>
-				<name>package</name>
+				<name>PackageName</name>
 				<default>lst.tfo.upm.es</default>
 				<required>true</required>
 				<description>"variable to set the base package"</description>
 			</variable>
-
-		
-
 		</variables>
 		<macros>
 
 			<macro>
 				<template>implementationGenerator.vm</template>
 				<for>Class</for>
-				<output>implementation/${class.getIRI().getFragment()}</output>  		
+				<output>${PackageName.replace(".","/")}/implementation/${class.getIRI().getFragment()}.java</output>  		
 					<imports>     
 					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
 					<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
@@ -41,7 +38,7 @@
 			<macro>
 				<template>interfaceGenerator.vm</template>
 				<for>Class</for>
-				<output>interfaces/${class.getIRI().getFragment()}</output> 
+				<output>${PackageName.replace(".","/")}/interfaces/${class.getIRI().getFragment()}.java</output> 
 				<imports>     
 					<FullyQualifiedName>org.semanticweb.owlapi.model.AxiomType</FullyQualifiedName> 
 					<FullyQualifiedName>org.apache.velocity.runtime.parser.node.MathUtils</FullyQualifiedName>
