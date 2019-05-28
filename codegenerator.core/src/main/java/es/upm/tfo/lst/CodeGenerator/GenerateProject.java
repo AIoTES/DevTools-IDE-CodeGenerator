@@ -15,9 +15,13 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -675,41 +679,54 @@ public class GenerateProject {
 	 * @throws Exception 
 	 */
 	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
-		
-		
+		VelocityContext context = new VelocityContext(this.baseContext);
+		File outputDirectory=null;
+		FileWriter fr=null;
 		boolean state = true;
 		
 		String processedOutput;
 		try {
 			for (MacroModel macro : macro_to_apply) {
-				log.debug("applying macro...");
-				VelocityContext context = new VelocityContext(this.baseContext);
+				log.debug("applying macro..."+macro.getTemplateName());
 				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
+				outputDirectory = new File(this.outputFolder + processedOutput);
+				//fr = new FileWriter(this.outputFolder + processedOutput, appendState);
+				//VelocityContext context = new VelocityContext(this.baseContext);
 				
-				File outputDirectory = new File(this.outputFolder + processedOutput);
-			
-				if (!outputDirectory.getParentFile().exists()) {
-					outputDirectory.getParentFile().mkdirs();
-				}
-	
-				if (!processedOutput.equals("")) {
+				if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
+					String t = "-";
 					try {
-						// throw ResourceNotFoundException
-						template = vel_eng.getTemplate(macro.getTemplateName());
-						// throw IOE
-						FileWriter fr = new FileWriter(this.outputFolder + processedOutput, appendState);
-						template.merge(context, fr);
+						
+						 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macro.getTemplateName())));
+						this.vel_eng.evaluate(context,  new FileWriter(this.outputFolder + processedOutput, appendState),macro.getTemplateName(),templateReader);			
 						fr.close();
-						outputDirectory=null;
-						context=null;
-					} catch (Exception e) {
-						log.fatal("cant merge velocity template with velocity context", e);
-						this.arrayOfExceptions.add(e);
-						throw e;
+					} catch (Exception a) {
+						log.fatal("cant proces="+processedOutput, a);
 					}
-				}else
-					log.warn("empty tag or errors in output tag content in projectModel...skipping...");
+				}else {
+					
+					if (!outputDirectory.getParentFile().exists()) {
+						outputDirectory.getParentFile().mkdirs();
+					}
+		
+					if (!processedOutput.equals("")) {
+						try {
+							// throw ResourceNotFoundException
+							template = vel_eng.getTemplate(macro.getTemplateName());						
+							template.merge(context, new FileWriter(this.outputFolder + processedOutput, appendState));
+							//fr.close();
+							outputDirectory=null;
+							context=null;
+						} catch (Exception e) {
+							log.fatal("cant merge velocity template with velocity context", e);
+							this.arrayOfExceptions.add(e);
+							throw e;
+						}
+					}else
+						log.warn("empty tag or errors in output tag content in projectModel...skipping...");
+				}
+
 			}
 		}catch (Exception e) {
 			log.debug(e.getMessage());
@@ -720,16 +737,19 @@ public class GenerateProject {
 		}
 	
 	
-	private void setupCurrentContextContent(VelocityContext context, Map<String, Object> toAdd, MacroModel currentMacro) {
-		
+	private void setupCurrentContextContent(VelocityContext ctx, Map<String, Object> toAdd, MacroModel currentMacro) {
+
 		if(!toAdd.isEmpty()) {
-		
-			for (Entry<String, Object> map : toAdd.entrySet()) {
-				context.put(map.getKey(), map.getValue());
-			}	
+			
+			
+				for (Entry<String, Object> map : toAdd.entrySet()) {
+					ctx.put(map.getKey(), map.getValue());
+				}		
+	
+			
 		}
 		
-		this.addImportsToContext(context,currentMacro);
+		this.addImportsToContext(ctx,currentMacro);
 	}
 	
 
