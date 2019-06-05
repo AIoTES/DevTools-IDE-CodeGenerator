@@ -58,6 +58,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
@@ -169,6 +170,7 @@ public class GenerateProject {
 				this.initVelocity();
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
+
 				
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
@@ -656,7 +658,8 @@ public class GenerateProject {
 	private void addImportsToContext(VelocityContext context, MacroModel model) {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
-				context.put(k, new FieldMethodizer(key.get(k)) );
+				//context.put(k, new FieldMethodizer(key.get(k)) );
+				context.put(k, k+".class");
 			}
 
 		}
@@ -760,8 +763,7 @@ public class GenerateProject {
 				for (Entry<String, Object> map : toAdd.entrySet()) {
 					ctx.put(map.getKey(), map.getValue());
 				}		
-	
-			
+
 		}
 		
 		this.addImportsToContext(ctx,currentMacro);
