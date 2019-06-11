@@ -172,6 +172,39 @@ public class GenerateServlet extends HttpServlet {
 			resp.getWriter().write("Permission denied. You dont have permissions to access to this directory");
 			return;
 		}
+		if(!req_data.contains("/ui")) {
+			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
+					"<html lang=\"en\">\r\n" + 
+					"<head>\r\n" + 
+					"    <meta charset=\"UTF-8\">\r\n" + 
+					"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n" + 
+					"    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n" + 
+					"    <title>Document</title>\r\n" + 
+					"</head>\r\n" + 
+					"<body>\r\n" + 
+					"    <form action=\"/action_page.php\">\r\n" + 
+					"        <h1>Web interface to CodeGenerator REST tool</h1>\r\n" + 
+					"        <p>Ontologies to be added (separated by a comma):</p>\r\n" + 
+					"        <input type=\"text\" name=\"ontology\"><br>\r\n" + 
+					"        \r\n" + 
+					"        <fieldset>\r\n" + 
+					"            <legend>varaibles:</legend>\r\n" + 
+					"            Name: <input type=\"text\"><br>\r\n" + 
+					"            Default Value: <input type=\"text\"><br>\r\n" + 
+					"            Description: <input type=\"text\"> <br>\r\n" + 
+					"            <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Required?<br>\r\n" + 
+					"\r\n" + 
+					"        </fieldset>\r\n" + 
+					"        <p>recursive</p>\r\n" + 
+					"        <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Load Recursive?<br>\r\n" + 
+					"        <p>Description</p>\r\n" + 
+					"        <input type=\"text\"><br>\r\n" + 
+					"        <input type=\"submit\" value=\"Submit\">\r\n" + 
+					"      </form> \r\n" + 
+					"</body>\r\n" + 
+					"</html>");
+			return;
+		}
 		urlToFile = this.getServletContext().getResource(req_data);
 
 		try {
