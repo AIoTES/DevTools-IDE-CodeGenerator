@@ -32,12 +32,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpResponse;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
+import org.eclipse.jetty.util.log.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -81,14 +81,19 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
-
+		
+		
+		System.out.println(req.getRequestURI());
+		///GenerateCode/generate
+		
+		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
+			System.out.println("generating code...");
 			// { template: "", ontologies:[{url:"", recursive:""}],
 			// variables:{varname:varvalue} }
 			// { template: "http://localhost/template/",
 			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
 			// recursive:"true"}], variables:{varname:varvalue} }
+			//{ "template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"} }
 			JsonParser jp = new JsonParser();
 			JsonElement sreq = jp.parse(req.getReader());
 			if (sreq instanceof JsonObject) {
@@ -161,18 +166,153 @@ public class GenerateServlet extends HttpServlet {
 				resp.getWriter().println(outO.toString());
 			}
 		}
+		
+		/*
+		if (req.getHeader(CONTENT_TYPE).contains("application/json")) {
+			// { template: "", ontologies:[{url:"", recursive:""}],
+			// variables:{varname:varvalue} }
+			// { template: "http://localhost/template/",
+			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
+			// recursive:"true"}], variables:{varname:varvalue} }
+			//{ "template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"} }
+			JsonParser jp = new JsonParser();
+			JsonElement sreq = jp.parse(req.getReader());
+			if (sreq instanceof JsonObject) {
+				JsonObject gc = (JsonObject) sreq;
+				// set template & init project
+				XmlParser parser = new XmlParser();
+				TemplateDataModel model = null;
+				try {
+					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+				} catch (Exception e) {
+					resp.sendError(400, e.getMessage());
+					return;
+					// e.printStackTrace();
+				}
+
+				GenerateProject gp = new GenerateProject();
+				gp.setMainModel(model);
+				// set ontologies
+				OntologyLoader ontologyLoader = new OntologyLoader();
+				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
+					for (int i = 0; i < gc.get(ONT).getAsJsonArray().size(); i++) {
+						if (gc.get(ONT).getAsJsonArray().get(0).isJsonPrimitive()) {
+							// array of strings (multiple onts without recursive)
+							gp.addOntology(
+									ontologyLoader.loadOntology(gc.get(ONT).getAsJsonArray().get(i).getAsString()),
+									false);
+						} else {
+							// array of object (multiple onts with recursive)
+							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
+
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
+									ont.get("recursive").getAsBoolean());
+						}
+					}
+				} else {
+					if (gc.get(ONT).isJsonPrimitive()) {
+						// string (single ont without recursive)
+						gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsString()), false);
+					} else {
+						// object (single ont with recursive parameter)
+						JsonObject ont = gc.get(ONT).getAsJsonObject();
+						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
+								ont.get("recursive").getAsBoolean());
+					}
+				}
+
+				// set variables
+				for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
+					gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+				}
+
+				// set Output
+				out = Integer.toHexString(sreq.hashCode());
+				File outFile = new File(tempFolder, out);
+				// Files.deleteIfExists(outFile.toPath());
+				this.deleteFolder(outFile);
+				outFile.mkdirs();
+				gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
+				// generate
+				try {
+					gp.process();
+				} catch (Exception e) {
+					resp.getWriter().println(e.getMessage());
+
+				}
+				boolean result;
+
+				outO.addProperty("output", outputAlias+"/"+out);
+				resp.addHeader(CONTENT_TYPE, "application/json");
+				resp.getWriter().println(outO.toString());
+			}
+		}
+		*/
 	}
 
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
-		req_data = req.getRequestURI().replaceAll(servletName, "");
-		if(!req_data.contains(out)) {
-			resp.getWriter().write("Permission denied. You dont have permissions to access to this directory");
+		System.out.println("request -url "+req.getRequestURI()); 
+		//http://localhost:8181/GenerateCode/ui user interface
+		//req_data = req.getRequestURI().replaceAll(servletName, "");
+		/*
+		if(req.getRequestURI().contains(out)) {
+			urlToFile = this.getServletContext().getResource(req_data);
+
+			try {
+				File t = new File(urlToFile.getFile());
+				if (t.isFile()) {
+
+					BufferedReader br = null;
+					br = new BufferedReader(new FileReader(t));
+					StringBuilder sb = new StringBuilder();
+
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+					resp.getWriter().write(sb.toString());
+				}
+
+				if (t.isDirectory()) {
+					BufferedReader br = null;
+					br = new BufferedReader(new InputStreamReader(
+							GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
+					StringBuilder sb = new StringBuilder();
+
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+
+					RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
+					StringReader reader = new StringReader(sb.toString());
+					StringWriter stringWriter = new StringWriter();
+					Template template = new Template();
+					template.setRuntimeServices(runtimeServices);
+					VelocityContext context = new VelocityContext();
+					context.put("path", t.getAbsolutePath());
+					context.put("file", t);
+					context.put("dirContent", t.listFiles());
+					context.put("BACK", req_data.split("/").length > 3);
+					template.setData(runtimeServices.parse(reader, HTMLtemplate));
+					// template.setData(runtimeServices.parse(reader, template));
+					// template.setData(runtimeServices.parse(reader, HTMLtemplate, false));
+					template.initDocument();
+					template.merge(context, stringWriter);
+					resp.getWriter().write(stringWriter.toString());
+					stringWriter.close();
+
+				}
+
+			} catch (Exception e) {
+
+			}
 			return;
-		}
-		if(!req_data.contains("/ui")) {
+		}else
+			*/
+			if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
 					"<html lang=\"en\">\r\n" + 
 					"<head>\r\n" + 
@@ -182,7 +322,7 @@ public class GenerateServlet extends HttpServlet {
 					"    <title>Document</title>\r\n" + 
 					"</head>\r\n" + 
 					"<body>\r\n" + 
-					"    <form action=\"/action_page.php\">\r\n" + 
+					"    <form name=\"process\" method=\"POST\" action=\"generate\">\r\n" + 
 					"        <h1>Web interface to CodeGenerator REST tool</h1>\r\n" + 
 					"        <p>Ontologies to be added (separated by a comma):</p>\r\n" + 
 					"        <input type=\"text\" name=\"ontology\"><br>\r\n" + 
@@ -204,56 +344,12 @@ public class GenerateServlet extends HttpServlet {
 					"</body>\r\n" + 
 					"</html>");
 			return;
-		}
-		urlToFile = this.getServletContext().getResource(req_data);
-
-		try {
-			File t = new File(urlToFile.getFile());
-			if (t.isFile()) {
-
-				BufferedReader br = null;
-				br = new BufferedReader(new FileReader(t));
-				StringBuilder sb = new StringBuilder();
-
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-				resp.getWriter().write(sb.toString());
-			}
-
-			if (t.isDirectory()) {
-				BufferedReader br = null;
-				br = new BufferedReader(new InputStreamReader(
-						GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
-				StringBuilder sb = new StringBuilder();
-
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-
-				RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
-				StringReader reader = new StringReader(sb.toString());
-				StringWriter stringWriter = new StringWriter();
-				Template template = new Template();
-				template.setRuntimeServices(runtimeServices);
-				VelocityContext context = new VelocityContext();
-				context.put("path", t.getAbsolutePath());
-				context.put("file", t);
-				context.put("dirContent", t.listFiles());
-				context.put("BACK", req_data.split("/").length > 3);
-				template.setData(runtimeServices.parse(reader, HTMLtemplate));
-				// template.setData(runtimeServices.parse(reader, template));
-				// template.setData(runtimeServices.parse(reader, HTMLtemplate, false));
-				template.initDocument();
-				template.merge(context, stringWriter);
-				resp.getWriter().write(stringWriter.toString());
-				stringWriter.close();
-
-			}
-
-		} catch (Exception e) {
+		}else {
+			resp.getWriter().write("nothing to show in this path");
 
 		}
+		
+		
 
 	}
 
