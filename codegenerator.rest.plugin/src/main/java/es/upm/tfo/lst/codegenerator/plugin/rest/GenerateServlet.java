@@ -69,6 +69,7 @@ public class GenerateServlet extends HttpServlet {
 	private final String baseTemplatePath = "/";
 	private String servletName = "/GenerateCode";
 	private JsonObject outO = null;
+	private String response_get_path="";
 
 	public GenerateServlet(String outDir) {
 		this.outDir = outDir;
@@ -82,12 +83,10 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		
-		System.out.println(req.getRequestURI());
-		///GenerateCode/generate
+	
 		
 		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
-			System.out.println("generating code...");
+			
 			// { template: "", ontologies:[{url:"", recursive:""}],
 			// variables:{varname:varvalue} }
 			// { template: "http://localhost/template/",
@@ -160,7 +159,7 @@ public class GenerateServlet extends HttpServlet {
 
 				}
 				boolean result;
-
+				this.response_get_path = outputAlias;
 				outO.addProperty("output", outputAlias+"/"+out);
 				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().println(outO.toString());
@@ -256,10 +255,11 @@ public class GenerateServlet extends HttpServlet {
 		String line, req_data, aux;
 		URL urlToFile;
 		System.out.println("request -url "+req.getRequestURI()); 
+		System.out.println("alias "+outputAlias);
 		//http://localhost:8181/GenerateCode/ui user interface
-		//req_data = req.getRequestURI().replaceAll(servletName, "");
-		/*
-		if(req.getRequestURI().contains(out)) {
+		req_data = req.getRequestURI().replaceAll(servletName, "");
+		
+		if(req.getRequestURI().contains(outputAlias)) {
 			urlToFile = this.getServletContext().getResource(req_data);
 
 			try {
@@ -310,9 +310,7 @@ public class GenerateServlet extends HttpServlet {
 
 			}
 			return;
-		}else
-			*/
-			if(req.getRequestURI().equals("/GenerateCode/ui")) {
+		}else if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
 					"<html lang=\"en\">\r\n" + 
 					"<head>\r\n" + 
