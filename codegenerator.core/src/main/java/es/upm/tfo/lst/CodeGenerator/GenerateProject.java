@@ -17,7 +17,6 @@ package es.upm.tfo.lst.CodeGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,21 +32,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.swing.plaf.synth.SynthScrollBarUI;
-
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.anakia.Escape;
 import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -58,7 +53,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import org.semanticweb.owlapi.search.EntitySearcher;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
@@ -380,7 +374,7 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		this.baseContext.put("esc", Escape.class);
+		this.baseContext.put("esc", EscapeTool.class);
 		
 	//	vel_eng.init(this.props);
 		
@@ -658,10 +652,9 @@ public class GenerateProject {
 	private void addImportsToContext(VelocityContext context, MacroModel model) {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
-				//context.put(k, new FieldMethodizer(key.get(k)) );
-				context.put(k, k+".class");
+				context.put(k, new FieldMethodizer(key.get(k)) );
+				
 			}
-
 		}
 	}
 	
@@ -759,13 +752,11 @@ public class GenerateProject {
 	private void setupCurrentContextContent(VelocityContext ctx, Map<String, Object> toAdd, MacroModel currentMacro) {
 
 		if(!toAdd.isEmpty()) {
-
 				for (Entry<String, Object> map : toAdd.entrySet()) {
-					ctx.put(map.getKey(), map.getValue());
+					ctx.put(map.getKey(),map.getValue());
 				}		
 
 		}
-		
 		this.addImportsToContext(ctx,currentMacro);
 	}
 	
