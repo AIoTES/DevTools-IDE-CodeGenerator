@@ -82,14 +82,14 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	
-		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
-			
+		System.out.println("post request");
+
+		//if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
+			//System.out.println("post request");
 			// { template: "", ontologies:[{url:"", recursive:""}],
 			// variables:{varname:varvalue} }
 			// { template: "http://localhost/template/",
-			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",
-			// recursive:"true"}], variables:{varname:varvalue} }
+			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",recursive:"true"}], variables:{varname:varvalue} }
 			//{ "template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"} }
 			JsonParser jp = new JsonParser();
 			JsonElement sreq = jp.parse(req.getReader());
@@ -160,9 +160,9 @@ public class GenerateServlet extends HttpServlet {
 				this.response_get_path = outputAlias;
 				outO.addProperty("output", outputAlias+"/"+out);
 				resp.addHeader(CONTENT_TYPE, "application/json");
-				resp.getWriter().println(outO.toString());
+				resp.getWriter().write(outO.toString());
 			}
-		}
+		//}
 		
 	
 	}
@@ -172,11 +172,10 @@ public class GenerateServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
-		//http://localhost:8181/GenerateCode/ui user interface
-		req_data = req.getRequestURI().replaceAll(servletName, "");
+		System.out.println("doGET ");
 		
-		if(req.getRequestURI().contains("/GenerateCode/"+outputAlias)) {
-			System.out.println("/GenerateCode/\"+outputAlias requested ");
+		if(req.getRequestURI().contains("/GenerateCode/")) {
+			req_data = req.getRequestURI().replaceAll(servletName, "");
 			urlToFile = this.getServletContext().getResource(req_data);
 
 			try {
@@ -227,10 +226,7 @@ public class GenerateServlet extends HttpServlet {
 						System.out.println(e.getMessage());
 				}
 			return;
-		}
-
-		
-		if(req.getRequestURI().contains("/GenerateCode/ui")) {
+		}else if(req.getRequestURI().contains("/GenerateCode/ui")) {
 			System.out.println("ui requested");
 			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
 					"<html lang=\"en\">\r\n" + 
