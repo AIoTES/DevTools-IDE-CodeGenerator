@@ -175,7 +175,8 @@ public class GenerateServlet extends HttpServlet {
 		//http://localhost:8181/GenerateCode/ui user interface
 		req_data = req.getRequestURI().replaceAll(servletName, "");
 		
-		if(req.getRequestURI().contains(outputAlias)) {
+		if(req.getRequestURI().contains("/GenerateCode/"+outputAlias)) {
+			System.out.println("/GenerateCode/\"+outputAlias requested ");
 			urlToFile = this.getServletContext().getResource(req_data);
 
 			try {
@@ -223,10 +224,14 @@ public class GenerateServlet extends HttpServlet {
 				}
 
 			} catch (Exception e) {
-
-			}
+						System.out.println(e.getMessage());
+				}
 			return;
-		}else if(req.getRequestURI().equals("/GenerateCode/ui")) {
+		}
+
+		
+		if(req.getRequestURI().contains("/GenerateCode/ui")) {
+			System.out.println("ui requested");
 			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
 					"<html lang=\"en\">\r\n" + 
 					"<head>\r\n" + 
