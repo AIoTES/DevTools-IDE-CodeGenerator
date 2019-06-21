@@ -53,6 +53,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import es.upm.tfo.lst.CodeGenerator.exception.MissingRequiredVariableValueException;
 import es.upm.tfo.lst.CodeGenerator.exception.OntologyException;
@@ -374,7 +375,7 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		this.baseContext.put("esc", EscapeTool.class);
+		this.baseContext.put("esc", new EscapeTool());
 		
 	//	vel_eng.init(this.props);
 		
@@ -652,8 +653,13 @@ public class GenerateProject {
 	private void addImportsToContext(VelocityContext context, MacroModel model) {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
-				context.put(k, new FieldMethodizer(key.get(k)) );
-				
+				if(k.equals("EntitySearher")) {
+					log.debug("addingEntity");
+					
+					context.put(k, EntitySearcher.class);
+				}else {
+					context.put(k, new FieldMethodizer(key.get(k)) );
+				}
 			}
 		}
 	}
