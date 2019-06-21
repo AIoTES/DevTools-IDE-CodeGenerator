@@ -207,8 +207,6 @@ public class XmlParser {
 				t = (Element) this.templateDescription.item(0);
 				this.javaXMLModel.setTemplateDescription(t.getFirstChild().getTextContent());
 				
-
-				log.debug("this.template_author_information.getLength()="+this.template_author_information.getLength());
 				
 				//adding author information to project
 				for (int y = 0; y < this.template_author_information.getLength(); y++) {
