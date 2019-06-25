@@ -172,9 +172,45 @@ public class GenerateServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
-		System.out.println("doGET ");
+		System.out.println("doGET "+req.getRequestURI());
 		
-		if(req.getRequestURI().contains("/GenerateCode/")) {
+	
+		if(req.getRequestURI().contains("/GenerateCode/ui")) {
+			System.out.println("ui requested");
+			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
+					"<html lang=\"en\">\r\n" + 
+					"<head>\r\n" + 
+					"    <meta charset=\"UTF-8\">\r\n" + 
+					"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n" + 
+					"    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n" + 
+					"    <title>Document</title>\r\n" + 
+					"</head>\r\n" + 
+					"<body>\r\n" + 
+					"    <form name=\"process\" method=\"POST\" action=\"generate\">\r\n" + 
+					"        <h1>Web interface to CodeGenerator REST tool</h1>\r\n" + 
+					"        <p>Ontologies to be added (separated by a comma):</p>\r\n" + 
+					"        <input type=\"text\" name=\"ontology\"><br>\r\n" + 
+					"        \r\n" + 
+					"        <fieldset>\r\n" + 
+					"            <legend>varaibles:</legend>\r\n" + 
+					"            Name: <input type=\"text\"><br>\r\n" + 
+					"            Default Value: <input type=\"text\"><br>\r\n" + 
+					"            Description: <input type=\"text\"> <br>\r\n" + 
+					"            <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Required?<br>\r\n" + 
+					"\r\n" + 
+					"        </fieldset>\r\n" + 
+					"        <p>recursive</p>\r\n" + 
+					"        <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Load Recursive?<br>\r\n" + 
+					"        <p>Description</p>\r\n" + 
+					"        <input type=\"text\"><br>\r\n" + 
+					"        <input type=\"submit\" value=\"Submit\">\r\n" + 
+					"      </form> \r\n" + 
+					"</body>\r\n" + 
+					"</html>");
+			return;
+		}else if(req.getRequestURI().contains("/GenerateCode/")) {
+			System.out.println("GenerateCode requested ");
+			
 			req_data = req.getRequestURI().replaceAll(servletName, "");
 			urlToFile = this.getServletContext().getResource(req_data);
 
@@ -226,40 +262,10 @@ public class GenerateServlet extends HttpServlet {
 						System.out.println(e.getMessage());
 				}
 			return;
-		}else if(req.getRequestURI().contains("/GenerateCode/ui")) {
-			System.out.println("ui requested");
-			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
-					"<html lang=\"en\">\r\n" + 
-					"<head>\r\n" + 
-					"    <meta charset=\"UTF-8\">\r\n" + 
-					"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n" + 
-					"    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n" + 
-					"    <title>Document</title>\r\n" + 
-					"</head>\r\n" + 
-					"<body>\r\n" + 
-					"    <form name=\"process\" method=\"POST\" action=\"generate\">\r\n" + 
-					"        <h1>Web interface to CodeGenerator REST tool</h1>\r\n" + 
-					"        <p>Ontologies to be added (separated by a comma):</p>\r\n" + 
-					"        <input type=\"text\" name=\"ontology\"><br>\r\n" + 
-					"        \r\n" + 
-					"        <fieldset>\r\n" + 
-					"            <legend>varaibles:</legend>\r\n" + 
-					"            Name: <input type=\"text\"><br>\r\n" + 
-					"            Default Value: <input type=\"text\"><br>\r\n" + 
-					"            Description: <input type=\"text\"> <br>\r\n" + 
-					"            <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Required?<br>\r\n" + 
-					"\r\n" + 
-					"        </fieldset>\r\n" + 
-					"        <p>recursive</p>\r\n" + 
-					"        <input type=\"checkbox\" name=\"vehicle1\" value=\"true\" >Load Recursive?<br>\r\n" + 
-					"        <p>Description</p>\r\n" + 
-					"        <input type=\"text\"><br>\r\n" + 
-					"        <input type=\"submit\" value=\"Submit\">\r\n" + 
-					"      </form> \r\n" + 
-					"</body>\r\n" + 
-					"</html>");
-			return;
-		}else {
+		}
+		
+		
+		else {
 			resp.getWriter().write("nothing to show in this path");
 
 		}
