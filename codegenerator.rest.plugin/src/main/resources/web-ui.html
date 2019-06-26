@@ -84,10 +84,12 @@
             const form = document.createElement('form');
             form.method = "post";
             form.action = "/GenerateCode";
+            form.enctype = "application/json"
 
                 const hiddenField = document.createElement('input');
                 hiddenField.type = 'hidden';
                 hiddenField.name = 'key';
+                
                 hiddenField.value = str02;
 
                 form.appendChild(hiddenField);
