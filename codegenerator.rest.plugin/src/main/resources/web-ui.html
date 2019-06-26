@@ -6,7 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script type="text/javascript">
-   
+
+    var str01 = '{||}';
+    var temp = '||';
+    var onto = '"ontologies":[||]';
+    var vars = '"variables":[||]';
+    var vreq = "";
 
     function addRow() {
         // Find a <table> element with id="myTable":
@@ -31,6 +36,10 @@
         cell2.innerHTML=var_def_val;
         cell3.innerHTML=var_description;
         cell4.innerHTML=var_req;
+        vars = vars.replace('||', '{"var_name":"' + var_name +
+        '","var_description":"' + var_description +
+        '","var_def_val":"' + var_def_val +
+        '","var_req":"' + var_req + '"},||');
         
     }
     function addOnt(){
@@ -50,10 +59,25 @@
         var ontology={url:"",recursive:""}
         ontology.url=ont_url;
         ontology.recursive=var_req;
-        jsonmock.ontologies.push(ontology);
+        onto = onto.replace('||', '{"url":"' + ont_url + '","recursive":"' + var_req + '"},||');
 
     }
     function post() {
+            var str02 = "";
+            var var_req1="";
+            if(document.getElementById("required").checked){
+            var_req1="true";
+            }else{
+            var_req1="false";
+            }
+
+            temp = temp.replace('||', '"template":"' + document.getElementById("coordinator").value +
+            '","rec_description":"' + document.getElementById("rec_description").value +
+            '","var_rec":"' + vreq + '"');
+            onto = onto.replace(',||', '');
+            vars = vars.replace(',||', '');
+            str02 = str01.replace('||', temp + ',' + onto + ',' + vars);
+            console.log(str02);
 
             // The rest of this code assumes you are not using a library.
             // It can be made less wordy if you use one.
@@ -64,14 +88,16 @@
                 const hiddenField = document.createElement('input');
                 hiddenField.type = 'hidden';
                 hiddenField.name = 'key';
-                hiddenField.value = '{"template":"http://localhost/template/complexXml.xml","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}';
+                hiddenField.value = str02;
 
                 form.appendChild(hiddenField);
           
             document.body.appendChild(form);
             form.submit();
 }
-    
+    function enviar(){
+
+}
     
     var jsonmock = {template:"",ontologies:[],variables:{}};
 
@@ -119,7 +145,7 @@
         <p>recursive</p>
         <input type="checkbox" name="vehicle1" >Load Recursive?<br>
         <p>Description</p>
-        <input type="text"><br>
+        <input type="text" id="rec_description"><br>
         <p>XML Coordinator url</p>
         <input type="text" id="coordinator"><br>
         <input type="button" value="GenerateCode" onclick="post()">
