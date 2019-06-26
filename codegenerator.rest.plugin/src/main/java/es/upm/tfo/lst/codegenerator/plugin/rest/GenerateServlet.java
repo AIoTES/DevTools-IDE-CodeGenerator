@@ -17,14 +17,17 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,7 +56,6 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  *
  */
 @WebServlet(value = "/GenerateCode", name = "CodeGenerator")
-
 public class GenerateServlet extends HttpServlet {
 	private Properties props = null;
 	private static final String ONT = "ontologies";
@@ -174,116 +176,17 @@ public class GenerateServlet extends HttpServlet {
 		URL urlToFile;
 		System.out.println("doGET "+req.getRequestURI());
 		
-	
+		//InputStream y = new FileInputStream("/src/main/resources/web-ui.txt");
+		InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
+		String web_content = "";
+		Scanner s = new Scanner((InputStream)y);
+		s.useDelimiter("\\A");
+		web_content = s.hasNext() ? s.next() : "";
+		s.close();
 		if(req.getRequestURI().contains("/GenerateCode/ui")) {
 			System.out.println("ui requested");
-			resp.getWriter().write("<!DOCTYPE html>\r\n" + 
-					"<html lang=\"en\">\r\n" + 
-					"<head>\r\n" + 
-					"    <meta charset=\"UTF-8\">\r\n" + 
-					"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n" + 
-					"    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n" + 
-					"    <title>Document</title>\r\n" + 
-					"    <script type=\"text/javascript\">\r\n" + 
-					"   \r\n" + 
-					"    var jsonmock = {template:\"\",ontologies:[],variables:{}};\r\n" + 
-					"\r\n" + 
-					"    function addRow() {\r\n" + 
-					"        // Find a <table> element with id=\"myTable\":\r\n" + 
-					"        var table = document.getElementById(\"variables_table\");\r\n" + 
-					"        // Create an empty <tr> element and add it to the 1st position of the table:\r\n" + 
-					"        var row = table.insertRow(1);\r\n" + 
-					"        var cell1 = row.insertCell(0);\r\n" + 
-					"        var cell2 = row.insertCell(1);\r\n" + 
-					"        var cell3 = row.insertCell(2);\r\n" + 
-					"        var cell4 = row.insertCell(3);\r\n" + 
-					"        var var_name = document.getElementById(\"var_name\").value;\r\n" + 
-					"        var var_def_val = document.getElementById(\"def_val\").value;\r\n" + 
-					"        var var_description = document.getElementById(\"description\").value;\r\n" + 
-					"        //var var_req = document.getElementById(\"required\").value;        \r\n" + 
-					"        var var_req =\"\"\r\n" + 
-					"        if(document.getElementById(\"required\").checked){\r\n" + 
-					"            var_req=\"true\";\r\n" + 
-					"        }else{\r\n" + 
-					"            var_req=\"false\";\r\n" + 
-					"        }\r\n" + 
-					"        cell1.innerHTML=var_name;\r\n" + 
-					"        cell2.innerHTML=var_def_val;\r\n" + 
-					"        cell3.innerHTML=var_description;\r\n" + 
-					"        cell4.innerHTML=var_req;\r\n" + 
-					"        \r\n" + 
-					"    }\r\n" + 
-					"    function addOnt(){\r\n" + 
-					"        var table = document.getElementById(\"ont_table\");\r\n" + 
-					"        var row = table.insertRow(1);\r\n" + 
-					"        var cell1 = row.insertCell(0);\r\n" + 
-					"        var cell2 = row.insertCell(1);\r\n" + 
-					"        var ont_url = document.getElementById(\"ontology\").value;\r\n" + 
-					"        var var_req =\"\"\r\n" + 
-					"        if(document.getElementById(\"ont_required\").checked){\r\n" + 
-					"            var_req=\"true\";\r\n" + 
-					"        }else{\r\n" + 
-					"            var_req=\"false\";\r\n" + 
-					"        }\r\n" + 
-					"        cell1.innerHTML=ont_url;\r\n" + 
-					"        cell2.innerHTML=var_req;\r\n" + 
-					"        var ontology={url:\"\",recursive:\"\"}\r\n" + 
-					"        ontology.url=ont_url;\r\n" + 
-					"        ontology.recursive=var_req;\r\n" + 
-					"        jsonmock.ontologies.push(ontology);\r\n" + 
-					"\r\n" + 
-					"    }\r\n" + 
-					"    var coordinator_path=document.getElementById(\"coordinator\").value\r\n" + 
-					"    jsonmock.template=coordinator_path;\r\n" + 
-					"    </script>\r\n" + 
-					"</head>\r\n" + 
-					"<body>\r\n" + 
-					"    <form name=\"process\" method=\"POST\" action=\"GenerateCode\">\r\n" + 
-					"        <h1>Web interface to CodeGenerator REST tool</h1>\r\n" + 
-					"        \r\n" + 
-					"             \r\n" + 
-					"        <table id=\"ont_table\" border=\"1px\">\r\n" + 
-					"            <tr>\r\n" + 
-					"                <th>Ontology URL</th>\r\n" + 
-					"                <th>Required</th>\r\n" + 
-					"            </tr>\r\n" + 
-					"        </table>\r\n" + 
-					"        <fieldset>\r\n" + 
-					"        <legend>Ontologies</legend>\r\n" + 
-					"\r\n" + 
-					"        <input type=\"text\" id=\"ontology\"><br>\r\n" + 
-					"        <input type=\"button\" onclick=\"addOnt()\" value=\"add\">\r\n" + 
-					"        <input type=\"checkbox\"   id=\"ont_required\">Required?<br>\r\n" + 
-					"\r\n" + 
-					"        </fieldset>\r\n" + 
-					"\r\n" + 
-					"        \r\n" + 
-					"        <table id=\"variables_table\" border=\"1px\">\r\n" + 
-					"            <tr>\r\n" + 
-					"                <th>Variable name</th>\r\n" + 
-					"                <th>Variable default value</th>\r\n" + 
-					"                <th>Variable description</th>\r\n" + 
-					"                <th>Variable required(true/false)</th>\r\n" + 
-					"            </tr>\r\n" + 
-					"        </table>\r\n" + 
-					"        <fieldset>\r\n" + 
-					"            <legend>varaibles:</legend>\r\n" + 
-					"            Name: <input type=\"text\" id=\"var_name\"><br>\r\n" + 
-					"            Default Value: <input type=\"text\" id=\"def_val\"><br>\r\n" + 
-					"            Description: <input type=\"text\" id=\"description\"> <br>\r\n" + 
-					"        <input type=\"checkbox\"   id=\"required\">Required?<br>\r\n" + 
-					"        <input type=\"button\" onclick=\"addRow()\" value=\"add\">\r\n" + 
-					"        </fieldset>\r\n" + 
-					"        <p>recursive</p>\r\n" + 
-					"        <input type=\"checkbox\" name=\"vehicle1\" >Load Recursive?<br>\r\n" + 
-					"        <p>Description</p>\r\n" + 
-					"        <input type=\"text\"><br>\r\n" + 
-					"        <p>XML Coordinator url</p>\r\n" + 
-					"        <input type=\"text\" id=\"coordinator\"><br>\r\n" + 
-					"        <input type=\"submit\" value=\"Submit\">\r\n" + 
-					"      </form> \r\n" + 
-					"</body>\r\n" + 
-					"</html>");
+			
+			resp.getWriter().write(web_content);
 			return;
 		}else if(req.getRequestURI().contains("/GenerateCode/")) {
 			System.out.println("GenerateCode requested ");
