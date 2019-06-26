@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript">
+   
+
+    function addRow() {
+        // Find a <table> element with id="myTable":
+        var table = document.getElementById("variables_table");
+        // Create an empty <tr> element and add it to the 1st position of the table:
+        var row = table.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var var_name = document.getElementById("var_name").value;
+        var var_def_val = document.getElementById("def_val").value;
+        var var_description = document.getElementById("description").value;
+        //var var_req = document.getElementById("required").value;        
+        var var_req =""
+        if(document.getElementById("required").checked){
+            var_req="true";
+        }else{
+            var_req="false";
+        }
+        cell1.innerHTML=var_name;
+        cell2.innerHTML=var_def_val;
+        cell3.innerHTML=var_description;
+        cell4.innerHTML=var_req;
+        
+    }
+    function addOnt(){
+        var table = document.getElementById("ont_table");
+        var row = table.insertRow(1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var ont_url = document.getElementById("ontology").value;
+        var var_req =""
+        if(document.getElementById("ont_required").checked){
+            var_req="true";
+        }else{
+            var_req="false";
+        }
+        cell1.innerHTML=ont_url;
+        cell2.innerHTML=var_req;
+        var ontology={url:"",recursive:""}
+        ontology.url=ont_url;
+        ontology.recursive=var_req;
+        jsonmock.ontologies.push(ontology);
+
+    }
+    function post(path, params, method='post') {
+
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+
+            for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+
+                form.appendChild(hiddenField);
+            }
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+}
+    
+    
+    var jsonmock = {template:"",ontologies:[],variables:{}};
+
+   // var coordinator_path=document.getElementById("coordinator").value
+    //jsonmock.template=coordinator_path;
+    </script>
+</head>
+<body>
+    <form name="CodeGenerator" method="POST" action="/GenerateCode">
+        <h1>Web interface to CodeGenerator REST tool</h1>
+        
+             
+        <table id="ont_table" border="1px">
+            <tr>
+                <th>Ontology URL</th>
+                <th>Required</th>
+            </tr>
+        </table>
+        <fieldset>
+        <legend>Ontologies</legend>
+
+        <input type="text" id="ontology"><br>
+        <input type="button" onclick="addOnt()" value="add">
+        <input type="checkbox"   id="ont_required">Required?<br>
+
+        </fieldset>
+
+        
+        <table id="variables_table" border="1px">
+            <tr>
+                <th>Variable name</th>
+                <th>Variable default value</th>
+                <th>Variable description</th>
+                <th>Variable required(true/false)</th>
+            </tr>
+        </table>
+        <fieldset>
+            <legend>varaibles:</legend>
+            Name: <input type="text" id="var_name"><br>
+            Default Value: <input type="text" id="def_val"><br>
+            Description: <input type="text" id="description"> <br>
+        <input type="checkbox"   id="required">Required?<br>
+        <input type="button" onclick="addRow()" value="add">
+        </fieldset>
+        <p>recursive</p>
+        <input type="checkbox" name="vehicle1" >Load Recursive?<br>
+        <p>Description</p>
+        <input type="text"><br>
+        <p>XML Coordinator url</p>
+        <input type="text" id="coordinator"><br>
+        <input type="submit" value="GenerateCode">
+      </form> 
+</body>
+</html>
