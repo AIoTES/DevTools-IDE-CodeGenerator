@@ -53,25 +53,21 @@
         jsonmock.ontologies.push(ontology);
 
     }
-    function post(path, params, method='post') {
+    function post() {
 
             // The rest of this code assumes you are not using a library.
             // It can be made less wordy if you use one.
             const form = document.createElement('form');
-            form.method = method;
-            form.action = path;
+            form.method = "post";
+            form.action = "/GenerateCode";
 
-            for (const key in params) {
-            if (params.hasOwnProperty(key)) {
                 const hiddenField = document.createElement('input');
                 hiddenField.type = 'hidden';
-                hiddenField.name = key;
-                hiddenField.value = params[key];
+                hiddenField.name = 'key';
+                hiddenField.value = '{"template":"http://localhost/template/complexXml.xml","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}';
 
                 form.appendChild(hiddenField);
-            }
-            }
-
+          
             document.body.appendChild(form);
             form.submit();
 }
@@ -126,7 +122,7 @@
         <input type="text"><br>
         <p>XML Coordinator url</p>
         <input type="text" id="coordinator"><br>
-        <input type="submit" value="GenerateCode">
+        <input type="button" value="GenerateCode" onclick="post()">
       </form> 
 </body>
 </html>
