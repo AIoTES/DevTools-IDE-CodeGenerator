@@ -140,9 +140,21 @@ public class GenerateServlet extends HttpServlet {
 				}
 
 				// set variables
-				for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
-					gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+				
+				if(gc.get(VAR).isJsonArray()) {
+					//json generated from html ui {"template":"x","rec_description":"v","var_rec":"true","ontologies":[{"url":"vxcv","recursive":"true"}],"variables":[{"var_name":"v","var_description":"v","var_def_val":"v","var_req":"false"}]}
+					for (JsonElement iterable_element : gc.get(VAR).getAsJsonArray()) {
+						JsonObject var = iterable_element.getAsJsonObject();
+						gp.setVariable(var.get("var_name").getAsJsonPrimitive().getAsString(), var.get("var_def_val").getAsJsonPrimitive().getAsString());
+
+					}
+				}else {
+					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
+						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+					}	
 				}
+				
+				
 
 				// set Output
 				out = Integer.toHexString(sreq.hashCode());
