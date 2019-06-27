@@ -11,7 +11,7 @@
 		<bundle start-level='50'>mvn:com.google.code.gson/gson/2.8.5</bundle>
 		<!-- Velocity -->
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.7_6</bundle>
-		<bundle start-level='52' start='true'>mvn:org.apache.velocity.tools/velocity-tools-generic/3.0</bundle>
+		<bundle start-level='49' start='true'>mvn:org.apache.velocity.tools/velocity-tools-generic/3.0</bundle>
 		
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/1_2</bundle>
 		<!-- OWLAPI -->
