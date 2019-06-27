@@ -42,7 +42,6 @@ import org.apache.velocity.app.FieldMethodizer;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
-import org.apache.velocity.tools.generic.EscapeTool;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -375,7 +374,7 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		this.baseContext.put("esc", new EscapeTool());
+		//this.baseContext.put("esc", new EscapeTool());
 		
 	//	vel_eng.init(this.props);
 		
