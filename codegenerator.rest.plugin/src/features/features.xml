@@ -15,7 +15,7 @@
 		<bundle start-level='50' start='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/1_2</bundle>
 		<!-- OWLAPI -->
 		<bundle start-level='51' start='true'>mvn:net.sourceforge.owlapi/owlapi-osgidistribution/4.5.7</bundle>
-		<bundle start-level='49' start='true'>mvn:org.jsoup/jsoup/1.8.2</bundle>		
+		<bundle start-level='49' start='true'>mvn:org.jsoup/jsoup/1.11.3</bundle>		
 		
 		<bundle start-level='52' start='true'>mvn:net.sourceforge.owlapi/jfact/4.0.4</bundle>
 		<!-- Codegenerator REST-->
