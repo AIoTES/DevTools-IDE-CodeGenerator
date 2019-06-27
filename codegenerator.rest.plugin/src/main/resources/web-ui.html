@@ -78,9 +78,10 @@
             vars = vars.replace(',||', '');
             str02 = str01.replace('||', temp + ',' + onto + ',' + vars);
             console.log(str02);
-
-            // The rest of this code assumes you are not using a library.
-            // It can be made less wordy if you use one.
+            var hidden_form = document.getElementById("json");
+            hidden_form.value=str02;
+            hidden_form.submit();
+            /*
             const form = document.createElement('form');
             form.method = "post";
             form.action = "/GenerateCode";
@@ -95,11 +96,10 @@
                 form.appendChild(hiddenField);
           
             document.body.appendChild(form);
+            */
             form.submit();
 }
-    function enviar(){
-
-}
+    
     
     var jsonmock = {template:"",ontologies:[],variables:{}};
 
@@ -109,9 +109,8 @@
 </head>
 <body>
     <form name="CodeGenerator" method="POST" action="/GenerateCode">
-        <h1>Web interface to CodeGenerator REST tool</h1>
-        
-             
+        <input type="hidden" id="json" value=""></input>
+        <h1>Web interface to CodeGenerator REST tool</h1>             
         <table id="ont_table" border="1px">
             <tr>
                 <th>Ontology URL</th>

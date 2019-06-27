@@ -163,6 +163,7 @@ public class GenerateServlet extends HttpServlet {
 				this.deleteFolder(outFile);
 				outFile.mkdirs();
 				gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
+				System.out.println(outFile.getAbsolutePath());
 				// generate
 				try {
 					gp.process();
@@ -195,32 +196,35 @@ public class GenerateServlet extends HttpServlet {
 		s.useDelimiter("\\A");
 		web_content = s.hasNext() ? s.next() : "";
 		s.close();
-		if(req.getRequestURI().contains("/GenerateCode/ui")) {
+		if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			System.out.println("ui requested");
 			
 			resp.getWriter().write(web_content);
 			return;
-		}else if(req.getRequestURI().contains("/GenerateCode/")) {
+		}else  {
+			//if(req.getRequestURI().contains("/GenerateCode"))
 			System.out.println("GenerateCode requested ");
-			
 			req_data = req.getRequestURI().replaceAll(servletName, "");
-			urlToFile = this.getServletContext().getResource(req_data);
+			System.out.println("req_data "+req_data);
+			
+			urlToFile = this.getServletContext().getResource(out+req_data);
 
 			try {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
-
+					System.out.println("is file");
 					BufferedReader br = null;
 					br = new BufferedReader(new FileReader(t));
 					StringBuilder sb = new StringBuilder();
 
 					while ((line = br.readLine()) != null) {
 						sb.append(line);
-					}
+					}					
 					resp.getWriter().write(sb.toString());
-				}
+				}else
 
 				if (t.isDirectory()) {
+					
 					BufferedReader br = null;
 					br = new BufferedReader(new InputStreamReader(
 							GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
@@ -229,7 +233,6 @@ public class GenerateServlet extends HttpServlet {
 					while ((line = br.readLine()) != null) {
 						sb.append(line);
 					}
-
 					RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
 					StringReader reader = new StringReader(sb.toString());
 					StringWriter stringWriter = new StringWriter();
@@ -249,7 +252,6 @@ public class GenerateServlet extends HttpServlet {
 					stringWriter.close();
 
 				}
-
 			} catch (Exception e) {
 						System.out.println(e.getMessage());
 				}
@@ -257,11 +259,11 @@ public class GenerateServlet extends HttpServlet {
 		}
 		
 		
-		else {
-			resp.getWriter().write("nothing to show in this path");
-
-		}
-		
+//		else {
+//			resp.getWriter().write("nothing to show in this path");
+//
+//		}
+//		
 		
 
 	}
