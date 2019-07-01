@@ -6,7 +6,6 @@ variables:
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
-  untracked: true
   paths:
     - .m2/repository/
 
@@ -34,6 +33,10 @@ package:
     - mvn $MAVEN_CLI_OPTS clean install -DskipTests
   only:
     - master
+  artifacts: 
+    paths: 
+      - ./codegenerator.rest.karaf/target/
+    expire_in: 1 hour
  
 
 deploy:
