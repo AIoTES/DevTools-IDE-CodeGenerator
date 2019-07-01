@@ -39,7 +39,7 @@ deploy:
   stage: deploy
   image: docker:dind
   script:
-    - cd codegenerator.rest.karaf/target/
+    - cd ./codegenerator.rest.karaf/target/
     - docker login -u $DOCKER_USER -p $DOCKER_PASSOWORD $DOCKER_SERVER 
     - docker build -t code.generator -t $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG -t $DOCKER_SERVER/code.generator:latest .
     - docker push $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG
