@@ -19,17 +19,13 @@ build:
   stage: build
   script:
     - mvn $MAVEN_CLI_OPTS -pl "!codegenerator.rest.karaf" clean compile
-  artifacts:
-    untracked: true
-    expire_in: 1 hour
+ 
 
 test:
   stage: test
   script:
     - mvn $MAVEN_CLI_OPTS -pl "!codegenerator.rest.karaf" test
-  artifacts:
-    untracked: true
-    expire_in: 1 hour
+
 
 package:
   stage: package
@@ -37,9 +33,7 @@ package:
     - mvn $MAVEN_CLI_OPTS clean install -DskipTests
   only:
     - master
-  artifacts:
-    untracked: true
-    expire_in: 1 hour
+ 
 
 deploy:
   stage: deploy
