@@ -30,6 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -39,14 +41,18 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
 /**
  * Goal which touches a generates code from the given configuration.
  */
-@Mojo( name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
+@Mojo(
+		name = "generate",
+		defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+		requiresDependencyResolution = ResolutionScope.COMPILE,
+		requiresProject = true)
 public class CodegenerationMojo
     extends AbstractMojo
 {
     /**
      * Location of the output.
      */
-    @Parameter( defaultValue = "${project.build.directory}", property = "outputDir", required = true )
+    @Parameter( defaultValue = "${project.build.directory}/generated-sources/owl-gen", property = "outputDir", required = true )
     private File outputDirectory;
 
     /**
@@ -65,10 +71,10 @@ public class CodegenerationMojo
     private File localOntologies;
 
     //private List<String> includes;
-    //TODO maybe if needed
+    //XXX maybe if needed
 
     //private List<String> excludes;
-    //TODO maybe if needed
+    //XXX maybe if needed
 
     /**
      * list of URL of ontologies to process.
@@ -89,6 +95,12 @@ public class CodegenerationMojo
     @Parameter(property = "variables")
     private Map<String, String> variables= Collections.emptyMap();
 
+    /**
+     * The current Maven project.
+     */
+    @Parameter(property = "project", required = true, readonly = true)
+    protected MavenProject project;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -107,8 +119,7 @@ public class CodegenerationMojo
 		try {
 			model = parser.generateXMLCoordinator(xmlTemplate.getPath());
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+        	throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString(), e1);
 		}
 
 		if (model == null) {
@@ -117,7 +128,6 @@ public class CodegenerationMojo
 
 		GenerateProject gp = new GenerateProject();
 		gp.setMainModel(model);
-
 
 		//gp.setLocalBaseLoaderPath(parser.getTemplateBasePath());
 		OntologyLoader ontologyLoader = new OntologyLoader();
@@ -153,16 +163,12 @@ public class CodegenerationMojo
 			gp.addOntology(ontologyLoader.loadOntology(url), recursive);
 		}
 
-
-
 		// add remote ontologies
 		for (URL url : remoteOntologies) {
 			boolean recursive = recursiveOntologies.contains(url.toString());
 	    	getLog().info("\t adding Ontology : " + url + (recursive?" rescurively":" ") + "to project");
 			gp.addOntology(ontologyLoader.loadOntology(url.toString()), recursive);
 		}
-
-
 
 		// add variables
 		for (Entry<String, String> entry : variables.entrySet()) {
@@ -180,22 +186,20 @@ public class CodegenerationMojo
         getLog().info("\toutputing project to: " + outputDirectory.getAbsolutePath());
         gp.setOutputFolder(outputDirectory.getAbsolutePath());
         // generate
-        boolean result;
         try {
         	//result = gp.process();
         	 gp.process();
+        	 addSourceRoot(outputDirectory);
         } catch (Exception e) {
         	getLog().debug(e);
         	throw new MojoExecutionException("unable to generate code.");
         }
 
-//        if (!result) {
-//        	throw new MojoExecutionException("Code generation was not successuful.");
-//        }
         getLog().info("generation completed.");
 
+    }
 
-
-
+    void addSourceRoot(File outputDir) {
+    	project.addCompileSourceRoot(outputDir.getPath());
     }
 }
