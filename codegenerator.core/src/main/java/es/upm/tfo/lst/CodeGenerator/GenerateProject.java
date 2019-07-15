@@ -97,20 +97,16 @@ public class GenerateProject {
 	public interface ProgessCallbackPublisher {
 		void updateProgress(int done);
 	}
-	private VelocityContext auxiliarContext=null;
 	private ReasonerWrapper wrapper = null;
 	private TemplateDataModel mainModel = null;
 	private VelocityContext  baseContext;
 	private VelocityEngine vel_eng;
-	private FileWriter fr;
 	private Template template;
 	private OWLReasonerFactory reasonerFactory;
 	private OWLReasoner reasoner = null;
 	private Map<String, Variable> variables;
-	private String outputFolder = null;
-	private String text = "";
+	private File outputFolder = null;
 	private List<Exception> arrayOfExceptions = null;
-	private URL urlBasePath = null;
 	private Properties props=null;
 	private List<OWLOntology> ontologies2BProcesed = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
@@ -166,14 +162,14 @@ public class GenerateProject {
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
 
-				
+
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
-					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());	
+					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());
 				}
-				
+
 				//TODO: control variables to not be null after parse this to context
-				
+
 				if (this.mainModel.getProjectMacros().isEmpty())
 					log.warn("doesn't exist macro to project");
 				if (this.mainModel.getOntologyMacros().isEmpty())
@@ -208,10 +204,10 @@ public class GenerateProject {
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("project", this);
 		if (!this.mainModel.getProjectMacros().isEmpty()) {
-			
+
 			this.applyMacro(toAdd, this.mainModel.getProjectMacros(), true);
 		}
-			
+
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
@@ -231,21 +227,21 @@ public class GenerateProject {
 	private void processOntology(OWLOntology ontology) throws Exception {
 		log.debug("processing ontology");
 		HashMap<String, Object> toAdd = new HashMap<>();
-		
+
 		toAdd.put("ontology", ontology);
-		
+
 		if (!this.mainModel.getOntologyMacros().isEmpty()) {
 
 			this.applyMacro(toAdd, this.mainModel.getOntologyMacros() ,true);
-		} 
-			
+		}
+
 			for (OWLAxiom axiom : ontology.getAxioms()) {
 				if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
 					OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
 					this.processClass(cls, ontology);
 				}
 			}
-		
+
 		this.processNamedIndividual(ontology);
 		this.processAnnotations(ontology);
 	}
@@ -265,17 +261,17 @@ public class GenerateProject {
 
 		if (! this.mainModel.getClassMacros().isEmpty()) {
 			this.applyMacro(toAdd,  this.mainModel.getClassMacros(), true);
-		
-		} 
+
+		}
 		this.processObjectProperties(c,  ontology);
 		this.processDataPropeties(c,  ontology);
-		
+
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cls {@link OWLClass}
-	 * @param ontology {@link OWLOntology} 
+	 * @param ontology {@link OWLOntology}
 	 * @throws Exception
 	 */
 	private void processNamedIndividual(OWLOntology ontology) throws Exception {
@@ -283,7 +279,7 @@ public class GenerateProject {
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 
-		
+
 		for (OWLDeclarationAxiom individual : ontology.getAxioms(AxiomType.DECLARATION)) {
 			for (OWLNamedIndividual iterable_element : individual.getIndividualsInSignature()) {
 				toAdd.put("NamedIndividual", iterable_element);
@@ -292,12 +288,12 @@ public class GenerateProject {
 				}
 			}
 		}
-		
-		
-	
+
+
+
 	}
 	/**
-	 * 
+	 *
 	 * @param individual {@link OWLNamedIndividual}
 	 * @param ontology {@link OWLOntology}
 	 * @throws Exception
@@ -307,7 +303,7 @@ public class GenerateProject {
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
-		
+
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			for (OWLDeclarationAxiom iterable_element : ontology.getAxioms(AxiomType.DECLARATION)) {
 				for (OWLObjectProperty iterable_element2 : iterable_element.getObjectPropertiesInSignature()) {
@@ -315,17 +311,17 @@ public class GenerateProject {
 					this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 				}
 			}
-			
+
 		}
 
 
 	}
-	
+
 	/**
 	 * @param cls
 	 * @param instances
 	 * @param ontology
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void processDataPropeties(OWLClass cls, OWLOntology ontology) throws Exception {
 		log.debug("processing DataProperties");
@@ -335,25 +331,25 @@ public class GenerateProject {
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			//for each data property
 			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
-			
+
 		}
-		
+
 	}
-	
+
 	//TODO: define this step
 	private void processAnnotations(OWLOntology ontology) throws Exception{
 		log.debug("processing Annotations");
 		HashMap<String, Object> toAdd = new HashMap<>();
-		
+
 		toAdd.put("ontology", ontology);
-		
+
 		if (!this.mainModel.getAnnotationsMacros().isEmpty()) {
 			this.applyMacro(toAdd,this.mainModel.getAnnotationsMacros(), true);
-		} 
+		}
 
-	
+
 	}
-	
+
 	private static Properties defaultVelocityProperties() {
 		Properties props = new Properties();
 		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -368,7 +364,7 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void initVelocity() throws Exception {
-		
+
 		vel_eng = new VelocityEngine();
 		this.baseContext = new VelocityContext();
 		// adding separately each variable to velocity context
@@ -376,16 +372,16 @@ public class GenerateProject {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
 		this.baseContext.put("esc", new EscapeTool());
-		
+
 	//	vel_eng.init(this.props);
-		
-		
+
+
 		if(this.props != null ) {
 			vel_eng.init(this.props);
 		}else {
 			try {
 				URL source = new URL(this.mainModel.getBaseTemplatePath());
-				
+
 //				props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
 //				props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
 //				props.put("url.resource.loader.cache", "true");
@@ -404,7 +400,7 @@ public class GenerateProject {
 			}
 			vel_eng.init(props);
 		}
-		
+
 	}
 
 
@@ -414,8 +410,18 @@ public class GenerateProject {
 	 * @param outputFolder path to output folder. If the folder not exists, the
 	 *                     plugin creates it into given path.
 	 */
-	public void setOutputFolder(String outputFolder) {
+	public void setOutputFolder(File outputFolder) {
 		this.outputFolder = outputFolder;
+	}
+
+	/**
+	 * Sets the output folder to generated files.
+	 *
+	 * @param outputFolder path to output folder. If the folder not exists, the
+	 *                     plugin creates it into given path.
+	 */
+	public void setOutputFolder(String outputFolder) {
+		this.outputFolder = new File(outputFolder);
 	}
 
 	/**
@@ -434,13 +440,13 @@ public class GenerateProject {
 		boolean flag = false;
 		if (this.ontologies2BProcesed.size() > 0) {
 			if (this.mainModel != null) {
-					
+
 				if(this.mainModel.getBaseTemplatePath()==null)
 					System.out.println("null this.mainModel.getBaseTemplatePath()");
 				if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
 					System.out.println("classpath at least");
 				}
-				
+
 				if (!(this.mainModel.getBaseTemplatePath().equals("")) || !(this.mainModel.getBaseTemplatePath() == null)) {
 					if (this.mainModel.getMacroList().size() != 0) {
 						if (this.outputFolder != null) {
@@ -472,7 +478,7 @@ public class GenerateProject {
 		} else {
 			log.fatal("Main ontology couldn't be loaded");
 			this.arrayOfExceptions.add(new OntologyException("Main ontology couldn't be loaded"));
-			
+
 		}
 		return flag;
 	}
@@ -488,8 +494,8 @@ public class GenerateProject {
 	private String processOutputString(String toProcess,VelocityContext ctx) {
 		String t = "-";
 		try {
-			StringWriter stringWriter = new StringWriter();	
-			this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess));			
+			StringWriter stringWriter = new StringWriter();
+			this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess));
 			t = stringWriter.toString();
 			stringWriter.close();
 		} catch (Exception a) {
@@ -545,7 +551,7 @@ public class GenerateProject {
 			ontologies2BProcesed.addAll(ont.getImports());
 		}
 		ontologies2BProcesed.add(ont);
-		
+
 		Collections.sort(ontologies2BProcesed, new Comparator<OWLOntology>() {
 
 			@Override
@@ -557,30 +563,30 @@ public class GenerateProject {
 		});
 	}
 	/**
-	 *   
+	 *
 	 * @return {@link String} : path to output directory
 	 */
 	public String getOutputDir() {
-		return outputFolder;
+		return outputFolder.getAbsolutePath();
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link Properties} object containing the velocity properties
 	 */
 	public Properties getProps() {
 		return props;
 	}
 	/**
-	 * 
-	 * @param props {@link Properties} to add in velocity 
+	 *
+	 * @param props {@link Properties} to add in velocity
 	 */
 	public void setProps(Properties props) {
 		this.props = props;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link TemplateDataModel} object representing the XML file
 	 */
 	public TemplateDataModel getMainModel() {
@@ -588,7 +594,7 @@ public class GenerateProject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mainModel {@link TemplateDataModel} object representing the XML file
 	 */
 	public void setMainModel(TemplateDataModel mainModel) {
@@ -603,8 +609,8 @@ public class GenerateProject {
 		for (String value : this.variables.keySet()) {
 			this.baseContext.put(value, this.variables.get(value));
 		}
-		
-		
+
+
 //		this.variables.keySet().stream().forEach(t -> {
 //			this.baseContext.put(t, this.variables.get(t));
 //				});
@@ -627,8 +633,8 @@ public class GenerateProject {
 	}
 	/**
 	 * method to add all exceptions into a collection.
-	 * 
-	 * @param a {@link Exception} 
+	 *
+	 * @param a {@link Exception}
 	 */
 	public void addError(Exception a) {
 		this.arrayOfExceptions.add(a);
@@ -638,13 +644,13 @@ public class GenerateProject {
 		for (OWLOntology o : this.ontologies2BProcesed) {
 			this.total2Process += o.getClassesInSignature().size();
 		}
-		
+
 	}
 
 	public int getTotal2Process() {
 		return total2Process;
 	}
-	
+
 	/**
 	 * To add the imports of static classes into context
 	 * @param model
@@ -655,7 +661,7 @@ public class GenerateProject {
 			for (String k : key.keySet()) {
 				if(k.equals("EntitySearher")) {
 					log.debug("addingEntity");
-					
+
 					context.put(k, EntitySearcher.class);
 				}else {
 					context.put(k, new FieldMethodizer(key.get(k)) );
@@ -663,7 +669,7 @@ public class GenerateProject {
 			}
 		}
 	}
-	
+
 	/**
 	 * method to get all imported ontologies plus actual ontology
 	 * @return {@link Set} < {@link OWLOntology} > of ontologies
@@ -671,71 +677,69 @@ public class GenerateProject {
 	public List<OWLOntology> getOntologies2BProcesed() {
 		return ontologies2BProcesed;
 	}
-	
+
 	/**
-	 * Method to apply all the macros provided in XML to the corresponding bucle of process 
+	 * Method to apply all the macros provided in XML to the corresponding bucle of process
 	 * @param varsToAdd {@link Map<{@link String}, {@link Object}> } with key-value to add into {@link VelocityContext}
 	 * @param macro_to_apply {@link List< {@link MacroModel}> with all of macros to be applied
 	 * @param  appendState boolean value indicating if the process will be append file content
 	 * @return boolean value. True if the process was ended successful or false if not
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private boolean applyMacro(Map<String, Object> varsToAdd ,List<MacroModel> macro_to_apply, boolean appendState) throws Exception {
-		
-		
+
+
 		boolean state = true;
-		
+
 		String processedOutput;
-		
+
 		if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
 			VelocityContext vel_context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : macro_to_apply) {
-				
+
 				String processed_string = this.processOutputString(macroModel.getOutput(),vel_context);
 				 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macroModel.getTemplateName())));
-				 File outputDirectory = new File(this.outputFolder + processed_string);
-					
-					if (!outputDirectory.getParentFile().exists()) {
-						outputDirectory.getParentFile().mkdirs();
+				 File outputFile = new File(this.outputFolder , processed_string);
+
+					if (!outputFile.getParentFile().exists()) {
+						outputFile.getParentFile().mkdirs();
 					}
-				String t = "-";
 				try {
-					StringWriter stringWriter = new StringWriter();	
-					this.vel_eng.evaluate(vel_context , new FileWriter(outputDirectory), "tag1", templateReader);			
-					t = stringWriter.toString();
+					StringWriter stringWriter = new StringWriter();
+					this.vel_eng.evaluate(vel_context , new FileWriter(outputFile), "tag1", templateReader);
 					stringWriter.close();
 				} catch (Exception a) {
-					log.fatal("cant apply macro "+outputDirectory.getAbsolutePath());
-				}				
+					log.fatal("cant apply macro "+outputFile.getAbsolutePath());
+				}
 			}
 
-		
+
 		}
-		
-		
-		
+
+
+
 		try {
 			for (MacroModel macro : macro_to_apply) {
 				log.debug("applying macro...");
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
 				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
-				
-				File outputDirectory = new File(this.outputFolder + processedOutput);
-			
-				if (!outputDirectory.getParentFile().exists()) {
-					outputDirectory.getParentFile().mkdirs();
+
+				File outputFile = new File(this.outputFolder , processedOutput);
+
+				if (!outputFile.getParentFile().exists()) {
+					outputFile.getParentFile().mkdirs();
 				}
-	
+
 				if (!processedOutput.equals("")) {
 					try {
 						// throw ResourceNotFoundException
 						template = vel_eng.getTemplate(macro.getTemplateName());
 						// throw IOE
-						FileWriter fr = new FileWriter(this.outputFolder + processedOutput, appendState);
+						FileWriter fr = new FileWriter(new File(this.outputFolder , processedOutput), appendState);
 						template.merge(context, fr);
 						fr.close();
-						outputDirectory=null;
+						outputFile=null;
 						context=null;
 					} catch (Exception e) {
 						log.fatal("cant merge velocity template with velocity context", e);
@@ -753,18 +757,18 @@ public class GenerateProject {
 		return state;
 		}
 
-	
-	
+
+
 	private void setupCurrentContextContent(VelocityContext ctx, Map<String, Object> toAdd, MacroModel currentMacro) {
 
 		if(!toAdd.isEmpty()) {
 				for (Entry<String, Object> map : toAdd.entrySet()) {
 					ctx.put(map.getKey(),map.getValue());
-				}		
+				}
 
 		}
 		this.addImportsToContext(ctx,currentMacro);
 	}
-	
+
 
 }
