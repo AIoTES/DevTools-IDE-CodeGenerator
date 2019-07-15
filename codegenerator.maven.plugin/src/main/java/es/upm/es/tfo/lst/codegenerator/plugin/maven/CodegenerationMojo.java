@@ -184,7 +184,7 @@ public class CodegenerationMojo
             f.mkdirs();
         }
         getLog().info("\toutputing project to: " + outputDirectory.getAbsolutePath());
-        gp.setOutputFolder(outputDirectory.getAbsolutePath());
+        gp.setOutputFolder(outputDirectory);
         // generate
         try {
         	//result = gp.process();
