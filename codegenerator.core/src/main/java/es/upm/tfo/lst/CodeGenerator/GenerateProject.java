@@ -758,7 +758,6 @@ public class GenerateProject {
 		}
 
 
-
 	private void setupCurrentContextContent(VelocityContext ctx, Map<String, Object> toAdd, MacroModel currentMacro) {
 
 		if(!toAdd.isEmpty()) {
@@ -770,5 +769,33 @@ public class GenerateProject {
 		this.addImportsToContext(ctx,currentMacro);
 	}
 
+	/**
+	 * method to get template name. Usefull only in velocity macro
+	 * @return
+	 */
+	public String getTemplateName() {
+		return this.mainModel.getTemplateName();
+	}
+	/**
+	 * method to get template version. Usefull only in velocity macro
+	 * @return
+	 */
+	public String getTemplateVersion() {
+		return this.mainModel.getTemplateVersion();
+	}
 
+	/**
+	 *  method to get template description. Usefull only in velocity macro
+	 * @return
+	 */
+	public String getTemplateDescription() {
+		return this.mainModel.getTemplateDescription();
+	}
+	/**
+	 *  method to get template author. Usefull only in velocity macro
+	 * @return
+	 */
+	public String getTemplateAuthor() {
+		return this.mainModel.getAuthor();
+	}
 }
