@@ -283,6 +283,7 @@ public class GenerateProject {
 		for (OWLDeclarationAxiom individual : ontology.getAxioms(AxiomType.DECLARATION)) {
 			for (OWLNamedIndividual iterable_element : individual.getIndividualsInSignature()) {
 				toAdd.put("NamedIndividual", iterable_element);
+				toAdd.put("ontology", ontology);
 				if (!this.mainModel.getNamedIndividualMacros().isEmpty()) {
 					this.applyMacro(toAdd, this.mainModel.getNamedIndividualMacros(), true);
 				}
@@ -491,13 +492,13 @@ public class GenerateProject {
 	 * @param VelocityContext containig needed references
 	 * @return {@link String } value, result of the process
 	 */
-	private String processOutputString(String toProcess,VelocityContext ctx) {
+	public String evaluateVTLString(String toProcess,VelocityContext ctx) {
 		String t = "-";
 		try {
 			StringWriter stringWriter = new StringWriter();
 			this.vel_eng.evaluate(ctx, stringWriter, "tag1", new StringReader(toProcess));
 			t = stringWriter.toString();
-			stringWriter.close();
+			stringWriter.close();			
 		} catch (Exception a) {
 			log.fatal("cant proces="+toProcess, a);
 		}
@@ -639,7 +640,10 @@ public class GenerateProject {
 	public void addError(Exception a) {
 		this.arrayOfExceptions.add(a);
 	}
-
+	
+	public VelocityContext getBaseContext() {
+		return this.baseContext;
+	}
 	private void calculateTotal() {
 		for (OWLOntology o : this.ontologies2BProcesed) {
 			this.total2Process += o.getClassesInSignature().size();
@@ -659,7 +663,7 @@ public class GenerateProject {
 	private void addImportsToContext(VelocityContext context, MacroModel model) {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
-				if(k.equals("EntitySearher")) {
+				if(k.equals("EntitySearcher")) {
 					log.debug("addingEntity");
 
 					context.put(k, EntitySearcher.class);
@@ -697,7 +701,7 @@ public class GenerateProject {
 			VelocityContext vel_context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : macro_to_apply) {
 
-				String processed_string = this.processOutputString(macroModel.getOutput(),vel_context);
+				String processed_string = this.evaluateVTLString(macroModel.getOutput(),vel_context);
 				 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macroModel.getTemplateName())));
 				 File outputFile = new File(this.outputFolder , processed_string);
 
@@ -716,14 +720,12 @@ public class GenerateProject {
 
 		}
 
-
-
 		try {
 			for (MacroModel macro : macro_to_apply) {
 				log.debug("applying macro...");
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
-				processedOutput = new String(this.processOutputString(macro.getOutput(),context));
+				processedOutput = new String(this.evaluateVTLString(macro.getOutput(),context));
 
 				File outputFile = new File(this.outputFolder , processedOutput);
 
