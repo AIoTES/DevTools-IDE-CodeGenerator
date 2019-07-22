@@ -48,6 +48,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectCardinalityRestriction;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.NodeSet;
@@ -161,7 +162,7 @@ public class GenerateProject {
 				this.initVelocity();
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
-
+				this.baseContext.put("OWLObjectCardinalityRestriction", OWLObjectCardinalityRestriction.class);
 
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
