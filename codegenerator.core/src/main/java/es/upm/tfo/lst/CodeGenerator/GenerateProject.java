@@ -201,14 +201,13 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processProject() throws Exception {
-		log.debug("processing Project");
+		log.debug("processing all macros for Project");		
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("project", this);
 		if (!this.mainModel.getProjectMacros().isEmpty()) {
 
 			this.applyMacro(toAdd, this.mainModel.getProjectMacros(), true);
 		}
-
 			for (OWLOntology ontology : this.ontologies2BProcesed) {
 				this.reasoner = this.reasonerFactory.createReasoner(ontology);
 				this.wrapper.setReasoner(this.reasoner);
@@ -226,13 +225,12 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processOntology(OWLOntology ontology) throws Exception {
-		log.debug("processing ontology");
-		HashMap<String, Object> toAdd = new HashMap<>();
+		log.debug("processing all macros for Ontology");
 
+		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 
 		if (!this.mainModel.getOntologyMacros().isEmpty()) {
-
 			this.applyMacro(toAdd, this.mainModel.getOntologyMacros() ,true);
 		}
 
@@ -255,14 +253,14 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processClass(OWLClass c, OWLOntology ontology) throws Exception {
-		log.debug("processing class");
+
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 		toAdd.put("class", c);
 
 		if (! this.mainModel.getClassMacros().isEmpty()) {
+			log.debug("processing all macros for Class");
 			this.applyMacro(toAdd,  this.mainModel.getClassMacros(), true);
-
 		}
 		this.processObjectProperties(c,  ontology);
 		this.processDataPropeties(c,  ontology);
@@ -276,16 +274,17 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processNamedIndividual(OWLOntology ontology) throws Exception {
-		log.debug("processing NamedIndividuals");
+		log.debug("processing all macros for NamedIndividuals");
+
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("ontology", ontology);
 
 
 		for (OWLDeclarationAxiom individual : ontology.getAxioms(AxiomType.DECLARATION)) {
 			for (OWLNamedIndividual iterable_element : individual.getIndividualsInSignature()) {
-				toAdd.put("NamedIndividual", iterable_element);
-				toAdd.put("ontology", ontology);
 				if (!this.mainModel.getNamedIndividualMacros().isEmpty()) {
+					toAdd.put("NamedIndividual", iterable_element);
+					toAdd.put("ontology", ontology);
 					this.applyMacro(toAdd, this.mainModel.getNamedIndividualMacros(), true);
 				}
 			}
@@ -301,12 +300,13 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processObjectProperties(OWLClass cls, OWLOntology ontology)throws Exception {
-		log.debug("processing ObjectProperties");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
 
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
+			log.debug("processing ObjectProperties");
+
 			for (OWLDeclarationAxiom iterable_element : ontology.getAxioms(AxiomType.DECLARATION)) {
 				for (OWLObjectProperty iterable_element2 : iterable_element.getObjectPropertiesInSignature()) {
 					toAdd.put("ObjectProperty", iterable_element2);
@@ -326,12 +326,13 @@ public class GenerateProject {
 	 * @throws Exception
 	 */
 	private void processDataPropeties(OWLClass cls, OWLOntology ontology) throws Exception {
-		log.debug("processing DataProperties");
 		HashMap<String, Object> toAdd = new HashMap<>();
 		toAdd.put("class", cls);
 		toAdd.put("ontology", ontology);
 		if (!this.mainModel.getObjectProperties().isEmpty()) {
 			//for each data property
+			log.debug("processing DataProperties");
+
 			this.applyMacro(toAdd, this.mainModel.getObjectProperties(), true);
 
 		}
@@ -340,12 +341,13 @@ public class GenerateProject {
 
 	//TODO: define this step
 	private void processAnnotations(OWLOntology ontology) throws Exception{
-		log.debug("processing Annotations");
 		HashMap<String, Object> toAdd = new HashMap<>();
 
 		toAdd.put("ontology", ontology);
 
 		if (!this.mainModel.getAnnotationsMacros().isEmpty()) {
+			log.debug("processing Annotations");
+
 			this.applyMacro(toAdd,this.mainModel.getAnnotationsMacros(), true);
 		}
 
@@ -665,7 +667,7 @@ public class GenerateProject {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
 				if(k.equals("EntitySearcher")) {
-					log.debug("addingEntity");
+
 
 					context.put(k, EntitySearcher.class);
 				}else {
@@ -723,34 +725,38 @@ public class GenerateProject {
 
 		try {
 			for (MacroModel macro : macro_to_apply) {
-				log.debug("applying macro...");
 				VelocityContext context = new VelocityContext(this.baseContext);
 				this.setupCurrentContextContent(context, varsToAdd, macro);
-				processedOutput = new String(this.evaluateVTLString(macro.getOutput(),context));
-
-				File outputFile = new File(this.outputFolder , processedOutput);
-
-				if (!outputFile.getParentFile().exists()) {
-					outputFile.getParentFile().mkdirs();
+			
+				if(macro.getOutput().isEmpty()) {
+					log.warn("<output> tag content is empty. This macro will be not processed "+macro.getTemplateName());
+				}else {
+					processedOutput = new String(this.evaluateVTLString(macro.getOutput(),context));
+					if (!processedOutput.equals("")) {
+						File outputFile = new File(this.outputFolder , processedOutput);
+						if (!outputFile.getParentFile().exists()) {
+							outputFile.getParentFile().mkdirs();
+						}
+						try {
+							// throw ResourceNotFoundException
+							template = vel_eng.getTemplate(macro.getTemplateName());
+							// throw IOE
+							FileWriter fr = new FileWriter(new File(this.outputFolder , processedOutput), appendState);
+							template.merge(context, fr);
+							fr.close();
+							outputFile=null;
+							context=null;
+						} catch (Exception e) {
+							log.fatal("cant merge velocity template with velocity context", e);
+							this.arrayOfExceptions.add(e);
+							throw e;
+						}
+					}else {
+						log.warn("Proccesing "+macro.getOutput() + " return empty string.This macro will be not processed "+macro.getTemplateName());
+					}	
 				}
-
-				if (!processedOutput.equals("")) {
-					try {
-						// throw ResourceNotFoundException
-						template = vel_eng.getTemplate(macro.getTemplateName());
-						// throw IOE
-						FileWriter fr = new FileWriter(new File(this.outputFolder , processedOutput), appendState);
-						template.merge(context, fr);
-						fr.close();
-						outputFile=null;
-						context=null;
-					} catch (Exception e) {
-						log.fatal("cant merge velocity template with velocity context", e);
-						this.arrayOfExceptions.add(e);
-						throw e;
-					}
-				}else
-					log.warn("empty tag or errors in output tag content in projectModel...skipping...");
+				
+					
 			}
 		}catch (Exception e) {
 			log.debug(e.getMessage());
