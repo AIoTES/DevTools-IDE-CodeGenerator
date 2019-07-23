@@ -17,6 +17,7 @@ package es.upm.tfo.lst.CodeGenerator.xmlparser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
@@ -61,7 +62,8 @@ public class XmlParser {
 
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private URL xmlSource = null;
-	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription, template_author_information;
+	private NodeList nodeVariable, nodeMacro, templateName, templateVersion, templateDescription,
+			template_author_information;
 	private Map<String, Variable> variableList;
 	private List<MacroModel> macroList;
 	private TemplateDataModel javaXMLModel = null;
@@ -76,17 +78,80 @@ public class XmlParser {
 	private List<URL> arrayOfSites = new ArrayList<>();
 	private List<String> arrayOfNames = new ArrayList<>();
 	private List<String> arrayOfImports = new ArrayList<>();
-	private boolean isLocal = true;
-	private Set<Map<String, String> > imports=null;
-	
-	public boolean isLocal() {
-		return isLocal;
-	}
+	private Set<Map<String, String>> imports = null;
 
 	public XmlParser() {
 		this.variableList = new HashMap<>();
 		this.macroList = new ArrayList<>();
 
+	}
+
+	/**
+	 * Attempts to generate the {@link TemplateDataModel} given
+	 * {@link XmlParser#xmlSource} and {@link XmlParser#templateBasePath} are
+	 * correctly set.
+	 *
+	 * @return
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	private TemplateDataModel generateModel() throws IOException, Exception {
+		if (this.xmlSource != null && this.templateBasePath != null) {
+
+			this.readXML(this.xmlSource.openStream());
+			if (this.javaXMLModel != null) {
+				log.debug("adding loader path to xml model " + this.templateBasePath);
+				this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
+			} else {
+				log.fatal("given path cant be processed as a valid template");
+				// throw new Exception("given path cant be processed as a valid template");
+				return null;
+			}
+
+			return this.javaXMLModel;
+		} else {
+			log.fatal("given path cant be processed as a valid template");
+			return null;
+		}
+	}
+
+	/**
+	 * generate XmlCoordinator object who represent XML file into java code.
+	 *
+	 * @param xmlPath path to XML file. This String value can be a
+	 *                website or path to local file
+	 * @return {@link TemplateDataModel} object representing XML file in Java code,
+	 *         or null if some problem occur in the process
+	 */
+	public TemplateDataModel generateXMLCoordinator(String xmlPath) throws Exception {
+		log.debug("reading XML coordinator from URL: " + xmlPath);
+		try {
+			return generateXMLCoordinator(new URL((String) xmlPath));
+		} catch (Exception a) {
+			log.debug("couldnt interpret current path as URL->" + a.getMessage());
+		}
+		log.warn("given URL isn't valid, trying to interpret as filesystem...given path=" + xmlPath);
+		return generateXMLCoordinator(new File(xmlPath));
+	}
+
+	/**
+	 * generate XmlCoordinator object who represent XML file into java code.
+	 *
+	 * @param xmlPath path to XML file. This String value can be a
+	 *                website or path to local file
+	 * @return {@link TemplateDataModel} object representing XML file in Java code,
+	 *         or null if some problem occur in the process
+	 */
+	public TemplateDataModel generateXMLCoordinator(File xmlPath) throws Exception {
+		log.debug("generating XML coordinator  from local file system= " + xmlPath);
+		try {
+			this.xmlSource = xmlPath.toURI().toURL();
+			this.templateBasePath = xmlSource.toURI().resolve(".").toURL();
+		} catch (Exception e2) {
+			log.fatal("error processing xml from given path=" + xmlPath, e2);
+			throw e2;
+		}
+		return generateModel();
 	}
 
 	/**
@@ -97,76 +162,31 @@ public class XmlParser {
 	 * @return {@link TemplateDataModel} object representing XML file in Java code,
 	 *         or null if some problem occur in the process
 	 */
-	public TemplateDataModel generateXMLCoordinator(Object  xmlPath) throws Exception {
-
-		if(xmlPath instanceof String  ) {
-			System.out.println("read from path");
-			boolean flag = false;
-			log.debug("reading XML coordinator from path: " + xmlPath);
-			try {
-				
-				this.xmlSource = new URL((String)xmlPath);
-				flag = true;
-			} catch (Exception a) {
-				log.debug("couldnt interpret current path as URL->" + a.getMessage());
-			
-			}
-			// if flag is true, means the xml file could be processed ok
-			if (flag) {
-				log.debug("generating XML coordinator  from url= " + this.xmlSource);
-				this.isLocal = false;
-				// this.readWebTemplate(this.xmlSource);
-				try {
-					// this.xmlSource = new File(this.templatesTempDir.getPath()).toURI().toURL();
-					log.debug("setting up the father directory from given url");
-					// teplateBasePath has the father of the given url (father of xm file)
-					this.templateBasePath = this.xmlSource.toURI().resolve(".").toURL();
-				} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
-					log.fatal("problems reading URL", e);
-				}
-			} else {
-				log.debug("generating XML coordinator  from local file system= " + xmlPath);
-				this.isLocal = true;
-				log.warn("given URL isn't valid, trying to interpret as filesystem...given path=" + xmlPath);
-				try {
-					this.xmlSource = new File((String)xmlPath).toURI().toURL();
-					this.templateBasePath = xmlSource.toURI().resolve(".").toURL();
-				} catch (Exception e2) {
-					log.fatal("error processing xml from given path=" + xmlPath, e2);
-					throw e2;
-				}
-			}
-
-			if (this.xmlSource != null) {
-
-				this.readXML(this.xmlSource.openStream());
-				if (this.javaXMLModel != null) {
-					if (flag) {
-						log.debug("adding remote loader path to xml model " + this.templateBasePath);
-						this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.toString());
-					} else {
-						log.debug("adding local loader path to xml model " + this.templateBasePath.getPath());
-						this.javaXMLModel.setBaseTemplatePath(this.templateBasePath.getPath());
-					}
-				} else {
-					log.fatal("given path cant be processed as a valid template");
-					//throw new Exception("given path cant be processed as a valid template");
-					return null;
-				}
-
-				return this.javaXMLModel;
-			} else {
-				log.fatal("given path cant be processed as a valid template");
-				return null;
-			}
-
-		}else {
-			System.out.println("read from stream");
-			this.readXML((InputStream) xmlPath);
-			this.javaXMLModel.setBaseTemplatePath("classpath");
-			return this.javaXMLModel;
-			//read all resources as astream from classpath and send it to core
+	public TemplateDataModel generateXMLCoordinator(URL xmlPath) throws Exception {
+		log.debug("generating XML coordinator  from url= " + this.xmlSource);
+		try {
+			this.xmlSource = xmlPath;
+			log.debug("setting up the father directory from given url");
+			this.templateBasePath = this.xmlSource.toURI().resolve(".").toURL();
+		} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
+			log.fatal("problems reading URL", e);
 		}
+		return generateModel();
+	}
+
+	/**
+	 * generate XmlCoordinator object who represent XML file into java code.
+	 *
+	 * @param xmlPath path to XML file. This String value can be a
+	 *                website or path to local file
+	 * @return {@link TemplateDataModel} object representing XML file in Java code,
+	 *         or null if some problem occur in the process
+	 */
+	public TemplateDataModel generateXMLCoordinator(InputStream xmlPath) throws Exception {
+		log.debug("read from stream");
+		this.readXML((InputStream) xmlPath);
+		this.javaXMLModel.setBaseTemplatePath("classpath");
+		return this.javaXMLModel;
 	}
 
 	/**
@@ -186,11 +206,10 @@ public class XmlParser {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
-
 			// IOException - If any IO errors occur.
 			// SAXException - If any parse errors occur.
 			// IllegalArgumentException - When is is null
-			//Document doc = docBuilder.parse(this.xmlSource.openStream());
+			// Document doc = docBuilder.parse(this.xmlSource.openStream());
 			Document doc = docBuilder.parse(is);
 			try {
 				this.nodeVariable = doc.getElementsByTagName("variable");
@@ -198,41 +217,41 @@ public class XmlParser {
 				this.templateName = doc.getElementsByTagName("template-name");
 				this.templateVersion = doc.getElementsByTagName("template-version");
 				this.templateDescription = doc.getElementsByTagName("template-description");
-	
-				
+
 				t = (Element) this.templateName.item(0);
 				this.javaXMLModel.setTemplateName(t.getFirstChild().getTextContent());
 				t = (Element) this.templateVersion.item(0);
 				this.javaXMLModel.setTemplateVersion(t.getFirstChild().getTextContent());
 				t = (Element) this.templateDescription.item(0);
 				this.javaXMLModel.setTemplateDescription(t.getFirstChild().getTextContent());
-				
-				
-				//adding author information to project
+
+				// adding author information to project
 				for (int y = 0; y < this.template_author_information.getLength(); y++) {
 					Element b = (Element) this.nodeVariable.item(y);
 				}
-				
+
 				log.debug("adding variables into Model");
 				for (int y = 0; y < this.nodeVariable.getLength(); y++) {
 					Element b = (Element) this.nodeVariable.item(y);
 					Variable aux = new Variable(b.getElementsByTagName("name").item(0).getTextContent(),
-							b.getElementsByTagName("description").item(0).getTextContent(),b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),b.getElementsByTagName("default").item(0).getTextContent());
-					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(),aux);
+							b.getElementsByTagName("description").item(0).getTextContent(),
+							b.getElementsByTagName("required").item(0).getTextContent().equalsIgnoreCase("true"),
+							b.getElementsByTagName("default").item(0).getTextContent());
+					this.variableList.put(b.getElementsByTagName("name").item(0).getTextContent(), aux);
 				}
-				
+
 				this.javaXMLModel.setVars(this.variableList);
 
 			} catch (Exception e) {
-				log.warn("some optionals tags into XML coordinator file isn't set="+e.getStackTrace());
+				log.warn("some optionals tags into XML coordinator file isn't set=" + e.getStackTrace());
 			}
 
 			this.nodeMacro = doc.getElementsByTagName("macro");
 			for (int y = 0; y < this.nodeMacro.getLength(); y++) {
-				HashMap <String, String> p ;
-				this.imports = new HashSet<>();		
+				HashMap<String, String> p;
+				this.imports = new HashSet<>();
 				Element b = (Element) this.nodeMacro.item(y);
-				Element h = (Element)b.getElementsByTagName("imports").item(0);
+				Element h = (Element) b.getElementsByTagName("imports").item(0);
 				if (h != null) {
 					for (int i = 0; i < h.getElementsByTagName("FullyQualifiedName").getLength(); i++) {
 						String name = h.getElementsByTagName("FullyQualifiedName").item(i).getTextContent();
@@ -240,7 +259,8 @@ public class XmlParser {
 
 						if (name != null) {
 
-							//TODO control characters. Maybe throw an error indicating if the given string to imports is not valid
+							// TODO control characters. Maybe throw an error indicating if the given string
+							// to imports is not valid
 							if (!name.equals("")) {
 
 								if (name.contains(".")) {
@@ -254,18 +274,15 @@ public class XmlParser {
 
 							} else
 								log.warn("empty import tag...skipping immport ");
-							//throw new Exception("The given import ("+name+") has not the correct format");	
+							// throw new Exception("The given import ("+name+") has not the correct
+							// format");
 						}
 
-					} 
+					}
 				}
-				this.macroList.add(
-						new MacroModel(
-							b.getElementsByTagName("template").item(0).getTextContent(),
-							b.getElementsByTagName("output").item(0).getTextContent(),
-							b.getElementsByTagName("for").item(0).getTextContent(),
-							this.imports
-						));
+				this.macroList.add(new MacroModel(b.getElementsByTagName("template").item(0).getTextContent(),
+						b.getElementsByTagName("output").item(0).getTextContent(),
+						b.getElementsByTagName("for").item(0).getTextContent(), this.imports));
 			}
 
 			this.javaXMLModel.setMacroList(this.macroList);

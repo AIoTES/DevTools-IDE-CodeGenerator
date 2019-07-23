@@ -59,7 +59,7 @@ public class CodegenerationMojo
      * Location of the XML defining the template system.
      */
     @Parameter(property="template", required = true)
-    private URL xmlTemplate;
+    private String xmlTemplate;
 
 
     /**
@@ -111,19 +111,19 @@ public class CodegenerationMojo
     	}
 
     	getLog().info("Generating code from Ontologies");
-    	getLog().info("xml template "+xmlTemplate.toString());
+    	getLog().info("xml template: "+ xmlTemplate);
 
     	// set template & init project
 		XmlParser parser = new XmlParser();
 		TemplateDataModel model=null;
 		try {
-			model = parser.generateXMLCoordinator(xmlTemplate.getPath());
+			model = parser.generateXMLCoordinator(xmlTemplate);
 		} catch (Exception e1) {
-        	throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString(), e1);
+        	throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate, e1);
 		}
 
 		if (model == null) {
-			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate.toString());
+			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate);
 		}
 
 		GenerateProject gp = new GenerateProject();

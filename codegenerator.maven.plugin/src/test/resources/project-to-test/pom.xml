@@ -17,7 +17,7 @@
         <version>1.0-SNAPSHOT</version>
         <configuration>
           <outputDirectory>target/test-harness/project-to-test</outputDirectory>
-          <xmlTemplate>file:../codegenerator.core/src/test/resources/template-complex/complexXml.xml</xmlTemplate>
+          <xmlTemplate>../codegenerator.core/src/test/resources/template-complex/complexXml.xml</xmlTemplate>
           <variables>
           	<outputBaseDir>/exampleFolder1</outputBaseDir>
          	<cardinality>/exampleFolder4</cardinality>
