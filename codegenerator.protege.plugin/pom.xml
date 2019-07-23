@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>codegenerator</artifactId>
-    <groupId>es.upm.tfo.lst</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<artifactId>codegenerator</artifactId>
+		<groupId>es.upm.tfo.lst</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>codegenerator.protege.plugin</artifactId>
+	<artifactId>codegenerator.protege.plugin</artifactId>
 	<packaging>bundle</packaging>
 
 	<properties>
@@ -17,61 +17,50 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>edu.stanford.protege</groupId>
 			<artifactId>protege-editor-owl</artifactId>
-			<version>5.0.0</version>
+			<version>[5.0.0,6.0.0)</version>
 		</dependency>
-
-	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.12</version>
-      		
-    	</dependency>
-    	
-    	<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
-<dependency>
-    <groupId>com.google.inject</groupId>
-    <artifactId>guice</artifactId>
-    <version>4.0-beta</version>
-</dependency>
-
-<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>18.0</version>
-</dependency>
-
-    	
-
-	<dependency>
-		<groupId>net.sourceforge.owlapi</groupId>
-		<artifactId>owlapi-distribution</artifactId>
-		<version>4.5.6</version>
-		
-	</dependency>
-
-<!-- 	<dependency> -->
-<!-- 	    <groupId>log4j</groupId> -->
-<!-- 	    <artifactId>log4j</artifactId> -->
-<!-- 	    <version>1.2.17</version> -->
-<!-- 	    <scope>test</scope> -->
-<!-- 	</dependency> -->
-
 		<dependency>
-		  <groupId>es.upm.tfo.lst</groupId>
-		  <artifactId>codegenerator.core</artifactId>
-		  <version>${project.version}</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.0-beta</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>log4j</groupId> -->
+		<!-- <artifactId>log4j</artifactId> -->
+		<!-- <version>1.2.17</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>es.upm.tfo.lst</groupId>
+			<artifactId>codegenerator.core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
-
 		<resources>
 			<resource>
-				<!-- Use resource filtering to replace references to the artifactId in 
+				<!-- Use resource filtering to replace references to the artifactId in
 					the plugin.xml file -->
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
@@ -102,7 +91,7 @@
 						<Bundle-Vendor>LifeSupporting Technologies, Technical University
 							of Madrid</Bundle-Vendor>
 						<Import-Package>
-							org.protege.editor.owl.*;version="5.0.0",*
+							org.protege.editor.owl.*;version="[5.0.0,6.0.0)",*
 						</Import-Package>
 						<Export-Package>es.upm.tfo.lst.codegenerator.plugin.protege</Export-Package>
 						<Embed-Dependency>codegenerator.core;scope=compile|runtime;inline=true,</Embed-Dependency>
