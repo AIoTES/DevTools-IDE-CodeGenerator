@@ -140,7 +140,7 @@ public class GenerateServlet extends HttpServlet {
 				}
 
 				// set variables
-				
+
 				if(gc.get(VAR).isJsonArray()) {
 					//json generated from html ui {"template":"x","rec_description":"v","var_rec":"true","ontologies":[{"url":"vxcv","recursive":"true"}],"variables":[{"var_name":"v","var_description":"v","var_def_val":"v","var_req":"false"}]}
 					for (JsonElement iterable_element : gc.get(VAR).getAsJsonArray()) {
@@ -151,10 +151,10 @@ public class GenerateServlet extends HttpServlet {
 				}else {
 					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
 						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
-					}	
+					}
 				}
-				
-				
+
+
 
 				// set Output
 				out = Integer.toHexString(sreq.hashCode());
@@ -178,27 +178,25 @@ public class GenerateServlet extends HttpServlet {
 				resp.getWriter().write(outO.toString());
 			}
 		//}
-		
-	
+
+
 	}
 
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
 		System.out.println("doGET "+req.getRequestURI());
-		
-		//InputStream y = new FileInputStream("/src/main/resources/web-ui.txt");
-		InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
-		String web_content = "";
-		Scanner s = new Scanner((InputStream)y);
-		s.useDelimiter("\\A");
-		web_content = s.hasNext() ? s.next() : "";
-		s.close();
+
 		if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			System.out.println("ui requested");
-			
+			InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
+			String web_content = "";
+			Scanner s = new Scanner((InputStream)y);
+			s.useDelimiter("\\A");
+			web_content = s.hasNext() ? s.next() : "";
+			s.close();
 			resp.getWriter().write(web_content);
 			return;
 		}else  {
@@ -206,7 +204,7 @@ public class GenerateServlet extends HttpServlet {
 			System.out.println("GenerateCode requested ");
 			req_data = req.getRequestURI().replaceAll(servletName, "");
 			System.out.println("req_data "+req_data);
-			
+
 			urlToFile = this.getServletContext().getResource(out+req_data);
 
 			try {
@@ -219,12 +217,12 @@ public class GenerateServlet extends HttpServlet {
 
 					while ((line = br.readLine()) != null) {
 						sb.append(line);
-					}					
+					}
 					resp.getWriter().write(sb.toString());
 				}else
 
 				if (t.isDirectory()) {
-					
+
 					BufferedReader br = null;
 					br = new BufferedReader(new InputStreamReader(
 							GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
@@ -257,14 +255,14 @@ public class GenerateServlet extends HttpServlet {
 				}
 			return;
 		}
-		
-		
+
+
 //		else {
 //			resp.getWriter().write("nothing to show in this path");
 //
 //		}
-//		
-		
+//
+
 
 	}
 

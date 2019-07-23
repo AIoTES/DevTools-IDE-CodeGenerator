@@ -6,41 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script type="text/javascript">
+    var restObj = {};
 
-    var str01 = '{||}';
-    var temp = '||';
-    var onto = '"ontologies":[||]';
-    var vars = '"variables":[||]';
-    var vreq = "";
+	function changeTemplate(){
+		restObj.template = document.getElementById("coordinator").value;
+	}
 
     function addRow() {
-        // Find a <table> element with id="myTable":
         var table = document.getElementById("variables_table");
         // Create an empty <tr> element and add it to the 1st position of the table:
         var row = table.insertRow(1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
         var var_name = document.getElementById("var_name").value;
-        var var_def_val = document.getElementById("def_val").value;
-        var var_description = document.getElementById("description").value;
-        //var var_req = document.getElementById("required").value;        
-        var var_req =""
-        if(document.getElementById("required").checked){
-            var_req="true";
-        }else{
-            var_req="false";
-        }
+        var var_val = document.getElementById("var_val").value;
         cell1.innerHTML=var_name;
-        cell2.innerHTML=var_def_val;
-        cell3.innerHTML=var_description;
-        cell4.innerHTML=var_req;
-        vars = vars.replace('||', '{"var_name":"' + var_name +
-        '","var_description":"' + var_description +
-        '","var_def_val":"' + var_def_val +
-        '","var_req":"' + var_req + '"},||');
-        
+        cell2.innerHTML=var_val;
+
+        if (!restObj.hasOwnProperty("variables")) {
+        	restObj.variables={}
+        }
+        restObj.variables[var_name]=var_val;
     }
     function addOnt(){
         var table = document.getElementById("ont_table");
@@ -49,7 +35,7 @@
         var cell2 = row.insertCell(1);
         var ont_url = document.getElementById("ontology").value;
         var var_req =""
-        if(document.getElementById("ont_required").checked){
+        if(document.getElementById("ont_recursive").checked){
             var_req="true";
         }else{
             var_req="false";
@@ -59,62 +45,36 @@
         var ontology={url:"",recursive:""}
         ontology.url=ont_url;
         ontology.recursive=var_req;
-        onto = onto.replace('||', '{"url":"' + ont_url + '","recursive":"' + var_req + '"},||');
-
+        if (restObj.hasOwnProperty("ontologies")){
+        	restObj.ontologies.push(ontology);
+        	} else {
+        	restObj.ontologies = [ontology];
+        	}
     }
     function post() {
-            var str02 = "";
-            var var_req1="";
-            if(document.getElementById("required").checked){
-            var_req1="true";
-            }else{
-            var_req1="false";
-            }
-
-            temp = temp.replace('||', '"template":"' + document.getElementById("coordinator").value +
-            '","rec_description":"' + document.getElementById("rec_description").value +
-            '","var_rec":"' + vreq + '"');
-            onto = onto.replace(',||', '');
-            vars = vars.replace(',||', '');
-            str02 = str01.replace('||', temp + ',' + onto + ',' + vars);
-            console.log(str02);
-            var hidden_form = document.getElementById("json");
-            hidden_form.value=str02;
-            hidden_form.submit();
-            /*
-            const form = document.createElement('form');
-            form.method = "post";
-            form.action = "/GenerateCode";
-            form.enctype = "application/json"
-
-                const hiddenField = document.createElement('input');
-                hiddenField.type = 'hidden';
-                hiddenField.name = 'key';
-                
-                hiddenField.value = str02;
-
-                form.appendChild(hiddenField);
-          
-            document.body.appendChild(form);
-            */
-            form.submit();
-}
-    
-    
-    var jsonmock = {template:"",ontologies:[],variables:{}};
-
-   // var coordinator_path=document.getElementById("coordinator").value
-    //jsonmock.template=coordinator_path;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+             alert(this.responseText);
+         }
+    };
+    xhttp.open("POST", "/GenerateCode", true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send(restObj);
+    //TODO get answer and go to answer.
+	}
     </script>
 </head>
 <body>
     <form name="CodeGenerator" method="POST" action="/GenerateCode">
         <input type="hidden" id="json" value=""></input>
-        <h1>Web interface to CodeGenerator REST tool</h1>             
+        <h1>CodeGenerator tool</h1>
+        <p>XML Coordinator url</p>
+        <input type="text" id="coordinator" onchange="changeTemplate()"><br>
         <table id="ont_table" border="1px">
             <tr>
                 <th>Ontology URL</th>
-                <th>Required</th>
+                <th>Recursive</th>
             </tr>
         </table>
         <fieldset>
@@ -122,34 +82,23 @@
 
         <input type="text" id="ontology"><br>
         <input type="button" onclick="addOnt()" value="add">
-        <input type="checkbox"   id="ont_required">Required?<br>
+        <input type="checkbox"   id="ont_recursive">load recursively<br>
 
         </fieldset>
 
-        
         <table id="variables_table" border="1px">
             <tr>
                 <th>Variable name</th>
-                <th>Variable default value</th>
-                <th>Variable description</th>
-                <th>Variable required(true/false)</th>
+                <th>Variable value</th>
             </tr>
         </table>
         <fieldset>
             <legend>varaibles:</legend>
             Name: <input type="text" id="var_name"><br>
-            Default Value: <input type="text" id="def_val"><br>
-            Description: <input type="text" id="description"> <br>
-        <input type="checkbox"   id="required">Required?<br>
+            Value: <input type="text" id="var_val"><br>
         <input type="button" onclick="addRow()" value="add">
         </fieldset>
-        <p>recursive</p>
-        <input type="checkbox" name="vehicle1" >Load Recursive?<br>
-        <p>Description</p>
-        <input type="text" id="rec_description"><br>
-        <p>XML Coordinator url</p>
-        <input type="text" id="coordinator"><br>
         <input type="button" value="GenerateCode" onclick="post()">
-      </form> 
+      </form>
 </body>
 </html>
