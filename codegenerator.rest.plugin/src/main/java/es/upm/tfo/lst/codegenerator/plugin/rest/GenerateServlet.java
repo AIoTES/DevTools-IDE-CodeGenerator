@@ -17,11 +17,11 @@ package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -40,7 +40,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.eclipse.jetty.util.log.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -84,15 +83,14 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("post request");
-
-		//if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
-			//System.out.println("post request");
-			// { template: "", ontologies:[{url:"", recursive:""}],
-			// variables:{varname:varvalue} }
-			// { template: "http://localhost/template/",
-			// ontologies:[{url:"https://protege.stanford.edu/ontologies/pizza/pizza.owl",recursive:"true"}], variables:{varname:varvalue} }
-			//{ "template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"} }
+		
+		addCorsHeader(resp);
+		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
+			
+		}
+			//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
+		
+		
 			JsonParser jp = new JsonParser();
 			JsonElement sreq = jp.parse(req.getReader());
 			if (sreq instanceof JsonObject) {
@@ -113,48 +111,32 @@ public class GenerateServlet extends HttpServlet {
 				// set ontologies
 				OntologyLoader ontologyLoader = new OntologyLoader();
 				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
-					for (int i = 0; i < gc.get(ONT).getAsJsonArray().size(); i++) {
-						if (gc.get(ONT).getAsJsonArray().get(0).isJsonPrimitive()) {
-							// array of strings (multiple onts without recursive)
-							gp.addOntology(
-									ontologyLoader.loadOntology(gc.get(ONT).getAsJsonArray().get(i).getAsString()),
-									false);
-						} else {
-							// array of object (multiple onts with recursive)
-							JsonObject ont = gc.get(ONT).getAsJsonArray().get(0).getAsJsonObject();
-
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
-									ont.get("recursive").getAsBoolean());
+					for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
+						if(item.isJsonPrimitive()) {
+							gp.addOntology(	ontologyLoader.loadOntology(item.getAsJsonPrimitive().getAsString()),false);
+						}
+						if(item.isJsonObject()) {
+							gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
 						}
 					}
+					
 				} else {
 					if (gc.get(ONT).isJsonPrimitive()) {
 						// string (single ont without recursive)
-						gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsString()), false);
+						gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonPrimitive().getAsString()), false);
 					} else {
 						// object (single ont with recursive parameter)
 						JsonObject ont = gc.get(ONT).getAsJsonObject();
-						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsString()),
-								ont.get("recursive").getAsBoolean());
+						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
 					}
 				}
 
 				// set variables
-
-				if(gc.get(VAR).isJsonArray()) {
-					//json generated from html ui {"template":"x","rec_description":"v","var_rec":"true","ontologies":[{"url":"vxcv","recursive":"true"}],"variables":[{"var_name":"v","var_description":"v","var_def_val":"v","var_req":"false"}]}
-					for (JsonElement iterable_element : gc.get(VAR).getAsJsonArray()) {
-						JsonObject var = iterable_element.getAsJsonObject();
-						gp.setVariable(var.get("var_name").getAsJsonPrimitive().getAsString(), var.get("var_def_val").getAsJsonPrimitive().getAsString());
-
-					}
-				}else {
+				if(gc.has(VAR)) {
 					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
 						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
 					}
 				}
-
-
 
 				// set Output
 				out = Integer.toHexString(sreq.hashCode());
@@ -177,18 +159,17 @@ public class GenerateServlet extends HttpServlet {
 				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().write(outO.toString());
 			}
-		//}
 
 
 	}
-
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
 		System.out.println("doGET "+req.getRequestURI());
-
+		addCorsHeader(resp);
+		
 		if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			System.out.println("ui requested");
 			InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
@@ -266,6 +247,16 @@ public class GenerateServlet extends HttpServlet {
 
 	}
 
+	
+	
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.doOptions(req, resp);
+		System.out.println("doOptions");
+		addCorsHeader(resp);
+	}
+
 	public void deleteFolder(File folder) {
 		File[] files = folder.listFiles();
 		if (files != null) { // some JVMs return null for empty dirs
@@ -285,4 +276,12 @@ public class GenerateServlet extends HttpServlet {
 		this.outputAlias = outputAlias;
 	}
 
+   private void addCorsHeader(HttpServletResponse response){
+        //TODO: externalize the Allow-Origin
+	   	//response.addHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8181");
+        response.addHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8181/GenerateCode");
+        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        response.addHeader("Access-Control-Max-Age", "1728000");
+    }
 }

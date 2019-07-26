@@ -7,7 +7,6 @@
     <title>Document</title>
     <script type="text/javascript">
     var restObj = {};
-
 	function changeTemplate(){
 		restObj.template = document.getElementById("coordinator").value;
 	}
@@ -52,16 +51,42 @@
         	}
     }
     function post() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-         if (this.readyState == 4 && this.status == 200) {
-             alert(this.responseText);
-         }
-    };
-    xhttp.open("POST", "/GenerateCode", true);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send(restObj);
-    //TODO get answer and go to answer.
+    console.log("posting "+restObj);
+/*
+    const form = document.createElement('form');
+    form.method = "POST";
+    form.action = "/GenerateCode";
+    
+
+    const hiddenField = document.createElement('input');
+    hiddenField.type = 'hidden';
+    hiddenField.name = "CodeGenerator";
+    hiddenField.value = restObj;
+    form.appendChild(hiddenField);
+    document.body.appendChild(form);
+    form.submit()
+   */ 
+//--------------------------------
+   
+    ///razón: falta la cabecera CORS 'Access-Control-Allow-Origin'
+    //Razón: Solicitud CORS sin éxito
+    xhr = new XMLHttpRequest();
+    var url = "/GenerateCode";
+    
+    xhr.open("POST", "http://127.0.0.1:8181/GenerateCode");
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.setRequestHeader("Access-Control-Allow-Origin","*")
+    xhr.onreadystatechange = function () { 
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
+        }else{
+            console.log("somethig wrong?");
+            console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
+            }
+    }
+    xhr.send(restObj);
+    
+ 
 	}
     </script>
 </head>
