@@ -19,12 +19,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -34,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -109,6 +114,7 @@ public class GenerateProject {
 	private File outputFolder = null;
 	private List<Exception> arrayOfExceptions = null;
 	private Properties props=null;
+	private Map<String,InputStream> protege_macros=null;
 	private List<OWLOntology> ontologies2BProcesed = new ArrayList<>();
 	private final static Logger log = Logger.getLogger(GenerateProject.class);
 	private int total2Process = 0;
@@ -157,13 +163,16 @@ public class GenerateProject {
 	 */
 	public void process() throws Exception {
 		this.calculateTotal();
+		
 		if (this.control()) {
 			try {
+//				URLClassLoader t = createURLClassLoader();
+//				 System.out.println("RESOURCE "+t.getResource("common.vm"));
 				this.initVelocity();
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
 				this.baseContext.put("OWLObjectCardinalityRestriction", OWLObjectCardinalityRestriction.class);
-
+				this.baseContext.put("esc", new EscapeTool());
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
 					this.baseContext.put(var_name, this.mainModel.getArrayVars().get(var_name).getDefaultValue());
@@ -185,7 +194,7 @@ public class GenerateProject {
 					log.warn("doesn't exist macro to DataProperties");
 				this.processProject();
 			} catch (Exception a) {
-				log.fatal("fatal error ", a);
+				log.fatal("fatal error ", a.getCause());
 				this.arrayOfExceptions.add(a);
 				throw a;
 			}
@@ -375,20 +384,12 @@ public class GenerateProject {
 		for (String s : this.mainModel.getArrayVars().keySet()) {
 			this.baseContext.put(s, this.mainModel.getArrayVars().get(s));
 		}
-		this.baseContext.put("esc", new EscapeTool());
-
-	//	vel_eng.init(this.props);
-
-
+		
 		if(this.props != null ) {
 			vel_eng.init(this.props);
 		}else {
 			try {
 				URL source = new URL(this.mainModel.getBaseTemplatePath());
-
-//				props.put("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.URLResourceLoader");
-//				props.put("url.resource.loader.root", this.mainModel.getBaseTemplatePath());
-//				props.put("url.resource.loader.cache", "true");
 				this.props = new Properties();
 				props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
 				props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -578,14 +579,14 @@ public class GenerateProject {
 	 *
 	 * @return {@link Properties} object containing the velocity properties
 	 */
-	public Properties getProps() {
+	public Properties getProperties() {
 		return props;
 	}
 	/**
 	 *
-	 * @param props {@link Properties} to add in velocity
+	 * @param props {@link Properties} to add to velocity context
 	 */
-	public void setProps(Properties props) {
+	public void setProperties(Properties props) {
 		this.props = props;
 	}
 
@@ -667,8 +668,6 @@ public class GenerateProject {
 		for (Map<String, String> key : model.getImports()) {
 			for (String k : key.keySet()) {
 				if(k.equals("EntitySearcher")) {
-
-
 					context.put(k, EntitySearcher.class);
 				}else {
 					context.put(k, new FieldMethodizer(key.get(k)) );
@@ -701,6 +700,7 @@ public class GenerateProject {
 		String processedOutput;
 
 		if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
+			System.out.println("claspath macros");
 			VelocityContext vel_context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : macro_to_apply) {
 
@@ -807,4 +807,35 @@ public class GenerateProject {
 	public String getTemplateAuthor() {
 		return this.mainModel.getAuthor();
 	}
+
+	
+	
+	public void setProtegeMacros(Map<String,InputStream> j) {
+		this.protege_macros=j;
+	}
+	private static URLClassLoader createURLClassLoader() {
+	        Collection<String> resources = ResourceList.getResources(Pattern.compile(".*\\.jar"));
+	        Collection<URL> urls = new ArrayList<URL>();
+	        for (String resource : resources) {
+	            File file = new File(resource);
+	            // Ensure that the JAR exists
+	            // and is in the globalclasspath directory.
+	            if (file.isFile() && "globalclasspath".equals(file.getParentFile().getName())) {
+	                try {
+	                    urls.add(file.toURI().toURL());
+	                } catch (MalformedURLException e) {
+	                    // This should never happen.
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	        return new URLClassLoader(urls.toArray(new URL[urls.size()]));
+	    }
+
+
+
+
+
+
+
 }
