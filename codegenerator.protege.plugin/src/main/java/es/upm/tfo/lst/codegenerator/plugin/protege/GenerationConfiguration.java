@@ -75,7 +75,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	private JComboBox sourceTextField;
 	private JComboBox outputTextfield;
 	private TableModel generateTable;
-	private GenerateProject proj;
+	private GenerateProject core_process;
 	private OWLModelManager owlModelManager;
 	private TemplateDataModel mainModel=null;
 	private XmlParser parser;
@@ -99,26 +99,25 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	public GenerationConfiguration(OWLModelManager owlModelManager) {
 		setTitle("CodeGenerator plugin");
 		 this.owlModelManager=owlModelManager;
-		 proj = new GenerateProject();
-		 this.proj.GenConf = this;
-
-			try
-			{
-				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
-				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
-				if(!templateFileOptions.exists())
-					templateFileOptions.createNewFile();
-				if(!outputFileOptions.exists())
-					outputFileOptions.createNewFile();
-
-
-			}catch (Exception e1) {
-				String mainMessage = "Message: " + e1.getMessage()
-				+ "\nStackTrace: " + Arrays.toString(e1.getStackTrace());
-				String title = e1.getClass().getName();
-				JOptionPane.showMessageDialog(null, mainMessage, title, JOptionPane.ERROR_MESSAGE);
-			}
-		 readFile();
+//		 proj = new GenerateProject();
+//		 this.proj.GenConf = this;
+//			try
+//			{
+//				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
+//				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
+//				if(!templateFileOptions.exists())
+//					templateFileOptions.createNewFile();
+//				if(!outputFileOptions.exists())
+//					outputFileOptions.createNewFile();
+//
+//
+//			}catch (Exception e1) {
+//				String mainMessage = "Message: " + e1.getMessage()
+//				+ "\nStackTrace: " + Arrays.toString(e1.getStackTrace());
+//				String title = e1.getClass().getName();
+//				JOptionPane.showMessageDialog(null, mainMessage, title, JOptionPane.ERROR_MESSAGE);
+//			}
+		 readDesplegableListOptions();
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 656, 514);
@@ -217,10 +216,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					JOptionPane.showMessageDialog(null, "Empty path not allowed, check if output directory or template directory are empty");
 					
 				}else {
-
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
-					
 					Properties props=null ;
 					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
 						props = new Properties();
@@ -385,8 +382,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 	
 	private void asyncProcess(Properties props) {
-		
-		pb = new ProgressBar(this.proj.getTotal2Process());
+		boolean error = false;
+		pb = new ProgressBar();
 		
 		swingWorker = new SwingWorker<Integer, Void>(){
 
@@ -396,13 +393,14 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				String err="";
 				System.out.println("Done!");
 				pb.setVisible(false);
-				if(proj.getErrors().isEmpty())
+				if(core_process.getErrors().isEmpty() )
 					JOptionPane.showMessageDialog(null, "Code successfully generated");
 				else {
-					for (Exception ex : proj.getErrors()) {
+					for (Exception ex : core_process.getErrors()) {
 						err+=ex.getLocalizedMessage()+"\n";
 					}
-					JOptionPane.showMessageDialog(null, "Process finished with some errros:\n"+err);					
+					//JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog( null,"Process finished with some errros:\n"+err);					
 				}
 					
 				dispose();
@@ -410,19 +408,22 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 			@Override
 			protected Integer doInBackground() throws Exception {
+				String aux = outputTextfield.getEditor().getItem().toString();
+				core_process= new GenerateProject(mainModel,props);
+				core_process.setOutputFolder(outputTextfield.getEditor().getItem().toString());
+				core_process.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
+				pb.setMax(core_process.getOntologies2BProcesed().size());
+				if(!aux.endsWith("/")) aux += "/";
+					core_process.setOutputFolder(aux);
 			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
-					String aux = outputTextfield.getEditor().getItem().toString();
-					GenerateProject generate= new GenerateProject(mainModel,props);
-					generate.setOutputFolder(outputTextfield.getEditor().getItem().toString());
-					generate.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
-					if(!aux.endsWith("/")) aux += "/";
-						generate.setOutputFolder(aux);
-					generate.process();
+					core_process.process();
 				} catch (Exception e1) {
+					System.out.println("ERROR DETECTED "+e1.getCause());
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);	
+					core_process.addError(e1);
+						
 				}
 				return null;
 			}
@@ -432,7 +433,7 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 	}
 
-	private void readFile() {
+	private void readDesplegableListOptions() {
 
 		 this.templateArrayOptions = new ArrayList<>();
 		 this.templateArrayOptions.add(def_temp);
@@ -444,18 +445,14 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 				  templateArrayOptions.add(st);
 			  }
 			  br.close();
-
 			  st=null;
-
 			  br = new BufferedReader(new FileReader(this.outputFileOptions));
 			  while ((st = br.readLine()) != null) {
 				  outputArrayOptions.add(st);
 			  }
 			  br.close();
-
 		}catch (Exception e) {
 			System.out.println(e.getLocalizedMessage());
-
 		}
 	}
 	private void writeFile( File f,String dataToWrite) {

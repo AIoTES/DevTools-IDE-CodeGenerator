@@ -25,14 +25,14 @@ import javax.swing.border.EmptyBorder;
 
 public class ProgressBar extends JFrame{
 	private int maxValue=0;
-
+	int max;
 	private JPanel contentPane;
 	public JProgressBar progressBar;
 
 	/**
 	 * Create the frame.
 	 */
-	public ProgressBar(int max) {
+	public ProgressBar() {
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 463, 199);
@@ -68,7 +68,9 @@ public class ProgressBar extends JFrame{
 		contentPane.setLayout(gl_contentPane);
 	}
 
-
+public void setMax (int ax) {
+	this.max = max;
+}
 
 
 
