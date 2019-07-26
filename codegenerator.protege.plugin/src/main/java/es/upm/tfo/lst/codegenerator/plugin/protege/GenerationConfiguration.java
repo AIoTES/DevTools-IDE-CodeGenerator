@@ -30,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +47,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -58,10 +57,8 @@ import javax.swing.table.TableModel;
 
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -186,7 +183,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					JOptionPane.showMessageDialog(null, message);
 					e1.printStackTrace();
 				}
-
 				//parser.setOutput(tempWebTemplate.getPath());
 				if(mainModel!=null) {
 					generateTable= new CodeGenerationVariableTable(mainModel);
@@ -218,23 +214,12 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			public void actionPerformed(ActionEvent e) {
 
 				if(sourceTextField.getEditor().getItem().toString().equals("") || outputTextfield.getSelectedItem().toString().equals("")) {
-					//System.out.println(sourceTextField.getEditor().getItem().toString());
-					JOptionPane.showMessageDialog(null, " empty path not allowed, check if output directory or template directory are empty");
+					JOptionPane.showMessageDialog(null, "Empty path not allowed, check if output directory or template directory are empty");
 					
 				}else {
 
-
-//					proj.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
-//					proj.setMainModel(mainModel);
-//					proj.setOutputFolder(sourceTextField.getEditor().toString());
-
-//					String aux = outputTextfield.getEditor().getItem().toString();
-//					if(!aux.endsWith("/")) aux += "/";
-//					proj.setOutputFolder(aux);
-
 					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
 					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
-					
 					
 					Properties props=null ;
 					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
@@ -242,10 +227,8 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 						props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
 						props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
 						props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-						//props.setProperty("classpath.resource.loader.root", "src/main/resources");
-
 					}
-
+					//if pros is null...GenerateCode instance will be initialize the properties internally
 					asyncProcess(props);
 				}
 			}
@@ -267,28 +250,27 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
 
-				fc.setFileFilter(new FileFilter() {
-
-					@Override
-					public String getDescription() {
-						return "Coordinator XML file";
-					}
-
-					@Override
-					public boolean accept(File f) {
-						return f.getName().toLowerCase().endsWith(".xml");
-					}
-				});
+//				fc.setFileFilter(new FileFilter() {
+//
+//					@Override
+//					public String getDescription() {
+//						return "Coordinator XML file";
+//					}
+//
+//					@Override
+//					public boolean accept(File f) {
+//						return f.getName().toLowerCase().endsWith(".xml");
+//					}
+//				});
 				int returnVal = fc.showOpenDialog(GenerationConfiguration.this);
 
 		        if (returnVal == JFileChooser.APPROVE_OPTION) {
 		            File file = fc.getSelectedFile();
 		            sourceTextField.setSelectedItem(file.getAbsolutePath());
 		        }
-		        //
+
 			}
 		});
-
 
 		//button to select output directory
 		JButton btnOutputFileChooser = new JButton("...");
@@ -323,7 +305,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			public void actionPerformed(ActionEvent e) {
 				String template_info ="Description: "+mainModel.getTemplateDescription()+"\n";
 				JOptionPane.showMessageDialog(null, template_info);
-				//TODO show alert with template information
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -402,11 +383,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 
 
-	private void saveComboContent(String t){
-			if(new File(t).exists()) {
-				//save data
-			}
-	}
 	
 	private void asyncProcess(Properties props) {
 		
@@ -417,10 +393,17 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 			@Override
 			protected void done() {
+				String err="";
 				System.out.println("Done!");
 				pb.setVisible(false);
 				if(proj.getErrors().isEmpty())
 					JOptionPane.showMessageDialog(null, "Code successfully generated");
+				else {
+					for (Exception ex : proj.getErrors()) {
+						err+=ex.getLocalizedMessage()+"\n";
+					}
+					JOptionPane.showMessageDialog(null, "Process finished with some errros:\n"+err);					
+				}
 					
 				dispose();
 			}
@@ -430,33 +413,19 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 			    pb.setVisible(true);
 				System.out.println("doInBackground...");
 				try {
-
 					String aux = outputTextfield.getEditor().getItem().toString();
-					
 					GenerateProject generate= new GenerateProject(mainModel,props);
 					generate.setOutputFolder(outputTextfield.getEditor().getItem().toString());
 					generate.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
 					if(!aux.endsWith("/")) aux += "/";
-					generate.setOutputFolder(aux);
+						generate.setOutputFolder(aux);
 					generate.process();
-					/*
-					this.genPro.setMainModel(this.model)	
-					this.genPro.addOntology(this.ontologyLoader.loadOntology(this.ontologyBasePath+"universidad.owl"), true);
-					this.genPro.setOutputFolder("target/completeTest/");
-					File f = new File(baseOutput);
-					f.mkdirs();
-					genPro.process();
-					 * */
-					//proj.process();
-					//generate.process();
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-					
+					JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);	
 				}
 				return null;
 			}
-
 		};
 		swingWorker.execute();
 
