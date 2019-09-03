@@ -172,6 +172,8 @@ public class GenerateProject {
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
 				this.baseContext.put("OWLObjectCardinalityRestriction", OWLObjectCardinalityRestriction.class);
+				this.baseContext.put("EntitySearcher", EntitySearcher.class);
+				this.baseContext.put("AxiomType", AxiomType.class);
 				this.baseContext.put("esc", new EscapeTool());
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
@@ -243,12 +245,12 @@ public class GenerateProject {
 			this.applyMacro(toAdd, this.mainModel.getOntologyMacros() ,true);
 		}
 
-			for (OWLAxiom axiom : ontology.getAxioms()) {
-				if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
-					OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
-					this.processClass(cls, ontology);
-				}
+		for (OWLAxiom axiom : ontology.getAxioms()) {
+			if (axiom.isOfType(AxiomType.DECLARATION) && ((OWLDeclarationAxiom) axiom).getEntity().isOWLClass()) {
+				OWLClass cls = (OWLClass) ((OWLDeclarationAxiom) axiom).getEntity();
+				this.processClass(cls, ontology);
 			}
+		}
 
 		this.processNamedIndividual(ontology);
 		this.processAnnotations(ontology);
