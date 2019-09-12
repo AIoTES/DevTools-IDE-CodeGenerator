@@ -84,7 +84,7 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		addCorsHeader(resp);
+		addCorsHeaderPOST(resp);
 		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
 			
 		}
@@ -168,7 +168,10 @@ public class GenerateServlet extends HttpServlet {
 		String line, req_data, aux;
 		URL urlToFile;
 		System.out.println("doGET "+req.getRequestURI());
-		addCorsHeader(resp);
+        
+		//addCorsHeader(resp);
+		addCorsHeaderPOST(resp);
+
 		
 		if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			System.out.println("ui requested");
@@ -237,14 +240,6 @@ public class GenerateServlet extends HttpServlet {
 			return;
 		}
 
-
-//		else {
-//			resp.getWriter().write("nothing to show in this path");
-//
-//		}
-//
-
-
 	}
 
 	
@@ -277,11 +272,15 @@ public class GenerateServlet extends HttpServlet {
 	}
 
    private void addCorsHeader(HttpServletResponse response){
-        //TODO: externalize the Allow-Origin
-	   	//response.addHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8181");
-        response.addHeader("Access-Control-Allow-Origin", "http://127.0.0.1:8181/GenerateCode");
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
-        response.addHeader("Access-Control-Max-Age", "1728000");
+        response.addHeader("Access-Control-Allow-Headers", "*");
+        response.addHeader("Access-Control-Allow-Credentials", "true");
+  
     }
+   private void addCorsHeaderPOST(HttpServletResponse response){
+       response.addHeader("Access-Control-Allow-Origin", "*");
+	    response.addHeader("Access-Control-Allow-Credentials", "true");
+   	
+   }
 }
