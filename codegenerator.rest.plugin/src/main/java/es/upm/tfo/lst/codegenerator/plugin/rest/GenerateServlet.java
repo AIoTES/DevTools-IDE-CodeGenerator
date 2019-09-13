@@ -27,7 +27,9 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
+import javax.print.attribute.standard.Media;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,7 +40,9 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
+import org.eclipse.jetty.util.log.Log;
 
+import com.google.common.net.MediaType;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -59,7 +63,6 @@ public class GenerateServlet extends HttpServlet {
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
 	private static final String CONTENT_TYPE = "Content-Type";
-	private static final String SERVER = "http://localhost:8181/";
 	private File tempFolder;
 	private String outputAlias, outDir,out ;
 	private VelocityContext velocityContext;
@@ -77,79 +80,72 @@ public class GenerateServlet extends HttpServlet {
 	}
 
 	private static final long serialVersionUID = 1L;
-
+	//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
 		addCorsHeaderPOST(resp);
 		JsonParser jp = new JsonParser();
 		TemplateDataModel model = null;
 		XmlParser parser = new XmlParser();
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
-			
-		}
-			//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
-		
-		
-		try {
-			//resp.sendRedirect("http://localhost:8080/example/test2");
-			
-			JsonElement sreq = jp.parse(req.getReader());
-			if (sreq instanceof JsonObject) {
-				JsonObject gc = (JsonObject) sreq;
-				model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
-				GenerateProject gp = new GenerateProject();
-				gp.setMainModel(model);
-				// set ontologies
-				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
-					for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
-						if(item.isJsonPrimitive()) {
-							gp.addOntology(	ontologyLoader.loadOntology(item.getAsJsonPrimitive().getAsString()),false);
+			try {
+				//resp.sendRedirect("http://localhost:8080/example/test2");
+				
+				JsonElement sreq = jp.parse(req.getReader());
+				if (sreq instanceof JsonObject) {
+					JsonObject gc = (JsonObject) sreq;
+					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+					GenerateProject gp = new GenerateProject();
+					gp.setMainModel(model);
+					// set ontologies
+					if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
+						for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
+							if(item.isJsonPrimitive()) {
+								gp.addOntology(	ontologyLoader.loadOntology(item.getAsJsonPrimitive().getAsString()),false);
+							}
+							if(item.isJsonObject()) {
+								gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
+							}
 						}
-						if(item.isJsonObject()) {
-							gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
-						}
-					}
-				} else {
-					if (gc.get(ONT).isJsonPrimitive()) {
-						// string (single ont without recursive)
-						gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonPrimitive().getAsString()), false);
 					} else {
-						// object (single ont with recursive parameter)
-						JsonObject ont = gc.get(ONT).getAsJsonObject();
-						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
+						if (gc.get(ONT).isJsonPrimitive()) {
+							// string (single ont without recursive)
+							gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonPrimitive().getAsString()), false);
+						} else {
+							// object (single ont with recursive parameter)
+							JsonObject ont = gc.get(ONT).getAsJsonObject();
+							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
+						}
 					}
-				}
-				// set variables
-				if(gc.has(VAR)) {
-					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
-						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+					// set variables
+					if(gc.has(VAR)) {
+						for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
+							gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+						}
 					}
-				}
-				// set Output
-				out = Integer.toHexString(sreq.hashCode());
-				File outFile = new File(tempFolder, out);
-				// Files.deleteIfExists(outFile.toPath());
-				this.deleteFolder(outFile);
-				outFile.mkdirs();
-				gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
-				System.out.println(outFile.getAbsolutePath());
-				// generate
-				gp.process();
-				this.response_get_path = outputAlias;
-				outO.addProperty("output", outputAlias+"/"+out);
-				resp.addHeader(CONTENT_TYPE, "application/json");
-				resp.getWriter().write(outO.toString());
-				resp.sendRedirect(this.SERVER+"GenerateCode");
-			}else
-				resp.sendError(400,"invalid json root element");
-		}catch (Exception e) {
-			resp.sendError(400,e.getLocalizedMessage());
-		}
-		
-	
-
+					// set Output
+					out = Integer.toHexString(sreq.hashCode());
+					File outFile = new File(tempFolder, out);
+					// Files.deleteIfExists(outFile.toPath());
+					this.deleteFolder(outFile);
+					outFile.mkdirs();
+					gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
+					//System.out.println(outFile.getAbsolutePath());
+					// generate
+					gp.process();
+					this.response_get_path = outputAlias;
+					outO.addProperty("output", outputAlias+"/"+out);
+					resp.addHeader(CONTENT_TYPE, "application/json");
+					resp.getWriter().write("code sucessfull generated, please see localhost:8181/GenerateCode" );
+					//resp.sendRedirect(this.SERVER+"GenerateCode");
+				}else
+					resp.sendError(400,"invalid json root element");
+			}catch (Exception e) {
+				resp.sendError(400,e.getLocalizedMessage());
+			}
+		}else
+			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
 	}
 
@@ -157,12 +153,8 @@ public class GenerateServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data, aux;
 		URL urlToFile;
-		System.out.println("doGET "+req.getRequestURI());
-        
-		//addCorsHeader(resp);
+       
 		addCorsHeaderPOST(resp);
-
-		
 		if(req.getRequestURI().equals("/GenerateCode/ui")) {
 			System.out.println("ui requested");
 			InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
@@ -174,8 +166,7 @@ public class GenerateServlet extends HttpServlet {
 			resp.getWriter().write(web_content);
 			return;
 		}else  {
-			//if(req.getRequestURI().contains("/GenerateCode"))
-			System.out.println("GenerateCode requested ");
+			
 			req_data = req.getRequestURI().replaceAll(servletName, "");
 			System.out.println("req_data "+req_data);
 
