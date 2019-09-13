@@ -70,26 +70,9 @@
         	restObj.ontologies = [ontology];
         	}
     }
-    function post() {
-    console.log("posting "+restObj);
-/*
-    const form = document.createElement('form');
-    form.method = "POST";
-    form.action = "/GenerateCode";
     
-
-    const hiddenField = document.createElement('input');
-    hiddenField.type = 'hidden';
-    hiddenField.name = "CodeGenerator";
-    hiddenField.value = restObj;
-    form.appendChild(hiddenField);
-    document.body.appendChild(form);
-    form.submit()
-   */ 
-//--------------------------------
-   
-    ///razón: falta la cabecera CORS 'Access-Control-Allow-Origin'
-    //Razón: Solicitud CORS sin éxito
+    function post() {
+  
     xhr = new XMLHttpRequest();
     var url = "/GenerateCode";
     
@@ -100,11 +83,12 @@
         if (xhr.readyState == 4 && xhr.status == 200) {
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
         }else{
-            console.log("somethig wrong?");
-            console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
+            console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText + "status code "+xhr.status);
             }
     }
-    xhr.send(restObj);
+    var data = JSON.stringify(restObj);
+    console.log(data);
+    xhr.send(data);
     
  
 	}

@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -37,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
 
@@ -61,10 +59,10 @@ public class GenerateServlet extends HttpServlet {
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
 	private static final String CONTENT_TYPE = "Content-Type";
+	private static final String SERVER = "http://localhost:8181/";
 	private File tempFolder;
 	private String outputAlias, outDir,out ;
 	private VelocityContext velocityContext;
-	private VelocityEngine vel_eng;
 	private Template template;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private final String baseTemplatePath = "/";
@@ -74,7 +72,6 @@ public class GenerateServlet extends HttpServlet {
 
 	public GenerateServlet(String outDir) {
 		this.outDir = outDir;
-		this.vel_eng = new VelocityEngine();
 		this.velocityContext = new VelocityContext();
 		outO = new JsonObject();
 	}
@@ -85,31 +82,26 @@ public class GenerateServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		addCorsHeaderPOST(resp);
+		JsonParser jp = new JsonParser();
+		TemplateDataModel model = null;
+		XmlParser parser = new XmlParser();
+		OntologyLoader ontologyLoader = new OntologyLoader();
 		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
 			
 		}
 			//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
 		
 		
-			JsonParser jp = new JsonParser();
+		try {
+			//resp.sendRedirect("http://localhost:8080/example/test2");
+			
 			JsonElement sreq = jp.parse(req.getReader());
 			if (sreq instanceof JsonObject) {
 				JsonObject gc = (JsonObject) sreq;
-				// set template & init project
-				XmlParser parser = new XmlParser();
-				TemplateDataModel model = null;
-				try {
-					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
-				} catch (Exception e) {
-					resp.sendError(400, e.getMessage());
-					return;
-					// e.printStackTrace();
-				}
-
+				model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
 				GenerateProject gp = new GenerateProject();
 				gp.setMainModel(model);
 				// set ontologies
-				OntologyLoader ontologyLoader = new OntologyLoader();
 				if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
 					for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
 						if(item.isJsonPrimitive()) {
@@ -119,7 +111,6 @@ public class GenerateServlet extends HttpServlet {
 							gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
 						}
 					}
-					
 				} else {
 					if (gc.get(ONT).isJsonPrimitive()) {
 						// string (single ont without recursive)
@@ -130,14 +121,12 @@ public class GenerateServlet extends HttpServlet {
 						gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
 					}
 				}
-
 				// set variables
 				if(gc.has(VAR)) {
 					for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
 						gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
 					}
 				}
-
 				// set Output
 				out = Integer.toHexString(sreq.hashCode());
 				File outFile = new File(tempFolder, out);
@@ -147,18 +136,19 @@ public class GenerateServlet extends HttpServlet {
 				gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
 				System.out.println(outFile.getAbsolutePath());
 				// generate
-				try {
-					gp.process();
-				} catch (Exception e) {
-					resp.getWriter().println(e.getMessage());
-
-				}
-				boolean result;
+				gp.process();
 				this.response_get_path = outputAlias;
 				outO.addProperty("output", outputAlias+"/"+out);
 				resp.addHeader(CONTENT_TYPE, "application/json");
 				resp.getWriter().write(outO.toString());
-			}
+				resp.sendRedirect(this.SERVER+"GenerateCode");
+			}else
+				resp.sendError(400,"invalid json root element");
+		}catch (Exception e) {
+			resp.sendError(400,e.getLocalizedMessage());
+		}
+		
+	
 
 
 	}
@@ -195,13 +185,13 @@ public class GenerateServlet extends HttpServlet {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
 					System.out.println("is file");
-					BufferedReader br = null;
-					br = new BufferedReader(new FileReader(t));
+					BufferedReader br = new BufferedReader(new FileReader(t));
 					StringBuilder sb = new StringBuilder();
 
 					while ((line = br.readLine()) != null) {
 						sb.append(line);
 					}
+					br.close();
 					resp.getWriter().write(sb.toString());
 				}else
 
@@ -248,7 +238,6 @@ public class GenerateServlet extends HttpServlet {
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		super.doOptions(req, resp);
-		System.out.println("doOptions");
 		addCorsHeader(resp);
 	}
 
