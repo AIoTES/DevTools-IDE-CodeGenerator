@@ -89,7 +89,7 @@ public class OntologyLoader {
 					}
 					// this.ontologyManager.getIRIMappers().add(new AutoIRIMapper(new
 					// File("src/test/resources/ontologies/"), true));
-					this.ontologyManager.getIRIMappers().add(new AutoIRIMapper(new File(k), true));
+					//this.ontologyManager.getIRIMappers().add(new AutoIRIMapper(new File(k), true));
 					try {
 						ont = this.ontologyManager.loadOntologyFromOntologyDocument(this.ontologyFile);
 					} catch (OWLOntologyCreationException e) {
