@@ -7,7 +7,7 @@ info:
   contact:
     email: "ebuhid@lst.tfo.upm.es"
   license:
-    name: "LST licence"
+    name: "Apache licence"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "localhost:8181"
 basePath: "/GenerateCode/ui"
