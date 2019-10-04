@@ -28,31 +28,57 @@
     </style>
     <script type="text/javascript">
     var restObj = {};
+
 	function changeTemplate(){
 		restObj.template = document.getElementById("coordinator").value;
 	}
 
-    function addRow() {
+	function delVar(var_name) {
+		var row = document.getElementById("var_row_"+var_name);
+    	row.parentNode.removeChild(row);
+    	delete restObj.variables[var_name];
+	}
+
+    function addVar() {
         var table = document.getElementById("variables_table");
         var row_count = table.getElementsByTagName("tr").length;
-        var row = table.insertRow(row_count);
+        var row = table.insertRow(row_count-1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
         var var_name = document.getElementById("var_name").value;
+        row.id="var_row_"+var_name;
         var var_val = document.getElementById("var_val").value;
         cell1.innerHTML=var_name;
         cell2.innerHTML=var_val;
-
+	    cell3.innerHTML='<input type="button" onclick="delVar(\''+var_name+'\')" value="del">'
         if (!restObj.hasOwnProperty("variables")) {
         	restObj.variables={}
         }
         restObj.variables[var_name]=var_val;
+        
+        document.getElementById("var_name").value="";
+        document.getElementById("var_val").value="";
     }
+    	
+    function delOnt(ont_url) {
+		var row = document.getElementById("ont_row_"+ont_url);
+    	row.parentNode.removeChild(row);
+    	
+    	
+    	for( var i = 0; i < restObj.ontologies.length; i++){ 
+  			if ( restObj.ontologies[i].url === ont_url) {
+				restObj.ontologies.splice(i, 1); 
+			}
+		}
+	}
     function addOnt(){
         var table = document.getElementById("ont_table");
-        var row = table.insertRow(1);
+        var row_count = table.getElementsByTagName("tr").length;
+        var row = table.insertRow(row_count-1);
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
         var ont_url = document.getElementById("ontology").value;
         var var_req =""
         if(document.getElementById("ont_recursive").checked){
@@ -62,6 +88,8 @@
         }
         cell1.innerHTML=ont_url;
         cell2.innerHTML=var_req;
+        row.id="ont_row_"+ont_url
+	    cell3.innerHTML='<input type="button" onclick="delOnt(\''+ont_url+'\')" value="del">'
         var ontology={url:"",recursive:""}
         ontology.url=ont_url;
         ontology.recursive=var_req;
@@ -70,20 +98,29 @@
         	} else {
         	restObj.ontologies = [ontology];
         	}
+        
+        document.getElementById("ontology").value="";
+        document.getElementById("ont_recursive").checked=false;
     }
     
     function post() {
   
     xhr = new XMLHttpRequest();
-    var url = "/GenerateCode";
     
-    xhr.open("POST", "http://127.0.0.1:8181/GenerateCode");
+    var pathArray = window.location.pathname.split('/');
+    var newPathname = "";
+	for (i = 0; i < pathArray.length-1; i++) {
+		newPathname += "/";
+		newPathname += pathArray[i];
+	}
+    xhr.open("POST", "window.location.protocol + "//" + window.location.host + "/" + newPathname + window.location.search");
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin","*")
     xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
-            location.replace("localhost:8181/GenerateCode")
+            //TODO extract output from response and add to newPathname.
+            location.replace("window.location.protocol + "//" + window.location.host + "/" + newPathname + window.location.search")
         }else{
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText + "status code "+xhr.status);
             }
@@ -108,36 +145,29 @@
                             <tr>
                                 <th>Ontology URL</th>
                                 <th>Recursive</th>
+                                <th>operation</th>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="ontology"></td>
+                                <td><input type="checkbox"   id="ont_recursive"></td>
+                                <td><input type="button" onclick="addOnt()" value="add"></td>
                             </tr>
                         </table>
-                        <fieldset class="fieldset" id="ont_fieldset">
-                        <legend>Ontologies</legend>
-                
-                        <input type="text" id="ontology"><br>
-                        <input type="button" onclick="addOnt()" value="add">
-                        <input type="checkbox"   id="ont_recursive">load recursively<br>
-                
-                        </fieldset>
-
             </div>
             <div class="c1">
                     <table id="variables_table">
                             <tr>
                                 <th>Variable name</th>
                                 <th>Variable value</th>
+                                <th>Operation</th>
+                            </tr>
+                            <tr>
+								<td><input type="text" id="var_name"></td>
+								<td><input type="text" id="var_val"></td>
+								<td><input type="button" onclick="addVar()" value="add"></td>
                             </tr>
                         </table>
-                        <fieldset class="fieldset" id="vars_dieldset">
-                            <legend>varaibles:</legend>
-                            Name: <input type="text" id="var_name"><br>
-                            Value: <input type="text" id="var_val"><br>
-                        <input type="button" onclick="addRow()" value="add">
-                        </fieldset>
-
             </div>
-   
-    
-
             <input type="button" value="GenerateCode" onclick="post()">
           </form>
     </fieldset>
