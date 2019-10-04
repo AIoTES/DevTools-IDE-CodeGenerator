@@ -44,7 +44,7 @@ public class Activator implements BundleActivator, ServiceListener {
 	private GenerateServlet servlet;
 
 	private File outputDir;
-	private String outputAlias = "/GenerateCode";
+	private static String aliasPath = System.getenv().getOrDefault("CODEGENERATOR_PATH", "/GenerateCode");
 
 	/*
 	 * (non-Javadoc)
@@ -60,9 +60,9 @@ public class Activator implements BundleActivator, ServiceListener {
 			loggerFactory = (LoggerFactory) context.getService(ref);
 		}
 		outputDir = context.getBundle().getDataFile("output");
-		servlet = new GenerateServlet(outputDir.getAbsolutePath());
+		servlet = new GenerateServlet();
 
-		servlet.setOutputDir(outputDir, outputAlias);
+		servlet.setOutputDir(outputDir, aliasPath);
 		register();
 		context.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + HttpService.class.getName() + ")");
 	}
@@ -85,7 +85,7 @@ public class Activator implements BundleActivator, ServiceListener {
 			HttpService httpService = (HttpService) context.getService(sRef);
 
 			try {
-				httpService.registerServlet(servlet.getClass().getAnnotation(WebServlet.class).value()[0], servlet,
+				httpService.registerServlet(aliasPath, servlet,
 						null, new OutputHTTPContext(outputDir));
 			} catch (ServletException e) {
 				logger.error("Exception while registering Servlet.", e);
