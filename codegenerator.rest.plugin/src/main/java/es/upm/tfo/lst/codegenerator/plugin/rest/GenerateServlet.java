@@ -25,13 +25,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
-import javax.print.attribute.standard.Media;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +36,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
-import org.eclipse.jetty.util.log.Log;
 
-import com.google.common.net.MediaType;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -56,27 +50,16 @@ import es.upm.tfo.lst.CodeGenerator.xmlparser.XmlParser;
  * @author amedrano
  *
  */
-@WebServlet(value = "/GenerateCode", name = "CodeGenerator")
 public class GenerateServlet extends HttpServlet {
-	private Properties props = null;
 	private static final String ONT = "ontologies";
 	private static final String TEMPLATE = "template";
 	private static final String VAR = "variables";
 	private static final String CONTENT_TYPE = "Content-Type";
 	private File tempFolder;
-	private String outputAlias, outDir,out ;
-	private VelocityContext velocityContext;
-	private Template template;
+	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
-	private final String baseTemplatePath = "/";
-	private String servletName = "/GenerateCode";
-	private JsonObject outO = null;
-	private String response_get_path="";
 
-	public GenerateServlet(String outDir) {
-		this.outDir = outDir;
-		this.velocityContext = new VelocityContext();
-		outO = new JsonObject();
+	public GenerateServlet() {
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -90,8 +73,6 @@ public class GenerateServlet extends HttpServlet {
 		OntologyLoader ontologyLoader = new OntologyLoader();
 		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
 			try {
-				//resp.sendRedirect("http://localhost:8080/example/test2");
-				
 				JsonElement sreq = jp.parse(req.getReader());
 				if (sreq instanceof JsonObject) {
 					JsonObject gc = (JsonObject) sreq;
@@ -125,19 +106,18 @@ public class GenerateServlet extends HttpServlet {
 						}
 					}
 					// set Output
-					out = Integer.toHexString(sreq.hashCode());
+					String out = Integer.toHexString(sreq.hashCode());
 					File outFile = new File(tempFolder, out);
-					// Files.deleteIfExists(outFile.toPath());
 					this.deleteFolder(outFile);
 					outFile.mkdirs();
 					gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
 					//System.out.println(outFile.getAbsolutePath());
 					// generate
 					gp.process();
-					this.response_get_path = outputAlias;
+					JsonObject outO = new JsonObject();
 					outO.addProperty("output", outputAlias+"/"+out);
 					resp.addHeader(CONTENT_TYPE, "application/json");
-					resp.getWriter().write("code sucessfull generated, please see localhost:8181/GenerateCode" );
+					resp.getWriter().write(outO.toString());
 					//resp.sendRedirect(this.SERVER+"GenerateCode");
 				}else
 					resp.sendError(400,"invalid json root element");
@@ -151,11 +131,12 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String line, req_data, aux;
+		String line, req_data;
 		URL urlToFile;
        
 		addCorsHeaderPOST(resp);
-		if(req.getRequestURI().equals("/GenerateCode/ui")) {
+		if(req.getRequestURI().equals(outputAlias+"/ui")) {
+			// UI request
 			System.out.println("ui requested");
 			InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
 			String web_content = "";
@@ -167,14 +148,15 @@ public class GenerateServlet extends HttpServlet {
 			return;
 		}else  {
 			
-			req_data = req.getRequestURI().replaceAll(servletName, "");
+			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			System.out.println("req_data "+req_data);
 
-			urlToFile = this.getServletContext().getResource(out+req_data);
+			urlToFile = this.getServletContext().getResource(req_data);
 
 			try {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
+					// request a file
 					System.out.println("is file");
 					BufferedReader br = new BufferedReader(new FileReader(t));
 					StringBuilder sb = new StringBuilder();
@@ -184,10 +166,8 @@ public class GenerateServlet extends HttpServlet {
 					}
 					br.close();
 					resp.getWriter().write(sb.toString());
-				}else
-
-				if (t.isDirectory()) {
-
+				}else if (t.isDirectory() && !t.equals(tempFolder)) {
+					// request listing of a directory (not the root)
 					BufferedReader br = null;
 					br = new BufferedReader(new InputStreamReader(
 							GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
@@ -227,7 +207,6 @@ public class GenerateServlet extends HttpServlet {
 	
 	@Override
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		super.doOptions(req, resp);
 		addCorsHeader(resp);
 	}
@@ -248,10 +227,11 @@ public class GenerateServlet extends HttpServlet {
 
 	public void setOutputDir(File outputDir, String outputAlias) {
 		tempFolder = outputDir;
-		this.outputAlias = outputAlias;
+		this.outputAlias = outputAlias.equals("/")?"":outputAlias.startsWith("/")?outputAlias:"/"+outputAlias ;
 	}
 
    private void addCorsHeader(HttpServletResponse response){
+	   //TODO CORS may only be needed for GET of http://www.apache.org/icons/*"
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
         response.addHeader("Access-Control-Allow-Headers", "*");
