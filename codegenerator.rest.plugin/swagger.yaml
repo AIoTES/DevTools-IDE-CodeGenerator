@@ -41,18 +41,13 @@ paths:
     get:
       tags:
       - "UI"
-      summary: "Update an existing pet"
+      summary: "Access to UI tool"
       description: ""
-      operationId: "updatePet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/xml"
-      - "application/json"
+      operationId: "getUI"
       responses:
         404:
           description: "Servet not found"
+        
         
 definitions:
   Ontology:
