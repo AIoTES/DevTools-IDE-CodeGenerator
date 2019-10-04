@@ -1,0 +1,77 @@
+swagger: "2.0"
+info:
+  description: "OPENAPI specification to work with CodeGenerator REST plugin. See https://gitlab.lst.tfo.upm.es/Activage-madrid-ds/code.generator/wikis/REST-plugin-guide"
+  version: "1.0.0"
+  title: "CodeGenerator"
+  termsOfService: "http://lst.tfo.upm.es/terms/"
+  contact:
+    email: "ebuhid@lst.tfo.upm.es"
+  license:
+    name: "Apache licence"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8181"
+basePath: "/GenerateCode/ui"
+
+schemes:
+- "http"
+paths:
+  /GenerateCode:
+    post:
+      tags:
+      - "Generate Code"
+      summary: "generate code "
+      description: ""
+      operationId: "generateCode"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "object that needs to generate code"
+        required: true
+        schema:
+          $ref: "#/definitions/Gen"
+      responses:
+        405:
+          description: "Invalid input"
+   
+  /GenerateCode/ui:      
+    get:
+      tags:
+      - "UI"
+      summary: "Access to UI tool"
+      description: ""
+      operationId: "getUI"
+      responses:
+        404:
+          description: "Servet not found"
+        
+        
+definitions:
+  Ontology:
+    type: "array"
+    items:
+          $ref: "#/definitions/Tag"    
+  Tag:
+    type: "object"
+    properties:
+      url:
+        type: "string"
+      recursive:
+        type: "boolean"
+    xml:
+      name: "Tag"
+  Gen:
+    type: "object"
+    properties:
+      template:
+        type: "string"
+      ontology:
+        $ref: "#/definitions/Ontology"
+      variables:
+        type: object
+        properties:
+          varname:
+            type: string
