@@ -113,14 +113,14 @@
 		newPathname += "/";
 		newPathname += pathArray[i];
 	}
-    xhr.open("POST", "window.location.protocol + "//" + window.location.host + "/" + newPathname + window.location.search");
+    xhr.open("POST", "window.location.protocol");
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin","*")
     xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
             //TODO extract output from response and add to newPathname.
-            location.replace("window.location.protocol + "//" + window.location.host + "/" + newPathname + window.location.search")
+            location.replace("window.location.protocol");
         }else{
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText + "status code "+xhr.status);
             }
