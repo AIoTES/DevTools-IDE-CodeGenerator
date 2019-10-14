@@ -184,7 +184,7 @@ public class XmlParser {
 	 */
 	public TemplateDataModel generateXMLCoordinator(InputStream xmlPath) throws Exception {
 		log.debug("read from stream");
-		this.readXML((InputStream) xmlPath);
+		this.readXML(xmlPath);
 		this.javaXMLModel.setBaseTemplatePath("classpath");
 		return this.javaXMLModel;
 	}

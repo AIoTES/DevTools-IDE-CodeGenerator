@@ -390,11 +390,14 @@ public class GenerateProject {
 		}
 		
 		if(this.props != null ) {
+			System.out.println("not null props");
 			vel_eng.init(this.props);
+			
 		}else {
 			try {
 				URL source = new URL(this.mainModel.getBaseTemplatePath());
 				this.props = new Properties();
+				
 				props.setProperty("url.resource.loader.description", "Velocity URL Resource Loader");
 				props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
 				props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
@@ -707,7 +710,7 @@ public class GenerateProject {
 			System.out.println("claspath macros");
 			VelocityContext vel_context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : macro_to_apply) {
-
+				System.out.println("template for "+macroModel.getTemplateFor());
 				String processed_string = this.evaluateVTLString(macroModel.getOutput(),vel_context);
 				 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macroModel.getTemplateName())));
 				 File outputFile = new File(this.outputFolder , processed_string);

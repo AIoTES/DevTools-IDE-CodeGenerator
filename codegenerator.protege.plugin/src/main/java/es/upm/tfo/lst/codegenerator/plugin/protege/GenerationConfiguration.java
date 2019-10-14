@@ -96,24 +96,6 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 	public GenerationConfiguration(OWLModelManager owlModelManager) {
 		setTitle("CodeGenerator plugin");
 		 this.owlModelManager=owlModelManager;
-//		 proj = new GenerateProject();
-//		 this.proj.GenConf = this;
-//			try
-//			{
-//				templateFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.templates").getAbsolutePath());
-//				outputFileOptions=new File(ProtegeOWL.getBundleContext().getDataFile("codegenerator.history.output").getAbsolutePath());
-//				if(!templateFileOptions.exists())
-//					templateFileOptions.createNewFile();
-//				if(!outputFileOptions.exists())
-//					outputFileOptions.createNewFile();
-//
-//
-//			}catch (Exception e1) {
-//				String mainMessage = "Message: " + e1.getMessage()
-//				+ "\nStackTrace: " + Arrays.toString(e1.getStackTrace());
-//				String title = e1.getClass().getName();
-//				JOptionPane.showMessageDialog(null, mainMessage, title, JOptionPane.ERROR_MESSAGE);
-//			}
 		 readDesplegableListOptions();
 		setBackground(Color.LIGHT_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -213,17 +195,17 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					JOptionPane.showMessageDialog(null, "Empty path not allowed, check if output directory or template directory are empty");
 					
 				}else {
-					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
-					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
-					Properties props=null ;
-					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
-						props = new Properties();
-						props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
-						props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
-						props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-					}
+//					writeFile(outputFileOptions, outputTextfield.getEditor().getItem().toString());
+//					writeFile(templateFileOptions, sourceTextField.getEditor().getItem().toString());
+//					Properties props=null ;
+//					if(sourceTextField.getEditor().getItem().toString().equals(def_temp)) {
+//						props = new Properties();
+//						props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
+//						props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
+//						props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+//					}
 					//if pros is null...GenerateCode instance will be initialize the properties internally
-					asyncProcess(props);
+					asyncProcess(null);
 				}
 			}
 		});
@@ -387,34 +369,49 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 
 			@Override
 			protected void done() {
-				String err="";
-				System.out.println("Done!");
-				pb.setVisible(false);
-				if(core_process.getErrors().isEmpty() )
-					JOptionPane.showMessageDialog(null, "Code successfully generated");
-				else {
-					for (Exception ex : core_process.getErrors()) {
-						err+=ex.getLocalizedMessage()+"\n";
-					}
-					//JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-					JOptionPane.showMessageDialog( null,"Process finished with some errros:\n"+err);					
-				}
-					
+//				String err="";
+//				System.out.println("Done!");
+//				pb.setVisible(false);
+//				if(core_process.getErrors().isEmpty() )
+//					JOptionPane.showMessageDialog(null, "Code successfully generated");
+//				else {
+//					for (Exception ex : core_process.getErrors()) {
+//						err+=ex.getLocalizedMessage()+"\n";
+//					}
+//					//JOptionPane.showMessageDialog(null, "exception given in process... "+e1.getLocalizedMessage(), e1.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+//					JOptionPane.showMessageDialog( null,"Process finished with some errros:\n"+err);					
+//				}
 				dispose();
+				
 			}
 
 			@Override
-			protected Integer doInBackground() throws Exception {
-				String aux = outputTextfield.getEditor().getItem().toString();
-				core_process= new GenerateProject(mainModel,props);
-				core_process.setOutputFolder(outputTextfield.getEditor().getItem().toString());
-				core_process.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
-				pb.setMax(core_process.getOntologies2BProcesed().size());
-				if(!aux.endsWith("/")) aux += "/";
-					core_process.setOutputFolder(aux);
-			    pb.setVisible(true);
-				System.out.println("doInBackground...");
+			protected Integer doInBackground() {
+				
+		
 				try {
+					String aux = outputTextfield.getEditor().getItem().toString();
+					
+					Properties props= new Properties();
+					props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
+//					props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
+//					props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+					
+					
+					props.setProperty("resource.loader", "class");
+					props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+					
+					
+					mainModel=	parser.generateXMLCoordinator(getClass().getClassLoader().getResource("coordinator.xml").openStream());
+					mainModel.setBaseTemplatePath("classpath");
+					core_process= new GenerateProject(mainModel,props);
+					core_process.setOutputFolder(outputTextfield.getEditor().getItem().toString());
+					core_process.addOntology(owlModelManager.getActiveOntology(), recursiveValue);
+					pb.setMax(core_process.getOntologies2BProcesed().size());
+					if(!aux.endsWith("/")) aux += "/";
+						core_process.setOutputFolder(aux);
+				    pb.setVisible(true);
+					System.out.println("doInBackground...");
 					core_process.process();
 				} catch (Exception e1) {
 					System.out.println("ERROR DETECTED "+e1.getCause());
