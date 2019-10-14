@@ -117,6 +117,7 @@ public class GenerateServlet extends HttpServlet {
 					JsonObject outO = new JsonObject();
 					outO.addProperty("output", outputAlias+"/"+out);
 					resp.addHeader(CONTENT_TYPE, "application/json");
+					System.out.println("response JSON "+outO);
 					resp.getWriter().write(outO.toString());
 					//resp.sendRedirect(this.SERVER+"GenerateCode");
 				}else

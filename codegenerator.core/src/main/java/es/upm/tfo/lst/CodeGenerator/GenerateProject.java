@@ -49,6 +49,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
@@ -174,6 +175,7 @@ public class GenerateProject {
 				this.baseContext.put("OWLObjectCardinalityRestriction", OWLObjectCardinalityRestriction.class);
 				this.baseContext.put("EntitySearcher", EntitySearcher.class);
 				this.baseContext.put("AxiomType", AxiomType.class);
+				this.baseContext.put("IRI", new FieldMethodizer(IRI.class));
 				this.baseContext.put("esc", new EscapeTool());
 				for (String var_name : this.mainModel.getArrayVars().keySet()) {
 					log.debug("adding "+var_name+" variable");
