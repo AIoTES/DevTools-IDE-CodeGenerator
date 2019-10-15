@@ -1,4 +1,16 @@
-#parse("common.vm")
+package $PackageName;
+import $PackageName.substring(0,$PackageName.lastIndexOf(".")).*;
+import java.net.URI;
+import java.util.Collection;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.protege.owl.codegeneration.WrappedIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
+/**
+*Default Protege Plugin Template 
+*Universidad Politecnica de Madrid
+*2019
+**/
 #set($axioms = $ontology.getAxioms())
 #set($obj_props_domain = $ontology.getAxioms($AxiomType.OBJECT_PROPERTY_DOMAIN))
 #set($data_props = $ontology.getAxioms($AxiomType.DATA_PROPERTIE_DOMAIN))
