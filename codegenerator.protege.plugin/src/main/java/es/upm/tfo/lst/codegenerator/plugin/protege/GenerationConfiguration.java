@@ -394,15 +394,10 @@ public class GenerationConfiguration extends JFrame implements GenerateProject.P
 					
 					Properties props= new Properties();
 					props.setProperty("url.resource.loader.description", "Velocity ClassPath Resource Loader");
-//					props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
-//					props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-					
-					
-					props.setProperty("resource.loader", "class");
-					props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-					
-					
-					mainModel=	parser.generateXMLCoordinator(getClass().getClassLoader().getResource("coordinator.xml").openStream());
+					props.put(RuntimeConstants.RESOURCE_LOADER, "classpath"); 
+					props.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+					XmlParser parser_aux = new XmlParser();
+					mainModel=	parser_aux.generateXMLCoordinator(getClass().getClassLoader().getResource("coordinator.xml").openStream());
 					mainModel.setBaseTemplatePath("classpath");
 					core_process= new GenerateProject(mainModel,props);
 					core_process.setOutputFolder(outputTextfield.getEditor().getItem().toString());

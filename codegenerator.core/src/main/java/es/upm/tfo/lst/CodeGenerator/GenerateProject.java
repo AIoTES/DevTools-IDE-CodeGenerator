@@ -512,6 +512,7 @@ public class GenerateProject {
 			stringWriter.close();			
 		} catch (Exception a) {
 			log.fatal("cant proces="+toProcess, a);
+			a.printStackTrace();
 		}
 		return t.replace("\n", "");
 	}
@@ -707,23 +708,36 @@ public class GenerateProject {
 		String processedOutput;
 
 		if(this.mainModel.getBaseTemplatePath().equals("classpath")) {
+			 Reader templateReader;
 			System.out.println("claspath macros");
 			VelocityContext vel_context = new VelocityContext(this.baseContext);
 			for (MacroModel macroModel : macro_to_apply) {
-				System.out.println("template for "+macroModel.getTemplateFor());
+				System.out.println("template for "+macroModel.getTemplateFor()+" template name "+macroModel.getTemplateName());
 				String processed_string = this.evaluateVTLString(macroModel.getOutput(),vel_context);
-				 Reader templateReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(macroModel.getTemplateName())));
-				 File outputFile = new File(this.outputFolder , processed_string);
+				 
+				 InputStream is = null;
+				 is = ClassLoader.getSystemClassLoader().getResourceAsStream(macroModel.getTemplateName());
+				 if(is == null) 
+					 is = getClass().getClassLoader().getResourceAsStream(macroModel.getTemplateName());
+				if(is == null) 
+					 is = getClass().getResourceAsStream(macroModel.getTemplateName());
+				if(is == null) 
+					 is = getClass().getClassLoader().getResource(macroModel.getTemplateName()).openStream();
+				templateReader = new BufferedReader(new InputStreamReader(is));
+				 
+					 
+				File outputFile = new File(this.outputFolder , processed_string);
 
 					if (!outputFile.getParentFile().exists()) {
 						outputFile.getParentFile().mkdirs();
 					}
 				try {
-					StringWriter stringWriter = new StringWriter();
-					this.vel_eng.evaluate(vel_context , new FileWriter(outputFile), "tag1", templateReader);
-					stringWriter.close();
+					FileWriter f = new FileWriter(outputFile);
+					this.vel_eng.evaluate(vel_context , f, "tag1", templateReader);
+					f.close();
 				} catch (Exception a) {
-					log.fatal("cant apply macro "+outputFile.getAbsolutePath());
+					log.fatal("cant apply macro "+outputFile.getAbsolutePath()+" Error "+a.getLocalizedMessage());
+					a.printStackTrace();
 				}
 			}
 
