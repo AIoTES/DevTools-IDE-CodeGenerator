@@ -147,6 +147,16 @@ public class GenerateServlet extends HttpServlet {
 			s.close();
 			resp.getWriter().write(web_content);
 			return;
+		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
+			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
+			String yaml = "";
+			Scanner s = new Scanner(i);
+			s.useDelimiter("\\A");
+			yaml = s.hasNext() ? s.next() : "";
+			s.close();
+			resp.getWriter().write(yaml);
+			resp.setContentType("text/plain");
+			return;		
 		}else  {
 			
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
