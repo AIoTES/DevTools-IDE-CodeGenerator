@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.entity.ContentType;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
@@ -58,6 +60,7 @@ public class GenerateServlet extends HttpServlet {
 	private File tempFolder;
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
+	private String out;
 
 	public GenerateServlet() {
 	}
@@ -106,8 +109,8 @@ public class GenerateServlet extends HttpServlet {
 						}
 					}
 					// set Output
-					String out = Integer.toHexString(sreq.hashCode());
-					File outFile = new File(tempFolder, out);
+					this.out = Integer.toHexString(sreq.hashCode());
+					File outFile = new File(tempFolder, this.out);
 					this.deleteFolder(outFile);
 					outFile.mkdirs();
 					gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
@@ -115,7 +118,7 @@ public class GenerateServlet extends HttpServlet {
 					// generate
 					gp.process();
 					JsonObject outO = new JsonObject();
-					outO.addProperty("output", outputAlias+"/"+out);
+					outO.addProperty("output", outputAlias+"/");
 					resp.addHeader(CONTENT_TYPE, "application/json");
 					System.out.println("response JSON "+outO);
 					resp.getWriter().write(outO.toString());
@@ -155,15 +158,12 @@ public class GenerateServlet extends HttpServlet {
 			yaml = s.hasNext() ? s.next() : "";
 			s.close();
 			resp.getWriter().write(yaml);
-			resp.setContentType("text/plain");
+			resp.setContentType("text/yaml");
 			return;		
 		}else  {
-			
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			System.out.println("req_data "+req_data);
-
-			urlToFile = this.getServletContext().getResource(req_data);
-
+			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
 			try {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
@@ -177,6 +177,7 @@ public class GenerateServlet extends HttpServlet {
 					}
 					br.close();
 					resp.getWriter().write(sb.toString());
+					resp.setContentType("text/plain");
 				}else if (t.isDirectory() && !t.equals(tempFolder)) {
 					// request listing of a directory (not the root)
 					BufferedReader br = null;
@@ -196,13 +197,16 @@ public class GenerateServlet extends HttpServlet {
 					context.put("path", t.getAbsolutePath());
 					context.put("file", t);
 					context.put("dirContent", t.listFiles());
+					context.put("hash", this.out);
 					context.put("BACK", req_data.split("/").length > 3);
+					SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+					context.put("dateformatter",df2);
+			        
 					template.setData(runtimeServices.parse(reader, HTMLtemplate));
-					// template.setData(runtimeServices.parse(reader, template));
-					// template.setData(runtimeServices.parse(reader, HTMLtemplate, false));
 					template.initDocument();
 					template.merge(context, stringWriter);
 					resp.getWriter().write(stringWriter.toString());
+					resp.setContentType("text/html");
 					stringWriter.close();
 
 				}

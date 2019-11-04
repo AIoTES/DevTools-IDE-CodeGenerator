@@ -108,19 +108,24 @@
     xhr = new XMLHttpRequest();
     
     var pathArray = window.location.pathname.split('/');
+    console.log("pathArray ",pathArray)
     var newPathname = "";
+    /*
 	for (i = 0; i < pathArray.length-1; i++) {
 		newPathname += "/";
 		newPathname += pathArray[i];
 	}
-    xhr.open("POST", "window.location.protocol");
+    */
+    xhr.open("POST", "/GenerateCode");
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin","*")
     xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
             //TODO extract output from response and add to newPathname.
-            location.replace("window.location.protocol");
+            console.log(location);
+            location.replace("/GenerateCode/");
+            console.log("changed location path ",location);
         }else{
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText + "status code "+xhr.status);
             }

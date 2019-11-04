@@ -7,7 +7,7 @@
  <body>
 <h1>Index of $file.getName()</h1>
   <table>
-   <tr><th valign="top"><img src="http://www.apache.org/icons/blank.gif" alt="[ICO]"></th><th>Name</th><th>Last modified</a></th><th>Size</th></tr>
+   <tr><th valign="top"><img src="http://www.apache.org/icons/blank.gif" alt="[ICO]"></th><th>Name</th><th>Last modified</a></th><th>Size (bites)</th></tr>
    <tr><th colspan="4"><hr></th></tr>
 #if($BACK)
 <tr>
@@ -21,12 +21,12 @@
 #if($f.isFile())
 <tr>
     <td valign="top"><img src="http://www.apache.org/icons/unknown.gif" alt="[file]"></td><td><a href="./$f.getName()">${f.getName()}</a></td>
-    <td   >$f.lastModified() </td><td   >${f.length()}</td>
+    <td>${dateformatter.format($f.lastModified())}</td><td>${f.length()}</td>
 </tr>
 #else
 <tr>
     <td valign="top"><img src="http://www.apache.org/icons/folder.gif" alt="[DIR]"></td><td><a href="./$f.getName()/">${f.getName()}</a></td>
-    <td   >$f.lastModified()  </td><td   >  - </td>
+    <td >${dateformatter.format($f.lastModified())}</td><td>  - </td>
 </tr>
 #end
 
