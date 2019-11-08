@@ -158,7 +158,7 @@ public class GenerateServlet extends HttpServlet {
 			yaml = s.hasNext() ? s.next() : "";
 			s.close();
 			resp.getWriter().write(yaml);
-			resp.setContentType("text/yaml");
+			resp.setContentType("text/plain");
 			return;		
 		}else  {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
