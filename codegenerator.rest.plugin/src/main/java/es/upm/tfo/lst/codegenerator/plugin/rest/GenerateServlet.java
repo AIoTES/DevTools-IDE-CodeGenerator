@@ -16,6 +16,7 @@
 package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,7 +24,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Map;
@@ -157,7 +160,9 @@ public class GenerateServlet extends HttpServlet {
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(req.getHeader("access_token") == null) {
 				//TODO maybe is not logged in yet...or someone missed the token in some point
+				this.getTokens();
 				resp.sendRedirect(this.KEYCLOAK_LOGIN_BASE_URL);
+				
 			}else{
 				
 				if(this.token != null) {
@@ -314,5 +319,32 @@ public class GenerateServlet extends HttpServlet {
 	   return isValid ;
    }
 
+   private void getTokens() {
+	   try {
+		   StringBuilder sb;
+	   String url_params="client_id=test&username=ebuhid&password=ebuhid&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3&login-redirect=www.google.com";
+	   byte[] postData = url_params.getBytes("utf-8" );
+	   HttpURLConnection conn;
+	   String url_req="http://192.168.1.164:8080/auth/realms/code-generator/protocol/openid-connect/token";
+
+		   URL url = new URL( url_req);
+		   conn = (HttpURLConnection)url.openConnection(); 
+		   conn.setDoOutput(true);
+		   conn.setRequestMethod("POST");
+		   conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
+		   conn.setRequestProperty("charset", "utf-8");
+		   conn.connect();
+		   BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+           sb = new StringBuilder();
+           String readLine;
+           while ((readLine = in.readLine()) != null) {
+               sb.append(readLine);
+           }
+           System.out.println(sb.toString());
+	} catch (Exception e) {
+		e.printStackTrace();
+		System.out.println(e.getMessage());
+	}
+   }
 
 }
