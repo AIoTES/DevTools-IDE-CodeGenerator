@@ -47,6 +47,7 @@ import org.apache.velocity.runtime.RuntimeSingleton;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -70,12 +71,15 @@ public class GenerateServlet extends HttpServlet {
 	private String KEYCLOAK_LOGIN_BASE_URL=null;
 	private String JWT_SECRET=null;
 	private String token=null;
+	private JsonObject srver_response;
 	private boolean is_token_valid=false;
+	private JsonParser jp;
+	private JsonObject server_response;
 	//	http://192.168.1.164:8080/auth/realms/code-generator/account
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
-		
+		jp = new JsonParser();
 		if(System.getenv("REALM_NAME")!=null) {
 			 this.REALM_NAME=System.getenv("REALM_NAME");
 		}
@@ -88,7 +92,7 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		addCorsHeaderPOST(resp);
-		JsonParser jp = new JsonParser();
+		 
 		TemplateDataModel model = null;
 		XmlParser parser = new XmlParser();
 		OntologyLoader ontologyLoader = new OntologyLoader();
@@ -161,8 +165,11 @@ public class GenerateServlet extends HttpServlet {
 			if(req.getHeader("access_token") == null) {
 				//TODO maybe is not logged in yet...or someone missed the token in some point
 				this.getTokens();
-				resp.sendRedirect(this.KEYCLOAK_LOGIN_BASE_URL);
-				
+				if(this.server_response.has("access_token")) {
+					this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
+					resp.getWriter().write(this.generateHTML());
+				}
+				//resp.sendRedirect(this.KEYCLOAK_LOGIN_BASE_URL);
 			}else{
 				
 				if(this.token != null) {
@@ -322,8 +329,8 @@ public class GenerateServlet extends HttpServlet {
    private void getTokens() {
 	   try {
 		   StringBuilder sb;
-	   String url_params="client_id=test&username=ebuhid&password=ebuhid&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3&login-redirect=www.google.com";
-	   byte[] postData = url_params.getBytes("utf-8" );
+	   String url_params="client_id=test&username=ebuhid&password=ebuhid&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3";
+	   byte[] postData = url_params.getBytes("UTF-8");
 	   HttpURLConnection conn;
 	   String url_req="http://192.168.1.164:8080/auth/realms/code-generator/protocol/openid-connect/token";
 
@@ -332,15 +339,20 @@ public class GenerateServlet extends HttpServlet {
 		   conn.setDoOutput(true);
 		   conn.setRequestMethod("POST");
 		   conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
-		   conn.setRequestProperty("charset", "utf-8");
+		   conn.setRequestProperty("charset", "UTF-8");
+		   DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+		   wr.write( postData );
 		   conn.connect();
-		   BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+		   InputStream is = conn.getInputStream();
+		   InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+		   BufferedReader br = new BufferedReader(isr);
            sb = new StringBuilder();
            String readLine;
-           while ((readLine = in.readLine()) != null) {
+           while ((readLine = br.readLine()) != null) {
                sb.append(readLine);
            }
-           System.out.println(sb.toString());
+           this.server_response = this.jp.parse(sb.toString()).getAsJsonObject();
+           
 	} catch (Exception e) {
 		e.printStackTrace();
 		System.out.println(e.getMessage());
