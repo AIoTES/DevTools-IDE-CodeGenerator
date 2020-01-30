@@ -46,6 +46,24 @@
   		  <version>8.1.19.v20160209</version>
 	   </dependency>
 	   
+	   
+	   
+	   
+<!-- 	   https://mvnrepository.com/artifact/org.keycloak/keycloak-saml-servlet-filter-adapter -->
+<!-- <dependency> -->
+<!--     <groupId>org.keycloak</groupId> -->
+<!--     <artifactId>keycloak-saml-servlet-filter-adapter</artifactId> -->
+<!--     <version>8.0.0</version> -->
+<!-- </dependency> -->
+	   
+	   
+	   
+<!-- 	<dependency> -->
+<!-- 	<groupId>com.auth0</groupId> -->
+<!-- 	<artifactId>java-jwt</artifactId> -->
+<!-- 	<version>3.9.0</version> -->
+<!-- 	</dependency> -->
+	   
 	   	<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
 	<dependency>
 	    <groupId>org.apache.velocity</groupId>

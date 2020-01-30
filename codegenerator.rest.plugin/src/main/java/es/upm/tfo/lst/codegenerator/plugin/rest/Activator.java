@@ -55,6 +55,7 @@ public class Activator implements BundleActivator, ServiceListener {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		this.context = context;
+		
 		ServiceReference ref = context.getServiceReference(LoggerFactory.class.getName());
 		if (ref != null) {
 			loggerFactory = (LoggerFactory) context.getService(ref);

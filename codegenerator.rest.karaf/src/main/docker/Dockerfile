@@ -1,7 +1,6 @@
 FROM openjdk:8-jdk
 LABEL maintainer="amedrano@lst.tfo.upm.es"
 #ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
 RUN mkdir /karaf
 COPY assembly/ /karaf/
 RUN chmod +x /karaf/bin/*

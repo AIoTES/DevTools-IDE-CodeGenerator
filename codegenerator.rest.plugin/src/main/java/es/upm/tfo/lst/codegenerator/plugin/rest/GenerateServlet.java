@@ -25,6 +25,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -38,6 +39,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
+
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -61,8 +63,21 @@ public class GenerateServlet extends HttpServlet {
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
+	private String REALM_NAME="code-generator";
+	private String KEYCLOAK_LOGIN_BASE_URL=null;
+	private String JWT_SECRET=null;
+	private String token=null;
+	private boolean is_token_valid=false;
+	//	http://192.168.1.164:8080/auth/realms/code-generator/account
+	boolean isAuthorized=false;
 
 	public GenerateServlet() {
+		
+		if(System.getenv("REALM_NAME")!=null) {
+			 this.REALM_NAME=System.getenv("REALM_NAME");
+		}
+		this.JWT_SECRET = System.getenv("JWT_SECRET");
+		this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL")+"/auth/realms/"+this.REALM_NAME+"/account";		 
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -137,19 +152,27 @@ public class GenerateServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String line, req_data;
 		URL urlToFile;
-       
+		
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			// UI request
-			System.out.println("ui requested");
-			InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
-			String web_content = "";
-			Scanner s = new Scanner((InputStream)y);
-			s.useDelimiter("\\A");
-			web_content = s.hasNext() ? s.next() : "";
-			s.close();
-			resp.getWriter().write(web_content);
-			return;
+			if(req.getHeader("access_token") == null) {
+				//TODO maybe is not logged in yet...or someone missed the token in some point
+				resp.sendRedirect(this.KEYCLOAK_LOGIN_BASE_URL);
+			}else{
+				
+				if(this.token != null) {
+					if(this.validateJWT()) {
+						resp.getWriter().write(this.generateHTML());
+					}else {
+						//TODO invalid token
+					}
+				}else {
+					this.token = req.getHeader("access_token");
+					this.doGet(req, resp);
+				}
+	
+			}
+
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
 			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
 			String yaml = "";
@@ -159,16 +182,14 @@ public class GenerateServlet extends HttpServlet {
 			s.close();
 			resp.getWriter().write(yaml);
 			resp.setContentType("text/plain");
-			return;		
+				
 		}else  {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
-			System.out.println("req_data "+req_data);
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
 			try {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
 					// request a file
-					System.out.println("is file");
 					BufferedReader br = new BufferedReader(new FileReader(t));
 					StringBuilder sb = new StringBuilder();
 
@@ -213,7 +234,7 @@ public class GenerateServlet extends HttpServlet {
 			} catch (Exception e) {
 						System.out.println(e.getMessage());
 				}
-			return;
+			
 		}
 
 	}
@@ -258,4 +279,40 @@ public class GenerateServlet extends HttpServlet {
 	    response.addHeader("Access-Control-Allow-Credentials", "true");
    	
    }
+   
+   private String generateHTML() {
+	   String web_content = "";
+	   try {
+		   InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
+			
+			Scanner s = new Scanner((InputStream)y);
+			s.useDelimiter("\\A");
+			web_content = s.hasNext() ? s.next() : "";
+			s.close();
+			
+	} catch (Exception e) {
+		// TODO: handle exception
+	}
+	   return web_content; 
+	
+}
+   private boolean validateJWT() {
+	   boolean isValid=true;
+	   /*
+		
+		try {
+		    Algorithm algorithm = Algorithm.HMAC256(this.JWT_SECRET);
+		    JWTVerifier verifier = JWT.require(algorithm)
+		        .withIssuer("auth0")
+		        .build(); //Reusable verifier instance
+		    DecodedJWT jwt = verifier.verify(this.token);
+		    
+		} catch (JWTVerificationException exception){
+			isValid =false;
+		}
+*/
+	   return isValid ;
+   }
+
+
 }
