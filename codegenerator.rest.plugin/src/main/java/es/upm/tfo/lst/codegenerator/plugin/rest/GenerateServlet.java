@@ -158,7 +158,8 @@ public class GenerateServlet extends HttpServlet {
 				System.out.println("redirecting to /GenerateCode/ui");
 				System.out.println(" given token "+this.token);
 				resp.setHeader("access_token", this.token);
-				resp.sendRedirect("/GenerateCode/ui");
+				//resp.sendRedirect("/GenerateCode/ui");
+				req.getRequestDispatcher("/GenerateCode/ui").forward(req, resp);
 			}
 		}else
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
