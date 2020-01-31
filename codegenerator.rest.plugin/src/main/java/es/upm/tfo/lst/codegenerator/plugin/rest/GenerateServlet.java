@@ -206,13 +206,14 @@ public class GenerateServlet extends HttpServlet {
 				
 		}else if(req.getRequestURI().equals(outputAlias+"/auth")) {
 			InputStream i = getClass().getClassLoader().getResource("auth.html").openStream();
-			String yaml = "";
+			String auth = "";
 			Scanner s = new Scanner(i);
 			s.useDelimiter("\\A");
-			yaml = s.hasNext() ? s.next() : "";
+			auth = s.hasNext() ? s.next() : "";
 			s.close();
-			resp.getWriter().write(yaml);
-			resp.setContentType("text/plain");	
+			resp.setContentType("text/html");	
+			resp.getWriter().write(auth);
+			
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
