@@ -164,17 +164,22 @@ public class GenerateServlet extends HttpServlet {
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(req.getHeader("access_token") == null) {
 				//TODO maybe is not logged in yet...or someone missed the token in some point
-				this.getTokens();
-				if(this.server_response.has("access_token")) {
-					this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
-					resp.getWriter().write(this.generateHTML());
+				this.authorize();
+				if(this.server_response.has("error")) {
+					
+				}else {
+					if(this.server_response.has("error")) {
+
+						this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
+						resp.getWriter().write(this.generateHTML("web-ui.html"));	
+					}
 				}
-				//resp.sendRedirect(this.KEYCLOAK_LOGIN_BASE_URL);
+				
 			}else{
 				
 				if(this.token != null) {
 					if(this.validateJWT()) {
-						resp.getWriter().write(this.generateHTML());
+						resp.getWriter().write(this.generateHTML("web-ui.html"));
 					}else {
 						//TODO invalid token
 					}
@@ -195,7 +200,9 @@ public class GenerateServlet extends HttpServlet {
 			resp.getWriter().write(yaml);
 			resp.setContentType("text/plain");
 				
-		}else  {
+		}else if(req.getRequestURI().equals(outputAlias+"/auth")) {
+			
+		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
 			try {
@@ -292,10 +299,10 @@ public class GenerateServlet extends HttpServlet {
    	
    }
    
-   private String generateHTML() {
+   private String generateHTML(String template_name) {
 	   String web_content = "";
 	   try {
-		   InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
+		   InputStream y =getClass().getClassLoader().getResource(template_name).openStream();
 			
 			Scanner s = new Scanner((InputStream)y);
 			s.useDelimiter("\\A");
@@ -326,7 +333,7 @@ public class GenerateServlet extends HttpServlet {
 	   return isValid ;
    }
 
-   private void getTokens() {
+   private void authorize() {
 	   try {
 		   StringBuilder sb;
 	   String url_params="client_id=test&username=ebuhid&password=ebuhid&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3";
