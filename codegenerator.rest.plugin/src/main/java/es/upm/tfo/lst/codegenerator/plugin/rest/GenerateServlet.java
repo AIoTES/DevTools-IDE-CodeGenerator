@@ -96,7 +96,7 @@ public class GenerateServlet extends HttpServlet {
 		TemplateDataModel model = null;
 		XmlParser parser = new XmlParser();
 		OntologyLoader ontologyLoader = new OntologyLoader();
-		if(req.getHeader(CONTENT_TYPE).contains("application/json")) {
+		if(req.getHeader(CONTENT_TYPE).equals("application/json")) {
 			try {
 				JsonElement sreq = jp.parse(req.getReader());
 				if (sreq instanceof JsonObject) {
@@ -150,6 +150,10 @@ public class GenerateServlet extends HttpServlet {
 			}catch (Exception e) {
 				resp.sendError(400,e.getLocalizedMessage());
 			}
+		}else if(req.getHeader(CONTENT_TYPE).equals("text/plain")) {
+			String user=req.getParameter("username");
+			String password=req.getParameter("password");
+			this.authorize(user, password);
 		}else
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
@@ -164,7 +168,7 @@ public class GenerateServlet extends HttpServlet {
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(req.getHeader("access_token") == null) {
 				//TODO maybe is not logged in yet...or someone missed the token in some point
-				this.authorize();
+				//this.authorize();
 				if(this.server_response.has("error")) {
 					
 				}else {
@@ -201,7 +205,14 @@ public class GenerateServlet extends HttpServlet {
 			resp.setContentType("text/plain");
 				
 		}else if(req.getRequestURI().equals(outputAlias+"/auth")) {
-			
+			InputStream i = getClass().getClassLoader().getResource("auth.html").openStream();
+			String yaml = "";
+			Scanner s = new Scanner(i);
+			s.useDelimiter("\\A");
+			yaml = s.hasNext() ? s.next() : "";
+			s.close();
+			resp.getWriter().write(yaml);
+			resp.setContentType("text/plain");	
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
@@ -333,10 +344,10 @@ public class GenerateServlet extends HttpServlet {
 	   return isValid ;
    }
 
-   private void authorize() {
+   private void authorize(String user, String pwd) {
 	   try {
 		   StringBuilder sb;
-	   String url_params="client_id=test&username=ebuhid&password=ebuhid&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3";
+	   String url_params="client_id=test&username="+user+"&password="+pwd+"&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3";
 	   byte[] postData = url_params.getBytes("UTF-8");
 	   HttpURLConnection conn;
 	   String url_req="http://192.168.1.164:8080/auth/realms/code-generator/protocol/openid-connect/token";
@@ -359,7 +370,7 @@ public class GenerateServlet extends HttpServlet {
                sb.append(readLine);
            }
            this.server_response = this.jp.parse(sb.toString()).getAsJsonObject();
-           
+           System.out.println(this.server_response);
 	} catch (Exception e) {
 		e.printStackTrace();
 		System.out.println(e.getMessage());

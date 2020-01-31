@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+    function post() {
+        xhr = new XMLHttpRequest();
+        var pathArray = window.location.pathname.split('/');
+        var newPathname = "";
+        var params="";
+        var username=document.getElementById("user").value;
+        var password=document.getElementById("password").value;
+        params="username="+username+"&passord="+password
+        xhr.open("POST", "/GenerateCode/auth?"+params);
+        xhr.setRequestHeader("Access-Control-Allow-Origin","*")
+        xhr.onreadystatechange = function () { 
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            location.replace("/GenerateCode/");
+            alert(xhr.responseText);
+        }
+        }
+        xhr.send(data);
+    }
+    </script>
+</head>
+<body>
+    <form name="CodeGeneratorAuth" method="POST" action="/GenerateCode/auth">
+        <p>username</p><input type="text" name="username" id="user">
+        <p>password</p> <input type="password" name="password" id="password">
+        <input type="button" value="GenerateCode" onclick="post()">
+      </form>
+</body>
+</html>
