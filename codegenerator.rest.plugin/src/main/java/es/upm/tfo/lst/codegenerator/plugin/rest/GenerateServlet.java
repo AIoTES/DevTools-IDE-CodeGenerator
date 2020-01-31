@@ -156,6 +156,7 @@ public class GenerateServlet extends HttpServlet {
 			if(this.authorize(user, password)) {
 				this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
 				System.out.println("redirecting to /GenerateCode/ui");
+				System.out.println(" given token "+this.token);
 				resp.setHeader("access_token", this.token);
 				resp.sendRedirect("/GenerateCode/ui");
 			}
@@ -173,6 +174,7 @@ public class GenerateServlet extends HttpServlet {
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			System.out.println("ui requested");
 			if(req.getHeader("access_token") == null) {
+				System.out.println("redirecting to auth");
 				resp.sendRedirect("/GenerateCode/auth");
 			}else{
 				
