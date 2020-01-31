@@ -152,7 +152,10 @@ public class GenerateServlet extends HttpServlet {
 		}else if(req.getHeader(CONTENT_TYPE).equals("text/plain")) {
 			String user=req.getParameter("username");
 			String password=req.getParameter("password");
-			this.authorize(user, password);
+			if(this.authorize(user, password)) {
+				resp.setHeader("access_token", this.token);
+				resp.sendRedirect("/GenerateCode/ui");
+			}
 		}else
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
@@ -166,8 +169,8 @@ public class GenerateServlet extends HttpServlet {
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(req.getHeader("access_token") == null) {
-				//TODO maybe is not logged in yet...or someone missed the token in some point
-				//this.authorize();
+				resp.sendRedirect("/GenerateCode/auth");
+				/*
 				if(this.server_response.has("error")) {
 					
 				}else {
@@ -177,7 +180,7 @@ public class GenerateServlet extends HttpServlet {
 						resp.getWriter().write(this.generateHTML("web-ui.html"));	
 					}
 				}
-				
+				*/
 			}else{
 				
 				if(this.token != null) {
@@ -344,16 +347,14 @@ public class GenerateServlet extends HttpServlet {
 	   return isValid ;
    }
 
-   private void authorize(String user, String pwd) {
-	   
+   private boolean authorize(String user, String pwd) {
 	   try {
 		   StringBuilder sb;
 	   String url_params="client_id="+this.REALM_NAME+"&username="+user+"&password="+pwd+"&grant_type=password&client_secret="+this.JWT_SECRET;
-	   System.out.println("PARAMS "+url_params);
 	   byte[] postData = url_params.getBytes("UTF-8");
 	   HttpURLConnection conn;
-	   String url_req="http://192.168.1.164:8080/auth/realms/code-generator/protocol/openid-connect/token";
-	   System.out.println("REQ url "+url_req);
+	   //String url_req="http://192.168.1.164:8080/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
+	   String url_req=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
 		   URL url = new URL( url_req);
 		   conn = (HttpURLConnection)url.openConnection(); 
 		   conn.setDoOutput(true);
@@ -376,7 +377,9 @@ public class GenerateServlet extends HttpServlet {
 	} catch (Exception e) {
 		e.printStackTrace();
 		System.out.println(e.getMessage());
+		return false;
 	}
+	   return true;
    }
 
 }
