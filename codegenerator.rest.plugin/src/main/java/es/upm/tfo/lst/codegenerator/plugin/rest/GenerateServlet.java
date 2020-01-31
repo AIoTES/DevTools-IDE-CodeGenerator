@@ -155,10 +155,10 @@ public class GenerateServlet extends HttpServlet {
 			String password=req.getParameter("password");
 			if(this.authorize(user, password)) {
 				this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
-				System.out.println("redirecting to /GenerateCode/ui");
-				System.out.println(" given token "+this.token);
+				System.out.println("redirecting to /GenerateCode/ui given token "+this.token);
 				resp.setHeader("access_token", this.token);
 				//resp.sendRedirect("/GenerateCode/ui");
+			
 				req.getRequestDispatcher("/GenerateCode/ui").forward(req, resp);
 			}
 		}else
@@ -178,14 +178,7 @@ public class GenerateServlet extends HttpServlet {
 				System.out.println("redirecting to auth");
 				resp.sendRedirect("/GenerateCode/auth");
 			}else{
-				
-				if(this.token != null) {
-					if(this.validateJWT()) {
-						resp.getWriter().write(this.generateHTML("web-ui.html"));
-					}else {
-						//TODO invalid token
-					}
-				}
+				resp.getWriter().write(this.generateHTML("web-ui.html"));
 	
 			}
 
@@ -368,7 +361,6 @@ public class GenerateServlet extends HttpServlet {
                sb.append(readLine);
            }
            this.server_response = this.jp.parse(sb.toString()).getAsJsonObject();
-           System.out.println(this.server_response);
 	} catch (Exception e) {
 		e.printStackTrace();
 		System.out.println(e.getMessage());
