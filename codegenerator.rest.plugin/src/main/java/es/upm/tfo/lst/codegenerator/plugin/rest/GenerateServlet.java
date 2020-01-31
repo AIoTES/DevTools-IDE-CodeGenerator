@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -155,11 +157,25 @@ public class GenerateServlet extends HttpServlet {
 			String password=req.getParameter("password");
 			if(this.authorize(user, password)) {
 				this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
-				System.out.println("redirecting to /GenerateCode/ui given token "+this.token);
-				resp.setHeader("access_token", this.token);
-				//resp.sendRedirect("/GenerateCode/ui");
-			
-				req.getRequestDispatcher("/GenerateCode/ui").forward(req, resp);
+				System.out.println("redirecting to /GenerateCode/ui ");
+				resp.setHeader("access_token", this.token);	
+				try {
+					int index  =req.getRequestURL().lastIndexOf("/");
+					String base =req.getRequestURL().toString().substring(0,index)+"ui"; 
+					URL redir = new URL(base);
+					HttpURLConnection conn = (HttpURLConnection)redir.openConnection(); 
+					   
+					   conn.setRequestMethod("GET");
+					   conn.setRequestProperty("Content-Type", "application/json");
+					   conn.setRequestProperty("access_token", this.token);
+					   conn.setRequestProperty("charset", "UTF-8");
+					   
+					   conn.connect();
+				} catch (Exception e) {
+					e.printStackTrace();
+					
+				}
+
 			}
 		}else
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
@@ -174,6 +190,7 @@ public class GenerateServlet extends HttpServlet {
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			System.out.println("ui requested");
+			
 			if(req.getHeader("access_token") == null) {
 				System.out.println("redirecting to auth");
 				resp.sendRedirect("/GenerateCode/auth");
