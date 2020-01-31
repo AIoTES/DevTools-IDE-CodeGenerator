@@ -84,7 +84,8 @@ public class GenerateServlet extends HttpServlet {
 			 this.REALM_NAME=System.getenv("REALM_NAME");
 		}
 		this.JWT_SECRET = System.getenv("JWT_SECRET");
-		this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL")+"/auth/realms/"+this.REALM_NAME+"/account";		 
+		//this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL")+"/auth/realms/"+this.REALM_NAME+"/account";
+		this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL");
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -350,11 +351,11 @@ public class GenerateServlet extends HttpServlet {
    private boolean authorize(String user, String pwd) {
 	   try {
 		   StringBuilder sb;
-	   String url_params="client_id="+this.REALM_NAME+"&username="+user+"&password="+pwd+"&grant_type=password&client_secret="+this.JWT_SECRET;
-	   byte[] postData = url_params.getBytes("UTF-8");
-	   HttpURLConnection conn;
-	   //String url_req="http://192.168.1.164:8080/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
-	   String url_req=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
+		   String url_params="client_id="+this.REALM_NAME+"&username="+user+"&password="+pwd+"&grant_type=password&client_secret="+this.JWT_SECRET;
+		   byte[] postData = url_params.getBytes("UTF-8");
+		   HttpURLConnection conn;
+		   //String url_req="http://192.168.1.164:8080/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
+		   String url_req=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
 		   URL url = new URL( url_req);
 		   conn = (HttpURLConnection)url.openConnection(); 
 		   conn.setDoOutput(true);
