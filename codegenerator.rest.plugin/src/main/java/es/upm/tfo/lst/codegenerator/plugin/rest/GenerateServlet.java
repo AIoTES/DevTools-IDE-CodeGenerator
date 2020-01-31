@@ -154,6 +154,8 @@ public class GenerateServlet extends HttpServlet {
 			String user=req.getParameter("username");
 			String password=req.getParameter("password");
 			if(this.authorize(user, password)) {
+				this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
+				System.out.println("redirecting to /GenerateCode/ui");
 				resp.setHeader("access_token", this.token);
 				resp.sendRedirect("/GenerateCode/ui");
 			}
@@ -169,19 +171,9 @@ public class GenerateServlet extends HttpServlet {
 		
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
+			System.out.println("ui requested");
 			if(req.getHeader("access_token") == null) {
 				resp.sendRedirect("/GenerateCode/auth");
-				/*
-				if(this.server_response.has("error")) {
-					
-				}else {
-					if(this.server_response.has("error")) {
-
-						this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
-						resp.getWriter().write(this.generateHTML("web-ui.html"));	
-					}
-				}
-				*/
 			}else{
 				
 				if(this.token != null) {
@@ -190,14 +182,12 @@ public class GenerateServlet extends HttpServlet {
 					}else {
 						//TODO invalid token
 					}
-				}else {
-					this.token = req.getHeader("access_token");
-					this.doGet(req, resp);
 				}
 	
 			}
 
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
+			System.out.println("swagger requested");
 			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
 			String yaml = "";
 			Scanner s = new Scanner(i);
@@ -208,6 +198,7 @@ public class GenerateServlet extends HttpServlet {
 			resp.setContentType("text/plain");
 				
 		}else if(req.getRequestURI().equals(outputAlias+"/auth")) {
+			System.out.println("auth requested");
 			InputStream i = getClass().getClassLoader().getResource("auth.html").openStream();
 			String auth = "";
 			Scanner s = new Scanner(i);
