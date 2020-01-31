@@ -92,7 +92,6 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		addCorsHeaderPOST(resp);
-		 
 		TemplateDataModel model = null;
 		XmlParser parser = new XmlParser();
 		OntologyLoader ontologyLoader = new OntologyLoader();
@@ -346,13 +345,15 @@ public class GenerateServlet extends HttpServlet {
    }
 
    private void authorize(String user, String pwd) {
+	   
 	   try {
 		   StringBuilder sb;
-	   String url_params="client_id=test&username="+user+"&password="+pwd+"&grant_type=password&client_secret=a5959099-97dc-4c40-9c47-de1f9eafbdd3";
+	   String url_params="client_id="+this.REALM_NAME+"&username="+user+"&password="+pwd+"&grant_type=password&client_secret="+this.JWT_SECRET;
+	   System.out.println("PARAMS "+url_params);
 	   byte[] postData = url_params.getBytes("UTF-8");
 	   HttpURLConnection conn;
 	   String url_req="http://192.168.1.164:8080/auth/realms/code-generator/protocol/openid-connect/token";
-
+	   System.out.println("REQ url "+url_req);
 		   URL url = new URL( url_req);
 		   conn = (HttpURLConnection)url.openConnection(); 
 		   conn.setDoOutput(true);
@@ -360,7 +361,7 @@ public class GenerateServlet extends HttpServlet {
 		   conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
 		   conn.setRequestProperty("charset", "UTF-8");
 		   DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		   wr.write( postData );
+		   wr.write(postData);
 		   conn.connect();
 		   InputStream is = conn.getInputStream();
 		   InputStreamReader isr = new InputStreamReader(is,"UTF-8");

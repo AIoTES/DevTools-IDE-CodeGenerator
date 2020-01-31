@@ -11,10 +11,13 @@
         var pathArray = window.location.pathname.split('/');
         var newPathname = "";
         var params="";
+        var URL="/GenerateCode/auth"
         var username=document.getElementById("user").value;
         var password=document.getElementById("password").value;
-        params="username="+username+"&passord="+password
-        xhr.open("POST", "/GenerateCode/auth?"+params);
+        params="username="+username+"&password="+password
+        xhr.open("POST", URL+"?"+params,true);
+        xhr.setRequestHeader("Content-type","text/plain")
+        
         xhr.setRequestHeader("Access-Control-Allow-Origin","*")
         xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -22,7 +25,7 @@
             alert(xhr.responseText);
         }
         }
-        xhr.send(data);
+        xhr.send();
     }
     </script>
 </head>
