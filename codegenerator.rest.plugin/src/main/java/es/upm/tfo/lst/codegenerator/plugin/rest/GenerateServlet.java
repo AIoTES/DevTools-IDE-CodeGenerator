@@ -73,6 +73,7 @@ public class GenerateServlet extends HttpServlet {
 	private String KEYCLOAK_LOGIN_BASE_URL=null;
 	private String JWT_SECRET=null;
 	private String token=null;
+	private String FULL_AUTH_URL=null;
 	private JsonObject srver_response;
 	private boolean is_token_valid=false;
 	private JsonParser jp;
@@ -210,17 +211,6 @@ public class GenerateServlet extends HttpServlet {
 			resp.getWriter().write(yaml);
 			resp.setContentType("text/plain");
 				
-		}else if(req.getRequestURI().equals(outputAlias+"/auth")) {
-			System.out.println("auth requested");
-			InputStream i = getClass().getClassLoader().getResource("auth.html").openStream();
-			String auth = "";
-			Scanner s = new Scanner(i);
-			s.useDelimiter("\\A");
-			auth = s.hasNext() ? s.next() : "";
-			s.close();
-			resp.setContentType("text/html");	
-			resp.getWriter().write(auth);
-			
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
