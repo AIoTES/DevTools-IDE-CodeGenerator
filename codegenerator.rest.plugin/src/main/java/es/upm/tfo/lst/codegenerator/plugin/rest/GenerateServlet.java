@@ -27,6 +27,9 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
@@ -71,7 +74,7 @@ public class GenerateServlet extends HttpServlet {
 	private String out;
 	private String REALM_NAME="code-generator";
 	private String KEYCLOAK_LOGIN_BASE_URL=null;
-	private String JWT_SECRET=null;
+	private String REDIRECT_URL=null;
 	private String token=null;
 	private String FULL_AUTH_URL=null;
 	private JsonObject srver_response;
@@ -86,9 +89,10 @@ public class GenerateServlet extends HttpServlet {
 		if(System.getenv("REALM_NAME")!=null) {
 			 this.REALM_NAME=System.getenv("REALM_NAME");
 		}
-		this.JWT_SECRET = System.getenv("JWT_SECRET");
+		this.REDIRECT_URL =System.getenv("REDIRECT_URL"); 
 		//this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL")+"/auth/realms/"+this.REALM_NAME+"/account";
 		this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL");
+		this.FULL_AUTH_URL=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/account";
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -153,32 +157,7 @@ public class GenerateServlet extends HttpServlet {
 			}catch (Exception e) {
 				resp.sendError(400,e.getLocalizedMessage());
 			}
-		}else if(req.getHeader(CONTENT_TYPE).equals("text/plain")) {
-			String user=req.getParameter("username");
-			String password=req.getParameter("password");
-			if(this.authorize(user, password)) {
-				this.token = this.server_response.get("access_token").getAsJsonPrimitive().getAsString();
-				System.out.println("redirecting to /GenerateCode/ui ");
-				resp.setHeader("access_token", this.token);	
-				try {
-					int index  =req.getRequestURL().lastIndexOf("/");
-					String base =req.getRequestURL().toString().substring(0,index)+"ui"; 
-					URL redir = new URL(base);
-					HttpURLConnection conn = (HttpURLConnection)redir.openConnection(); 
-					   
-					   conn.setRequestMethod("GET");
-					   conn.setRequestProperty("Content-Type", "application/json");
-					   conn.setRequestProperty("access_token", this.token);
-					   conn.setRequestProperty("charset", "UTF-8");
-					   
-					   conn.connect();
-				} catch (Exception e) {
-					e.printStackTrace();
-					
-				}
-
-			}
-		}else
+		}else 
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
 	}
@@ -190,11 +169,40 @@ public class GenerateServlet extends HttpServlet {
 		
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
+			String redirect="";
 			System.out.println("ui requested");
-			
 			if(req.getHeader("access_token") == null) {
-				System.out.println("redirecting to auth");
-				resp.sendRedirect("/GenerateCode/auth");
+				System.out.println("redirecting to auth "+this.FULL_AUTH_URL);
+				try {
+					URL url = new URL(this.FULL_AUTH_URL);
+					HttpURLConnection t = (HttpURLConnection) url.openConnection();
+					System.out.println(t.getResponseCode());
+					System.out.println(t.getURL());
+					System.out.println(URLDecoder.decode(t.getURL().toString()));
+					System.out.println("redirect URL->"+URLEncoder.encode(this.REDIRECT_URL));
+					String full_url=URLDecoder.decode(t.getURL().toString());
+					System.out.println("asdasdasd "+full_url);
+					String[] y = full_url.split("&");
+				
+					for (int i = 0; i < y.length; i++) {
+						System.out.println(y[i]);
+						if(y[i].contains("redirect_uri")) {
+							y[i] ="redirect_uri="+ URLEncoder.encode(this.REDIRECT_URL);
+							break;
+						}
+						
+					}
+					String result="";
+					for (String string : y) {
+						result+=string+"&";
+							
+					}
+				System.out.println("RESULT -->"+result);
+					redirect = result.substring(0,result.lastIndexOf("&"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				resp.sendRedirect(redirect);
 			}else{
 				resp.getWriter().write(this.generateHTML("web-ui.html"));
 	
@@ -342,38 +350,6 @@ public class GenerateServlet extends HttpServlet {
 	   return isValid ;
    }
 
-   private boolean authorize(String user, String pwd) {
-	   try {
-		   StringBuilder sb;
-		   String url_params="client_id="+this.REALM_NAME+"&username="+user+"&password="+pwd+"&grant_type=password&client_secret="+this.JWT_SECRET;
-		   byte[] postData = url_params.getBytes("UTF-8");
-		   HttpURLConnection conn;
-		   //String url_req="http://192.168.1.164:8080/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
-		   String url_req=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/protocol/openid-connect/token";
-		   URL url = new URL( url_req);
-		   conn = (HttpURLConnection)url.openConnection(); 
-		   conn.setDoOutput(true);
-		   conn.setRequestMethod("POST");
-		   conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
-		   conn.setRequestProperty("charset", "UTF-8");
-		   DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		   wr.write(postData);
-		   conn.connect();
-		   InputStream is = conn.getInputStream();
-		   InputStreamReader isr = new InputStreamReader(is,"UTF-8");
-		   BufferedReader br = new BufferedReader(isr);
-           sb = new StringBuilder();
-           String readLine;
-           while ((readLine = br.readLine()) != null) {
-               sb.append(readLine);
-           }
-           this.server_response = this.jp.parse(sb.toString()).getAsJsonObject();
-	} catch (Exception e) {
-		e.printStackTrace();
-		System.out.println(e.getMessage());
-		return false;
-	}
-	   return true;
-   }
+
 
 }
