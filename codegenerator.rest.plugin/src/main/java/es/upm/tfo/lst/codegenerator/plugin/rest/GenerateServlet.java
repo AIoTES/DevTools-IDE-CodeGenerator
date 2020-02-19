@@ -72,27 +72,17 @@ public class GenerateServlet extends HttpServlet {
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
-	private String REALM_NAME="code-generator";
-	private String KEYCLOAK_LOGIN_BASE_URL=null;
 	private String REDIRECT_URL=null;
-	private String token=null;
-	private String FULL_AUTH_URL=null;
-	private JsonObject srver_response;
-	private boolean is_token_valid=false;
 	private JsonParser jp;
-	private JsonObject server_response;
-	//	http://192.168.1.164:8080/auth/realms/code-generator/account
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
 		jp = new JsonParser();
-		if(System.getenv("REALM_NAME")!=null) {
-			 this.REALM_NAME=System.getenv("REALM_NAME");
+		
+		if(System.getenv("REDIRECT_URL")!=null) {
+			 this.REDIRECT_URL =System.getenv("REDIRECT_URL");
 		}
-		this.REDIRECT_URL =System.getenv("REDIRECT_URL"); 
-		//this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL")+"/auth/realms/"+this.REALM_NAME+"/account";
-		this.KEYCLOAK_LOGIN_BASE_URL=System.getenv("KEYCLOAK_LOGIN_BASE_URL");
-		this.FULL_AUTH_URL=this.KEYCLOAK_LOGIN_BASE_URL+"/auth/realms/"+this.REALM_NAME+"/account";
+	
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -169,47 +159,26 @@ public class GenerateServlet extends HttpServlet {
 		
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			String redirect="";
-			System.out.println("ui requested");
 			if(req.getHeader("access_token") == null) {
-				System.out.println("redirecting to auth "+this.FULL_AUTH_URL);
-				try {
-					URL url = new URL(this.FULL_AUTH_URL);
-					HttpURLConnection t = (HttpURLConnection) url.openConnection();
-					System.out.println(t.getResponseCode());
-					System.out.println(t.getURL());
-					System.out.println(URLDecoder.decode(t.getURL().toString()));
-					System.out.println("redirect URL->"+URLEncoder.encode(this.REDIRECT_URL));
-					String full_url=URLDecoder.decode(t.getURL().toString());
-					System.out.println("asdasdasd "+full_url);
-					String[] y = full_url.split("&");
-				
-					for (int i = 0; i < y.length; i++) {
-						System.out.println(y[i]);
-						if(y[i].contains("redirect_uri")) {
-							y[i] ="redirect_uri="+ URLEncoder.encode(this.REDIRECT_URL);
-							break;
-						}
-						
-					}
-					String result="";
-					for (String string : y) {
-						result+=string+"&";
-							
-					}
-				System.out.println("RESULT -->"+result);
-					redirect = result.substring(0,result.lastIndexOf("&"));
-				} catch (Exception e) {
-					e.printStackTrace();
+				if(this.REDIRECT_URL==null) {
+					System.out.println("NULL redirect URL");
+					String web = this.generateWebInterface();
+					resp.getWriter().write(web);
+				}else {
+					resp.sendRedirect(this.REDIRECT_URL);	
 				}
-				resp.sendRedirect(redirect);
-			}else{
-				resp.getWriter().write(this.generateHTML("web-ui.html"));
-	
+				
+			}else {
+				String web = this.generateWebInterface();
+				resp.getWriter().write(web);
+				return;
+
 			}
 
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
-			System.out.println("swagger requested");
+			if(req.getHeader("access_token") == null) {
+				resp.sendRedirect(this.REDIRECT_URL);
+			}
 			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
 			String yaml = "";
 			Scanner s = new Scanner(i);
@@ -315,41 +284,22 @@ public class GenerateServlet extends HttpServlet {
 	    response.addHeader("Access-Control-Allow-Credentials", "true");
    	
    }
-   
-   private String generateHTML(String template_name) {
-	   String web_content = "";
-	   try {
-		   InputStream y =getClass().getClassLoader().getResource(template_name).openStream();
-			
+ private String generateWebInterface() {
+		String web_content = "";
+
+	 try {
+		 InputStream y =getClass().getClassLoader().getResource("web-ui.html").openStream();
 			Scanner s = new Scanner((InputStream)y);
 			s.useDelimiter("\\A");
 			web_content = s.hasNext() ? s.next() : "";
 			s.close();
 			
 	} catch (Exception e) {
-		// TODO: handle exception
+		e.printStackTrace();
+	 
 	}
-	   return web_content; 
 	
-}
-   private boolean validateJWT() {
-	   boolean isValid=true;
-	   /*
-		
-		try {
-		    Algorithm algorithm = Algorithm.HMAC256(this.JWT_SECRET);
-		    JWTVerifier verifier = JWT.require(algorithm)
-		        .withIssuer("auth0")
-		        .build(); //Reusable verifier instance
-		    DecodedJWT jwt = verifier.verify(this.token);
-		    
-		} catch (JWTVerificationException exception){
-			isValid =false;
-		}
-*/
-	   return isValid ;
-   }
-
-
-
+	 return web_content;
+ }
+ 
 }
