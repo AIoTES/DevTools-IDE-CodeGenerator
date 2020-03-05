@@ -16,7 +16,6 @@
 package es.upm.tfo.lst.codegenerator.plugin.rest;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,34 +24,28 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.entity.ContentType;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
 
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -72,17 +65,30 @@ public class GenerateServlet extends HttpServlet {
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
+<<<<<<< HEAD
 	private String REDIRECT_URL=null;
 	private JsonParser jp;
+=======
+	private String token=null;
+	private JsonObject srver_response;
+	private boolean is_token_valid=false;
+	private JsonParser jp;
+	private JsonObject server_response;
+	private String req_url="";
+	//	http://192.168.1.164:8080/auth/realms/code-generator/account
+>>>>>>> keycloak-auth
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
 		jp = new JsonParser();
+<<<<<<< HEAD
 		
 		if(System.getenv("REDIRECT_URL")!=null) {
 			 this.REDIRECT_URL =System.getenv("REDIRECT_URL");
 		}
 	
+=======
+>>>>>>> keycloak-auth
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -154,11 +160,13 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String auth ="https://activage.lst.tfo.upm.es:8443/auth/realms/activage/protocol/openid-connect/auth?client_id=tools-user-login&redirect_uri=https%3A%2F%2Factivage.lst.tfo.upm.es%3A8443%2Fdeployment%2Fcomponent-configuration%2F%23%2Fmain%2Fcomponent_configurator%2Fcomponent_view%2Fplatform_info&state=0d3192bd-766c-4819-868b-de279083891f&response_mode=fragment&response_type=code&scope=openid&nonce=7fd74989-6c10-4a46-9d89-7a93f6a74813";
+		String redirect_url=buildRedirectURL(auth, req.getRequestURL().toString());
 		String line, req_data;
 		URL urlToFile;
-		
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
+<<<<<<< HEAD
 			if(req.getHeader("access_token") == null) {
 				if(this.REDIRECT_URL==null) {
 					System.out.println("NULL redirect URL");
@@ -187,6 +195,31 @@ public class GenerateServlet extends HttpServlet {
 			s.close();
 			resp.getWriter().write(yaml);
 			resp.setContentType("text/plain");
+=======
+			
+			
+			if(req.getHeader("Authorization") == null) {
+				resp.sendRedirect(redirect_url);
+			}else{
+				resp.getWriter().write(this.generateHTML("web-ui.html"));
+	
+			}
+
+		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
+			if(req.getHeader("Authorization")==null) {
+				resp.sendRedirect(redirect_url);
+			}else {
+				InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
+				String yaml = "";
+				Scanner s = new Scanner(i);
+				s.useDelimiter("\\A");
+				yaml = s.hasNext() ? s.next() : "";
+				s.close();
+				resp.getWriter().write(yaml);
+				resp.setContentType("text/plain");
+			}
+
+>>>>>>> keycloak-auth
 				
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
@@ -299,7 +332,37 @@ public class GenerateServlet extends HttpServlet {
 	 
 	}
 	
+<<<<<<< HEAD
 	 return web_content;
  }
  
+=======
+}
+   private String buildRedirectURL(String old_url, String baseURL) {
+	   String rebuilded_redirect=""; 
+		try {
+			String full_url=URLDecoder.decode(old_url);
+			String[] y = full_url.split("&");
+			for (int i = 0; i < y.length; i++) {
+				if(y[i].contains("redirect_uri")) {
+					y[i] ="redirect_uri="+URLEncoder.encode(baseURL);
+					break;
+				}
+				
+			}
+			String result="";
+			for (String string : y) {
+				result+=string+"&";	
+			}
+			rebuilded_redirect = result.substring(0,result.lastIndexOf("&"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("REDIRECT ->"+rebuilded_redirect);
+		return rebuilded_redirect;
+   }
+
+
+
+>>>>>>> keycloak-auth
 }
