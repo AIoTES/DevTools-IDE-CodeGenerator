@@ -148,7 +148,7 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String auth ="https://activage.lst.tfo.upm.es:8443/auth/realms/activage/protocol/openid-connect/auth?client_id=tools-user-login&redirect_uri=https%3A%2F%2Factivage.lst.tfo.upm.es%3A8443%2Fdeployment%2Fcomponent-configuration%2F%23%2Fmain%2Fcomponent_configurator%2Fcomponent_view%2Fplatform_info&state=0d3192bd-766c-4819-868b-de279083891f&response_mode=fragment&response_type=code&scope=openid&nonce=7fd74989-6c10-4a46-9d89-7a93f6a74813";
+		String auth ="https://activage-test1.lst.tfo.upm.es:8081/auth/realms/activage/protocol/openid-connect/auth?client_id=account&redirect_uri=https%3A%2F%2Factivage-test1.lst.tfo.upm.es%3A8081%2Fauth%2Frealms%2Factivage%2Faccount%2Flogin-redirect&state=0%2Fedafbc90-7ee2-466a-b02e-1ee24428db50&response_type=code&scope=openid";
 		String redirect_url=buildRedirectURL(auth, req.getRequestURL().toString());
 		String line, req_data;
 		URL urlToFile;
