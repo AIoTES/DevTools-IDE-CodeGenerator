@@ -65,30 +65,18 @@ public class GenerateServlet extends HttpServlet {
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
-<<<<<<< HEAD
-	private String REDIRECT_URL=null;
-	private JsonParser jp;
-=======
+
 	private String token=null;
 	private JsonObject srver_response;
 	private boolean is_token_valid=false;
 	private JsonParser jp;
 	private JsonObject server_response;
 	private String req_url="";
-	//	http://192.168.1.164:8080/auth/realms/code-generator/account
->>>>>>> keycloak-auth
+
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
 		jp = new JsonParser();
-<<<<<<< HEAD
-		
-		if(System.getenv("REDIRECT_URL")!=null) {
-			 this.REDIRECT_URL =System.getenv("REDIRECT_URL");
-		}
-	
-=======
->>>>>>> keycloak-auth
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -166,42 +154,11 @@ public class GenerateServlet extends HttpServlet {
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-<<<<<<< HEAD
-			if(req.getHeader("access_token") == null) {
-				if(this.REDIRECT_URL==null) {
-					System.out.println("NULL redirect URL");
-					String web = this.generateWebInterface();
-					resp.getWriter().write(web);
-				}else {
-					resp.sendRedirect(this.REDIRECT_URL);	
-				}
-				
-			}else {
-				String web = this.generateWebInterface();
-				resp.getWriter().write(web);
-				return;
 
-			}
-
-		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
-			if(req.getHeader("access_token") == null) {
-				resp.sendRedirect(this.REDIRECT_URL);
-			}
-			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
-			String yaml = "";
-			Scanner s = new Scanner(i);
-			s.useDelimiter("\\A");
-			yaml = s.hasNext() ? s.next() : "";
-			s.close();
-			resp.getWriter().write(yaml);
-			resp.setContentType("text/plain");
-=======
-			
-			
 			if(req.getHeader("Authorization") == null) {
 				resp.sendRedirect(redirect_url);
 			}else{
-				resp.getWriter().write(this.generateHTML("web-ui.html"));
+				resp.getWriter().write(this.generateWebInterface());
 	
 			}
 
@@ -219,7 +176,6 @@ public class GenerateServlet extends HttpServlet {
 				resp.setContentType("text/plain");
 			}
 
->>>>>>> keycloak-auth
 				
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
@@ -332,12 +288,11 @@ public class GenerateServlet extends HttpServlet {
 	 
 	}
 	
-<<<<<<< HEAD
+
 	 return web_content;
  }
  
-=======
-}
+
    private String buildRedirectURL(String old_url, String baseURL) {
 	   String rebuilded_redirect=""; 
 		try {
@@ -364,5 +319,4 @@ public class GenerateServlet extends HttpServlet {
 
 
 
->>>>>>> keycloak-auth
 }
