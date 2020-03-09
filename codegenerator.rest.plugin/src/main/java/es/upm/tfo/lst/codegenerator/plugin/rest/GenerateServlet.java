@@ -149,15 +149,21 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String auth ="https://activage-test1.lst.tfo.upm.es:8081/auth/realms/activage/protocol/openid-connect/auth?client_id=account&redirect_uri=https%3A%2F%2Factivage-test1.lst.tfo.upm.es%3A8081%2Fauth%2Frealms%2Factivage%2Faccount%2Flogin-redirect&state=0%2Fedafbc90-7ee2-466a-b02e-1ee24428db50&response_type=code&scope=openid";
-		String redirect_url=buildRedirectURL(auth, req.getRequestURL().toString());
+		String aux_redir_url="https://activage-test1.lst.tfo.upm.es:8081/development/codegenerator/ui"; 
+
+		String redirect_url=buildRedirectURL(auth, aux_redir_url);
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
-		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 
+		
+		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(req.getHeader("Authorization") == null) {
+				System.out.println("Authorization token missing");
+				System.out.println("REDIRECTING TO----> "+redirect_url);
 				resp.sendRedirect(redirect_url);
 			}else{
+				System.out.println("Authorization token "+req.getHeader("Authorization"));
 				resp.getWriter().write(this.generateWebInterface());
 	
 			}
@@ -301,6 +307,7 @@ public class GenerateServlet extends HttpServlet {
 			for (int i = 0; i < y.length; i++) {
 				if(y[i].contains("redirect_uri")) {
 					y[i] ="redirect_uri="+URLEncoder.encode(baseURL);
+					
 					break;
 				}
 				
@@ -313,7 +320,6 @@ public class GenerateServlet extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("REDIRECT ->"+rebuilded_redirect);
 		return rebuilded_redirect;
    }
 
