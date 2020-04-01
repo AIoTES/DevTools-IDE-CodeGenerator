@@ -72,7 +72,9 @@ public class GenerateServlet extends HttpServlet {
 	private JsonParser jp;
 	private JsonObject server_response;
 	private String req_url="";
-
+	private String auth = System.getenv("AIOTES_HOSTNAME");
+	private String port = System.getenv("AIOTES_PORT");
+	private String path="/auth/realms/CodeGenerator/protocol/openid-connect/auth?client_id=account&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Frealms%2FCodeGenerator%2Faccount%2Flogin-redirect&state=0%2F08224de1-a6f9-4237-aeff-7e0b52c8011c&response_type=code&scope=openid";
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
@@ -148,8 +150,8 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String auth ="https://activage-test1.lst.tfo.upm.es:8081/auth/realms/activage/protocol/openid-connect/auth?client_id=account&redirect_uri=https%3A%2F%2Factivage-test1.lst.tfo.upm.es%3A8081%2Fauth%2Frealms%2Factivage%2Faccount%2Flogin-redirect&state=0%2Fedafbc90-7ee2-466a-b02e-1ee24428db50&response_type=code&scope=openid";
-		String aux_redir_url="https://activage-test1.lst.tfo.upm.es:8081/development/codegenerator/ui"; 
+
+		String aux_redir_url="https://localhost:8081/GenerateCode/ui"; 
 
 		String redirect_url=buildRedirectURL(auth, aux_redir_url);
 		String line, req_data;
@@ -158,15 +160,15 @@ public class GenerateServlet extends HttpServlet {
 
 		
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-//			if(req.getHeader("Authorization") == null) {
-//				System.out.println("Authorization token missing");
-//				System.out.println("REDIRECTING TO----> "+redirect_url);
-//				resp.sendRedirect(redirect_url);
-//			}else{
+			if(req.getHeader("Authorization") == null) {
+				System.out.println("Authorization token missing");
+				System.out.println("REDIRECTING TO----> "+redirect_url);
+				resp.sendRedirect(redirect_url);
+			}else{
 				System.out.println("Authorization token "+req.getHeader("Authorization"));
 				resp.getWriter().write(this.generateWebInterface());
 	
-//			}
+			}
 
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
 			if(req.getHeader("Authorization")==null) {
@@ -300,6 +302,7 @@ public class GenerateServlet extends HttpServlet {
  
 
    private String buildRedirectURL(String old_url, String baseURL) {
+	   
 	   String rebuilded_redirect=""; 
 		try {
 			String full_url=URLDecoder.decode(old_url);
@@ -316,7 +319,8 @@ public class GenerateServlet extends HttpServlet {
 			for (String string : y) {
 				result+=string+"&";	
 			}
-			rebuilded_redirect = result.substring(0,result.lastIndexOf("&"));
+//			rebuilded_redirect = result.substring(0,result.lastIndexOf("&"));
+			rebuilded_redirect = this.auth+":"+this.port+path;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
