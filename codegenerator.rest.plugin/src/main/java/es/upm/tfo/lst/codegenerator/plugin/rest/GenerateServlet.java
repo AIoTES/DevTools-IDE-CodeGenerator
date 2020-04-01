@@ -158,15 +158,15 @@ public class GenerateServlet extends HttpServlet {
 
 		
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			if(req.getHeader("Authorization") == null) {
-				System.out.println("Authorization token missing");
-				System.out.println("REDIRECTING TO----> "+redirect_url);
-				resp.sendRedirect(redirect_url);
-			}else{
+//			if(req.getHeader("Authorization") == null) {
+//				System.out.println("Authorization token missing");
+//				System.out.println("REDIRECTING TO----> "+redirect_url);
+//				resp.sendRedirect(redirect_url);
+//			}else{
 				System.out.println("Authorization token "+req.getHeader("Authorization"));
 				resp.getWriter().write(this.generateWebInterface());
 	
-			}
+//			}
 
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
 			if(req.getHeader("Authorization")==null) {
