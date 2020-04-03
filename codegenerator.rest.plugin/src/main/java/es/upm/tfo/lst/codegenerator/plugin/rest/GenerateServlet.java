@@ -65,9 +65,6 @@ public class GenerateServlet extends HttpServlet {
 
 	private String token=null,redirect_url=null;
 	private JsonParser jp;
-	private String host_name = System.getenv("AIOTES_HOSTNAME");
-	private String host_port = System.getenv("AIOTES_API_PORT");
-	private String redir_url="/auth/realms/activage/account";
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
@@ -150,29 +147,17 @@ public class GenerateServlet extends HttpServlet {
 		addCorsHeaderPOST(resp);
 
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			if(this.token == null) {
-				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
-				System.out.println("Authorization token missing. Redirecting to authentication server "+this.redirect_url);				
-				resp.sendRedirect(this.redirect_url);
-			}else{
-				System.out.println("Authorization token "+this.token);
-				resp.getWriter().write(this.generateWebInterface());
-	
-			}
+			resp.getWriter().write(this.generateWebInterface());
 
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
-			if(req.getHeader("Authorization")==null) {
-				resp.sendRedirect(redirect_url);
-			}else {
-				InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
-				String yaml = "";
-				Scanner s = new Scanner(i);
-				s.useDelimiter("\\A");
-				yaml = s.hasNext() ? s.next() : "";
-				s.close();
-				resp.getWriter().write(yaml);
-				resp.setContentType("text/plain");
-			}
+			InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
+			String yaml = "";
+			Scanner s = new Scanner(i);
+			s.useDelimiter("\\A");
+			yaml = s.hasNext() ? s.next() : "";
+			s.close();
+			resp.getWriter().write(yaml);
+			resp.setContentType("text/plain");
 
 				
 		}else {
@@ -290,35 +275,6 @@ public class GenerateServlet extends HttpServlet {
 	 return web_content;
  }
  
-
-   private String buildRedirectURL(String request_uri) {
-	   //https://activage-test.lst.tfo.upm.es:8081/auth/realms/activage/account
-	   String rebuilded_redirect=""; 
-		try {
-			
-//			String[] y = this.redirect_path.split("&");
-//			for (int i = 0; i < y.length; i++) {
-//				if(y[i].contains("redirect_uri")) {
-//					y[i] ="redirect_uri="+URLEncoder.encode(request_uri);
-//					break;
-//				}
-//				
-//			}
-//			String result="";
-//			for (String string : y) {
-//				result+=string+"&";	
-//			}
-			if(this.host_port.equals("443")) {
-				rebuilded_redirect = this.host_name+":"+this.redir_url;
-			}else {
-				rebuilded_redirect = this.host_name+":"+this.host_port+this.redir_url;	
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return rebuilded_redirect;
-   }
 
 
 
