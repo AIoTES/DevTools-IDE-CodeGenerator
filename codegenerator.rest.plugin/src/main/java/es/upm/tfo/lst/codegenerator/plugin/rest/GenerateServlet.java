@@ -152,8 +152,14 @@ public class GenerateServlet extends HttpServlet {
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(this.token == null) {
 				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
-				System.out.println("Authorization token missing. Redirecting to authentication server "+this.redirect_url);				
-				resp.sendRedirect(this.redirect_url);
+				if(!this.redirect_url.isEmpty()) {
+					System.out.println("Authorization token missing. Redirecting to authentication server-> "+this.redirect_url);
+					resp.sendRedirect(this.redirect_url);
+				} else {
+					resp.sendError(500, "Empty redirect URL");
+				}
+				
+				
 			}else{
 				System.out.println("Authorization token "+this.token);
 				resp.getWriter().write(this.generateWebInterface());
@@ -292,31 +298,22 @@ public class GenerateServlet extends HttpServlet {
  
 
    private String buildRedirectURL(String request_uri) {
-	   //https://activage-test.lst.tfo.upm.es:8081/auth/realms/activage/account
-	   String rebuilded_redirect=""; 
-		try {
-			
-//			String[] y = this.redirect_path.split("&");
-//			for (int i = 0; i < y.length; i++) {
-//				if(y[i].contains("redirect_uri")) {
-//					y[i] ="redirect_uri="+URLEncoder.encode(request_uri);
-//					break;
-//				}
-//				
-//			}
-//			String result="";
-//			for (String string : y) {
-//				result+=string+"&";	
-//			}
-			if(this.host_port.equals("443")) {
-				rebuilded_redirect = this.host_name+":"+this.redir_url;
-			}else {
-				rebuilded_redirect = this.host_name+":"+this.host_port+this.redir_url;	
+	   String rebuilded_redirect="";
+	   if(this.host_name != null  && this.host_port != null) {
+			try {
+				if(this.host_port.equals("443")) {
+					rebuilded_redirect = this.host_name+":"+this.redir_url;
+				}else {
+					rebuilded_redirect = this.host_name+":"+this.host_port+this.redir_url;	
+				}
+				
+			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	   }else {
+		   System.out.println("host_name or host_port null. Host name="+this.host_name+" host_port="+this.host_port);
+	   }
+
 		return rebuilded_redirect;
    }
 
