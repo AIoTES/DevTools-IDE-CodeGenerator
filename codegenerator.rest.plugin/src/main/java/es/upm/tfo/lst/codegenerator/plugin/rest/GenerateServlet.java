@@ -23,17 +23,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,15 +63,11 @@ public class GenerateServlet extends HttpServlet {
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
 
-	private String token=null;
-	private JsonObject srver_response;
-	private boolean is_token_valid=false;
+	private String token=null,redirect_url=null;
 	private JsonParser jp;
-	private JsonObject server_response;
-	private String req_url="";
-	private String auth = System.getenv("AIOTES_HOSTNAME");
-	private String port = System.getenv("AIOTES_PORT");
-	private String path="/auth/realms/CodeGenerator/protocol/openid-connect/auth?client_id=account&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Frealms%2FCodeGenerator%2Faccount%2Flogin-redirect&state=0%2F08224de1-a6f9-4237-aeff-7e0b52c8011c&response_type=code&scope=openid";
+	private String host_name = System.getenv("AIOTES_HOSTNAME");
+	private String host_port = System.getenv("AIOTES_PORT");
+	private String redir_url="/auth/realms/activage/account";
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
@@ -150,22 +143,19 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		String aux_redir_url="https://localhost:8081/GenerateCode/ui"; 
-
-		String redirect_url=buildRedirectURL(auth, aux_redir_url);
+		this.token= req.getParameter("token");
+		
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
 
-		
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			if(req.getHeader("Authorization") == null) {
-				System.out.println("Authorization token missing");
-				System.out.println("REDIRECTING TO----> "+redirect_url);
-				resp.sendRedirect(redirect_url);
+			if(this.token == null) {
+				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
+				System.out.println("Authorization token missing. Redirecting to authentication server "+this.redirect_url);				
+				resp.sendRedirect(this.redirect_url);
 			}else{
-				System.out.println("Authorization token "+req.getHeader("Authorization"));
+				System.out.println("Authorization token "+this.token);
 				resp.getWriter().write(this.generateWebInterface());
 	
 			}
@@ -301,26 +291,29 @@ public class GenerateServlet extends HttpServlet {
  }
  
 
-   private String buildRedirectURL(String old_url, String baseURL) {
-	   
+   private String buildRedirectURL(String request_uri) {
+	   //https://activage-test.lst.tfo.upm.es:8081/auth/realms/activage/account
 	   String rebuilded_redirect=""; 
 		try {
-			String full_url=URLDecoder.decode(old_url);
-			String[] y = full_url.split("&");
-			for (int i = 0; i < y.length; i++) {
-				if(y[i].contains("redirect_uri")) {
-					y[i] ="redirect_uri="+URLEncoder.encode(baseURL);
-					
-					break;
-				}
-				
+			
+//			String[] y = this.redirect_path.split("&");
+//			for (int i = 0; i < y.length; i++) {
+//				if(y[i].contains("redirect_uri")) {
+//					y[i] ="redirect_uri="+URLEncoder.encode(request_uri);
+//					break;
+//				}
+//				
+//			}
+//			String result="";
+//			for (String string : y) {
+//				result+=string+"&";	
+//			}
+			if(this.host_port.equals("443")) {
+				rebuilded_redirect = this.host_name+":"+this.redir_url;
+			}else {
+				rebuilded_redirect = this.host_name+":"+this.host_port+this.redir_url;	
 			}
-			String result="";
-			for (String string : y) {
-				result+=string+"&";	
-			}
-//			rebuilded_redirect = result.substring(0,result.lastIndexOf("&"));
-			rebuilded_redirect = this.auth+":"+this.port+path;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
