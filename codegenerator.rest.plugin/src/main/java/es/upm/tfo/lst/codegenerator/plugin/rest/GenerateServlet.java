@@ -66,7 +66,7 @@ public class GenerateServlet extends HttpServlet {
 	private String token=null,redirect_url=null;
 	private JsonParser jp;
 	private String host_name = System.getenv("AIOTES_HOSTNAME");
-	private String host_port = System.getenv("AIOTES_PORT");
+	private String host_port = System.getenv("AIOTES_API_PORT");
 	private String redir_url="/auth/realms/activage/account";
 	boolean isAuthorized=false;
 
