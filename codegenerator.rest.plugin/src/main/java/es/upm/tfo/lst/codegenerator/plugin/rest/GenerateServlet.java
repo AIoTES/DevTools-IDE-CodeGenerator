@@ -60,12 +60,11 @@ public class GenerateServlet extends HttpServlet {
 	private static final String CONTENT_TYPE = "Content-Type";
 	private File tempFolder;
 	private String outputAlias ;
-	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
-	private String  default_post_path="/GenerateCode";
 	private String token=null,redirect_url=null;
 	private JsonParser jp;
 	private String host_name = System.getenv("AIOTES_HOSTNAME");
+	private String base_post_path = System.getenv("CODEGENERATOR_PATH");
 	private String host_port = System.getenv("AIOTES_API_PORT");
 	private String redir_url="/auth/realms/activage/account";
 	boolean isAuthorized=false;
@@ -145,13 +144,13 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		this.token= req.getParameter("token");
-		System.out.println("DOGET "+req.getRequestURL().toString()); 
+		System.out.println("doGet request URL -> "+req.getRequestURL().toString()); 
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
-
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
 			if(this.token == null) {
+				System.out.println("Token missing...");
 				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
 				if(!this.redirect_url.isEmpty()) {
 					System.out.println("Authorization token missing. Redirecting to authentication server -> "+this.redirect_url);
@@ -160,13 +159,14 @@ public class GenerateServlet extends HttpServlet {
 					resp.sendError(500, "Empty redirect URL");
 				}
 			}else{
-				System.out.println("Authorization token "+this.token);
+				System.out.println("Authorization token= "+this.token);
+				System.out.println("POST env var value= "+this.base_post_path);
 				Map<String, Object > vars = new HashMap<String, Object>();
 				//variables value need to start with slash
-				String path = req.getRequestURI().substring(0,req.getRequestURI().lastIndexOf("/"));
-				if(!path.startsWith("/")) path+="/"+path;
-				System.out.println("POSTPATH "+path);
-				vars.put("post_url",path);
+//				String path = req.getRequestURI().substring(0,req.getRequestURI().lastIndexOf("/"));
+//				if(!path.startsWith("/")) path+="/"+path;
+//				System.out.println("POSTPATH "+path);
+				vars.put("post_url",this.base_post_path);
 				try {
 					resp.getWriter().write(this.processVelocityTemplate("web-ui.vm", vars));	
 				} catch (Exception e) {
@@ -176,7 +176,6 @@ public class GenerateServlet extends HttpServlet {
 				
 	
 			}
-
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
 			if(req.getHeader("Authorization")==null) {
 				resp.sendRedirect(redirect_url);
