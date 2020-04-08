@@ -24,10 +24,10 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
@@ -62,7 +62,7 @@ public class GenerateServlet extends HttpServlet {
 	private String outputAlias ;
 	private final String HTMLtemplate = "listing.htm.vm";
 	private String out;
-
+	private String  default_post_path="/GenerateCode";
 	private String token=null,redirect_url=null;
 	private JsonParser jp;
 	private String host_name = System.getenv("AIOTES_HOSTNAME");
@@ -78,6 +78,7 @@ public class GenerateServlet extends HttpServlet {
 	//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("POST REQUEST");
 		addCorsHeaderPOST(resp);
 		TemplateDataModel model = null;
 		XmlParser parser = new XmlParser();
@@ -144,7 +145,7 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		this.token= req.getParameter("token");
-		
+		System.out.println("DOGET "+req.getRequestURL().toString()); 
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
@@ -153,16 +154,26 @@ public class GenerateServlet extends HttpServlet {
 			if(this.token == null) {
 				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
 				if(!this.redirect_url.isEmpty()) {
-					System.out.println("Authorization token missing. Redirecting to authentication server-> "+this.redirect_url);
+					System.out.println("Authorization token missing. Redirecting to authentication server -> "+this.redirect_url);
 					resp.sendRedirect(this.redirect_url);
 				} else {
 					resp.sendError(500, "Empty redirect URL");
 				}
-				
-				
 			}else{
 				System.out.println("Authorization token "+this.token);
-				resp.getWriter().write(this.generateWebInterface());
+				Map<String, Object > vars = new HashMap<String, Object>();
+				//variables value need to start with slash
+				String path = req.getRequestURI().substring(0,req.getRequestURI().lastIndexOf("/"));
+				if(!path.startsWith("/")) path+="/"+path;
+				System.out.println("POSTPATH "+path);
+				vars.put("post_url",path);
+				try {
+					resp.getWriter().write(this.processVelocityTemplate("web-ui.vm", vars));	
+				} catch (Exception e) {
+					e.printStackTrace();
+					resp.sendError(500, "Can't generate web interface");
+				}
+				
 	
 			}
 
@@ -198,39 +209,20 @@ public class GenerateServlet extends HttpServlet {
 					resp.getWriter().write(sb.toString());
 					resp.setContentType("text/plain");
 				}else if (t.isDirectory() && !t.equals(tempFolder)) {
-					// request listing of a directory (not the root)
-					BufferedReader br = null;
-					br = new BufferedReader(new InputStreamReader(
-							GenerateServlet.class.getClassLoader().getResourceAsStream(HTMLtemplate)));
-					StringBuilder sb = new StringBuilder();
-
-					while ((line = br.readLine()) != null) {
-						sb.append(line);
-					}
-					RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
-					StringReader reader = new StringReader(sb.toString());
-					StringWriter stringWriter = new StringWriter();
-					Template template = new Template();
-					template.setRuntimeServices(runtimeServices);
-					VelocityContext context = new VelocityContext();
-					context.put("path", t.getAbsolutePath());
-					context.put("file", t);
-					context.put("dirContent", t.listFiles());
-					context.put("hash", this.out);
-					context.put("BACK", req_data.split("/").length > 3);
-					SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-					context.put("dateformatter",df2);
-			        
-					template.setData(runtimeServices.parse(reader, HTMLtemplate));
-					template.initDocument();
-					template.merge(context, stringWriter);
-					resp.getWriter().write(stringWriter.toString());
+					Map<String, Object> vbles = new HashMap<String, Object>();
+					vbles.put("path", t.getAbsolutePath());
+					vbles.put("file", t);
+					vbles.put("dirContent", t.listFiles());
+					vbles.put("hash", this.out);
+					vbles.put("BACK", req_data.split("/").length > 3);
+					String processed_teplate = this.processVelocityTemplate("listing.htm.vm", vbles);
+					resp.getWriter().write(processed_teplate);
 					resp.setContentType("text/html");
-					stringWriter.close();
 
 				}
 			} catch (Exception e) {
-						System.out.println(e.getMessage());
+				e.printStackTrace();
+				System.out.println(e.getMessage());
 				}
 			
 		}
@@ -277,7 +269,8 @@ public class GenerateServlet extends HttpServlet {
 	    response.addHeader("Access-Control-Allow-Credentials", "true");
    	
    }
- private String generateWebInterface() {
+ 
+   private String generateWebInterface() {
 		String web_content = "";
 
 	 try {
@@ -316,6 +309,35 @@ public class GenerateServlet extends HttpServlet {
 
 		return rebuilded_redirect;
    }
+
+	private String processVelocityTemplate(String template_name, Map<String,Object> variables)  throws Exception{
+		SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		StringWriter stringWriter = new StringWriter();
+		String line;
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = null;
+		br = new BufferedReader(new InputStreamReader(GenerateServlet.class.getClassLoader().getResourceAsStream(template_name)));
+		while ((line = br.readLine()) != null) {
+			sb.append(line);
+		}
+		RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
+		StringReader reader = new StringReader(sb.toString());
+		Template template = new Template();
+		template.setRuntimeServices(runtimeServices);
+		VelocityContext context = new VelocityContext();
+		
+		for (Entry<String, Object> item : variables.entrySet()) {
+			context.put(item.getKey(), item.getValue());	
+		}
+		context.put("dateformatter",df2);
+        
+		template.setData(runtimeServices.parse(reader, template_name));
+		template.initDocument();
+		template.merge(context, stringWriter);
+		stringWriter.close();
+		return stringWriter.toString();
+	}
+
 
 
 
