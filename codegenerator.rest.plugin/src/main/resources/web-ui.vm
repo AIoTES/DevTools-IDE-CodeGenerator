@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+
+<style>
+.coordinator_path{
+display: inline-block;
+}
+
+table,tr,td,th{
+border: 2px solid black;
+}
+table{
+border-collapse: collapse;
+}
+
+#ont_table, #ont_fieldset{
+display: inline-block;
+}
+#variables_table, #vars_dieldset{
+display: inline-block;
+}
+
+</style>
+<script type="text/javascript">
+var restObj = {};
+function changeTemplate(){
+    restObj.template = document.getElementById("coordinator").value;
+}
+
+function delVar(var_name) {
+    var row = document.getElementById("var_row_"+var_name);
+    row.parentNode.removeChild(row);
+    delete restObj.variables[var_name];
+}
+
+function addVar() {
+    var table = document.getElementById("variables_table");
+    var row_count = table.getElementsByTagName("tr").length;
+    var row = table.insertRow(row_count-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var var_name = document.getElementById("var_name").value;
+    row.id="var_row_"+var_name;
+    var var_val = document.getElementById("var_val").value;
+    cell1.innerHTML=var_name;
+    cell2.innerHTML=var_val;
+    cell3.innerHTML='<input type="button" onclick="delVar(\''+var_name+'\')" value="del">';
+    if (!restObj.hasOwnProperty("variables")) {
+        restObj.variables={};
+    }
+    restObj.variables[var_name]=var_val;
+    document.getElementById("var_name").value="";
+    document.getElementById("var_val").value="";
+}
+
+function delOnt(ont_url) {
+    var row = document.getElementById("ont_row_"+ont_url);
+    row.parentNode.removeChild(row);
+    for( var i = 0; i < restObj.ontologies.length; i++){ 
+        if ( restObj.ontologies[i].url === ont_url) {
+            restObj.ontologies.splice(i, 1); 
+        }
+    }
+}
+
+function addOnt(){
+    var table = document.getElementById("ont_table");
+    var row_count = table.getElementsByTagName("tr").length;
+    var row = table.insertRow(row_count-1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var ont_url = document.getElementById("ontology").value;
+    var var_req ="";
+    if(document.getElementById("ont_recursive").checked){
+        var_req="true";
+    }else{
+        var_req="false";
+    }
+    cell1.innerHTML=ont_url;
+    cell2.innerHTML=var_req;
+    row.id="ont_row_"+ont_url;
+    cell3.innerHTML='<input type="button" onclick="delOnt(\''+ont_url+'\')" value="del">';
+    var ontology={url:"",recursive:""};
+    ontology.url=ont_url;
+    ontology.recursive=var_req;
+    if (restObj.hasOwnProperty("ontologies")){
+        restObj.ontologies.push(ontology);
+    } else {
+        restObj.ontologies = [ontology];
+    }
+
+    document.getElementById("ontology").value="";
+    document.getElementById("ont_recursive").checked=false;
+}
+
+function post() {
+
+xhr = new XMLHttpRequest();
+
+var pathArray = window.location.pathname.split('/');
+var newPathname = "";
+
+xhr.open("POST", "${post_url}");
+xhr.setRequestHeader("Content-type", "application/json");
+xhr.setRequestHeader("Access-Control-Allow-Origin","*");
+xhr.onreadystatechange = function () { 
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        location.replace("${post_url}");
+    }
+};
+
+var data = JSON.stringify(restObj);
+console.log(data);
+xhr.send(data);
+
+
+}
+</script>
+
+
+</head>
+<body>
+<h1>CodeGenerator tool</h1>
+<fieldset class="fieldset">
+<form name="CodeGenerator" method="POST" action="${post_url}">
+<div id="coordinator_div">
+<p class="coordinator_path">XmlCoordinator path</p>   <input type="text" id="coordinator" class="coordinator_path"  onchange="changeTemplate()"><br>
+</div>
+<div class="c1">
+<table id="ont_table">
+<tr>
+<th>Ontology URL</th>
+<th>Recursive</th>
+<th>operation</th>
+</tr>
+<tr>
+<td><input type="text" id="ontology"></td>
+<td><input type="checkbox"   id="ont_recursive"></td>
+<td><input type="button" onclick="addOnt()" value="add"></td>
+</tr>
+</table>
+</div>
+<div class="c1">
+<table id="variables_table">
+<tr>
+<th>Variable name</th>
+<th>Variable value</th>
+<th>Operation</th>
+</tr>
+<tr>
+<td><input type="text" id="var_name"></td>
+<td><input type="text" id="var_val"></td>
+<td><input type="button" onclick="addVar()" value="add"></td>
+</tr>
+</table>
+</div>
+<input type="button" value="GenerateCode" onclick="post()">
+</form>
+</fieldset>
+
+
+</body>
+</html>
