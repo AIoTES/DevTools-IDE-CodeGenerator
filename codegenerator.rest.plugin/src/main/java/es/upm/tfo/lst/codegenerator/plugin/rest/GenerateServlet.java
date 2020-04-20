@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,12 +62,14 @@ public class GenerateServlet extends HttpServlet {
 	private File tempFolder;
 	private String outputAlias ;
 	private String out;
-	private String token=null,redirect_url=null;
+	private String token=null,redirect_url=null,oidc_code=null;
 	private JsonParser jp;
 	private String host_name = System.getenv("AIOTES_HOSTNAME");
 	private String base_post_path = System.getenv("CODEGENERATOR_PATH");
 	private String host_port = System.getenv("AIOTES_API_PORT");
 	private String redir_url="/auth/realms/activage/account";
+	private String test_redir_url="/auth/realms/Activage/protocol/openid-connect/auth";
+	
 	boolean isAuthorized=false;
 
 	public GenerateServlet() {
@@ -77,109 +80,116 @@ public class GenerateServlet extends HttpServlet {
 	//{"template": "http://localhost/template/","ontologies":[{"url":"https://protege.stanford.edu/ontologies/pizza/pizza.owl", "recursive":"true"}], "variables":{"varname":"varvalue"}}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("POST REQUEST");
-		addCorsHeaderPOST(resp);
-		TemplateDataModel model = null;
-		XmlParser parser = new XmlParser();
-		OntologyLoader ontologyLoader = new OntologyLoader();
-		if(req.getHeader(CONTENT_TYPE).equals("application/json")) {
-			try {
-				JsonElement sreq = jp.parse(req.getReader());
-				if (sreq instanceof JsonObject) {
-					JsonObject gc = (JsonObject) sreq;
-					model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
-					GenerateProject gp = new GenerateProject();
-					gp.setMainModel(model);
-					// set ontologies
-					if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
-						for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
-							if(item.isJsonPrimitive()) {
-								gp.addOntology(	ontologyLoader.loadOntology(item.getAsJsonPrimitive().getAsString()),false);
+		System.out.println("POST REQUEST " +req.getRequestURL().toString());
+		if(req.getParameter("token")!= null) {
+			//TODO validate token
+			addCorsHeaderPOST(resp);
+			TemplateDataModel model = null;
+			XmlParser parser = new XmlParser();
+			OntologyLoader ontologyLoader = new OntologyLoader();
+			if(req.getHeader(CONTENT_TYPE).equals("application/json")) {
+				try {
+					JsonElement sreq = jp.parse(req.getReader());
+					if (sreq instanceof JsonObject) {
+						JsonObject gc = (JsonObject) sreq;
+						model = parser.generateXMLCoordinator(gc.get(TEMPLATE).getAsString());
+						GenerateProject gp = new GenerateProject();
+						gp.setMainModel(model);
+						// set ontologies
+						if (gc.get(ONT).isJsonArray() && gc.get(ONT).getAsJsonArray().size() > 0) {
+							for (JsonElement item : gc.get(ONT).getAsJsonArray()) {
+								if(item.isJsonPrimitive()) {
+									gp.addOntology(	ontologyLoader.loadOntology(item.getAsJsonPrimitive().getAsString()),false);
+								}
+								if(item.isJsonObject()) {
+									gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
+								}
 							}
-							if(item.isJsonObject()) {
-								gp.addOntology(ontologyLoader.loadOntology(item.getAsJsonObject().get("url").getAsJsonPrimitive().getAsString()),item.getAsJsonObject().get("recursive").getAsBoolean());
-							}
-						}
-					} else {
-						if (gc.get(ONT).isJsonPrimitive()) {
-							// string (single ont without recursive)
-							gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonPrimitive().getAsString()), false);
 						} else {
-							// object (single ont with recursive parameter)
-							JsonObject ont = gc.get(ONT).getAsJsonObject();
-							gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
+							if (gc.get(ONT).isJsonPrimitive()) {
+								// string (single ont without recursive)
+								gp.addOntology(ontologyLoader.loadOntology(gc.get(ONT).getAsJsonPrimitive().getAsString()), false);
+							} else {
+								// object (single ont with recursive parameter)
+								JsonObject ont = gc.get(ONT).getAsJsonObject();
+								gp.addOntology(ontologyLoader.loadOntology(ont.get("url").getAsJsonPrimitive().getAsString()),ont.get("recursive").getAsBoolean());
+							}
 						}
-					}
-					// set variables
-					if(gc.has(VAR)) {
-						for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
-							gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+						// set variables
+						if(gc.has(VAR)) {
+							for (Map.Entry<String, JsonElement> varEntry : gc.get(VAR).getAsJsonObject().entrySet()) {
+								gp.setVariable(varEntry.getKey(), varEntry.getValue().getAsString());
+							}
 						}
-					}
-					// set Output
-					this.out = Integer.toHexString(sreq.hashCode());
-					File outFile = new File(tempFolder, this.out);
-					this.deleteFolder(outFile);
-					outFile.mkdirs();
-					gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
-					//System.out.println(outFile.getAbsolutePath());
-					// generate
-					gp.process();
-					JsonObject outO = new JsonObject();
-					outO.addProperty("output", outputAlias+"/");
-					resp.addHeader(CONTENT_TYPE, "application/json");
-					System.out.println("response JSON "+outO);
-					resp.getWriter().write(outO.toString());
-					//resp.sendRedirect(this.SERVER+"GenerateCode");
-				}else
-					resp.sendError(400,"invalid json root element");
-			}catch (Exception e) {
-				resp.sendError(400,e.getLocalizedMessage());
-			}
-		}else 
-			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+						// set Output
+						this.out = Integer.toHexString(sreq.hashCode());
+						File outFile = new File(tempFolder, this.out);
+						this.deleteFolder(outFile);
+						outFile.mkdirs();
+						gp.setOutputFolder(outFile.getAbsolutePath() + File.separatorChar);
+						//System.out.println(outFile.getAbsolutePath());
+						// generate
+						gp.process();
+						JsonObject outO = new JsonObject();
+						outO.addProperty("output", outputAlias+"/");
+						resp.addHeader(CONTENT_TYPE, "application/json");
+						System.out.println("response JSON -> "+outO);
+						System.out.println("output content location -> "+outFile.getAbsolutePath());
+						resp.getWriter().write(outO.toString());
+						//resp.sendRedirect(this.SERVER+"GenerateCode");
+					}else
+						resp.sendError(500,"invalid json root element");
+				}catch (Exception e) {
+					resp.sendError(400,e.getLocalizedMessage());
+				}
+			}else 
+				resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 
+		}else {
+			resp.sendError(400, "Missing token in URL param");
+		}
+		
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		this.token= req.getParameter("token");
+		this.oidc_code= req.getParameter("code");
 		System.out.println("doGet request URL -> "+req.getRequestURL().toString()); 
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
 		if(req.getRequestURI().equals(outputAlias+"/ui")) {
-			if(this.token == null) {
-				System.out.println("Token missing...");
-				this.redirect_url=buildRedirectURL(req.getRequestURI().toString());
+			if(this.token == null && this.oidc_code == null) {
+				this.redirect_url=buildRedirectURL(req.getRequestURL().toString());
 				if(!this.redirect_url.isEmpty()) {
 					System.out.println("Authorization token missing. Redirecting to authentication server -> "+this.redirect_url);
 					resp.sendRedirect(this.redirect_url);
 				} else {
-					resp.sendError(500, "Empty redirect URL");
+					resp.sendError(500, "Could not build redirect URL");
 				}
 			}else{
-				System.out.println("Authorization token= "+this.token);
-				System.out.println("POST env var value= "+this.base_post_path);
+				System.out.println("doGet Authorization token= "+this.token);
+				System.out.println("doGet Authorization code= "+this.oidc_code);
 				Map<String, Object > vars = new HashMap<String, Object>();
-				//variables value need to start with slash
-//				String path = req.getRequestURI().substring(0,req.getRequestURI().lastIndexOf("/"));
-//				if(!path.startsWith("/")) path+="/"+path;
-//				System.out.println("POSTPATH "+path);
-				vars.put("post_url",this.base_post_path);
+				vars.put("post_url",this.base_post_path+"/ui?token="+this.token);
+				vars.put("gen_code_path",this.base_post_path);
 				try {
 					resp.getWriter().write(this.processVelocityTemplate("web-ui.vm", vars));	
 				} catch (Exception e) {
 					e.printStackTrace();
-					resp.sendError(500, "Can't generate web interface");
+					resp.sendError(500, "Can't generate web interface. "+e.getMessage());
 				}
 				
 	
 			}
 		}else if(req.getRequestURI().equals(outputAlias+"/swagger")){
-			if(req.getHeader("Authorization")==null) {
-				resp.sendRedirect(redirect_url);
+			if(this.token==null && this.oidc_code == null) {
+				this.redirect_url=buildRedirectURL(req.getRequestURL().toString());
+				resp.sendRedirect(this.redirect_url);
 			}else {
+				System.out.println("doGet Authorization token= "+this.token);
+				System.out.println("doGet Authorization token= "+this.oidc_code);
 				InputStream i = getClass().getClassLoader().getResource("swagger.yaml").openStream();
 				String yaml = "";
 				Scanner s = new Scanner(i);
@@ -194,6 +204,8 @@ public class GenerateServlet extends HttpServlet {
 		}else {
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
+			System.out.println("sending generated content --> "+"/"+this.out+req_data);
+			
 			try {
 				File t = new File(urlToFile.getFile());
 				if (t.isFile()) {
@@ -294,18 +306,18 @@ public class GenerateServlet extends HttpServlet {
 	   if(this.host_name != null  && this.host_port != null) {
 			try {
 				if(this.host_port.equals("443")) {
-					rebuilded_redirect = this.host_name+":"+this.redir_url;
+					rebuilded_redirect = this.host_name+":"+this.test_redir_url;
 				}else {
-					rebuilded_redirect = this.host_name+":"+this.host_port+this.redir_url;	
+					rebuilded_redirect = this.host_name+":"+this.host_port+this.test_redir_url;	
 				}
-				
+				rebuilded_redirect+="?client_id=codegenerator&redirect_uri="+URLEncoder.encode(request_uri)+"&scope=openid&state=somestate&response_type=code";
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
 	   }else {
 		   System.out.println("host_name or host_port null. Host name="+this.host_name+" host_port="+this.host_port);
 	   }
-
+System.out.println("rebuilded redirect "+rebuilded_redirect);
 		return rebuilded_redirect;
    }
 
