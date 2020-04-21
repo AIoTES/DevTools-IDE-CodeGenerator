@@ -202,6 +202,7 @@ public class GenerateServlet extends HttpServlet {
 
 				
 		}else {
+			System.out.println("REQ URI "+req.getRequestURI());
 			req_data = req.getRequestURI().replaceFirst(outputAlias, "");
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
 			System.out.println("sending generated content --> "+"/"+this.out+req_data);
@@ -221,6 +222,7 @@ public class GenerateServlet extends HttpServlet {
 					resp.setContentType("text/plain");
 				}else if (t.isDirectory() && !t.equals(tempFolder)) {
 					Map<String, Object> vbles = new HashMap<String, Object>();
+					vbles.put("req_url", req.getRequestURI().toString());
 					vbles.put("path", t.getAbsolutePath());
 					vbles.put("file", t);
 					vbles.put("dirContent", t.listFiles());
