@@ -172,7 +172,7 @@ public class GenerateServlet extends HttpServlet {
 				System.out.println("doGet Authorization token= "+this.token);
 				System.out.println("doGet Authorization code= "+this.oidc_code);
 				Map<String, Object > vars = new HashMap<String, Object>();
-				vars.put("post_url",this.base_post_path+"/ui?token="+this.token);
+				vars.put("post_url",this.base_post_path+"?token="+this.token);
 				vars.put("gen_code_path",this.base_post_path);
 				try {
 					resp.getWriter().write(this.processVelocityTemplate("web-ui.vm", vars));	
@@ -306,6 +306,7 @@ public class GenerateServlet extends HttpServlet {
    private String buildRedirectURL(String request_uri) {
 	   String rebuilded_redirect="";
 	   if(this.host_name != null  && this.host_port != null) {
+		   if(!this.host_name.startsWith("http")) this.host_name = "https://"+this.host_name;
 			try {
 				if(this.host_port.equals("443")) {
 					rebuilded_redirect = this.host_name+":"+this.test_redir_url;
