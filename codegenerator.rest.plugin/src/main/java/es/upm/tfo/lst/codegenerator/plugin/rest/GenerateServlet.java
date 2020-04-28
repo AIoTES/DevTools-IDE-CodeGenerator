@@ -174,6 +174,7 @@ public class GenerateServlet extends HttpServlet {
 				Map<String, Object > vars = new HashMap<String, Object>();
 				vars.put("post_url",this.base_post_path+"?token="+this.token);
 				vars.put("gen_code_path",this.base_post_path);
+				vars.put("generaed_code_path",this.base_post_path.replaceAll("/ui", ""));
 				try {
 					resp.getWriter().write(this.processVelocityTemplate("web-ui.vm", vars));	
 				} catch (Exception e) {
