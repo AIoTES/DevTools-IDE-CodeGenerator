@@ -53,7 +53,9 @@ deploy:
 
 mirror-git:
   stage: deploy
-  image: alpine/git
+  image:
+    name: alpine/git
+    entrypoint: ["/bin/sh", "-c"]
   cache: {}
   script:
     - git clone --mirror ${CI_REPOSITORY_URL} project
