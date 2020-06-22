@@ -105,33 +105,38 @@
     function post() {
   
     xhr = new XMLHttpRequest();
-    
+    xhr2 = new XMLHttpRequest();
     var pathArray = window.location.pathname.split('/');
     console.log("pathArray ",pathArray)
     var newPathname = "";
-    /*
-	for (i = 0; i < pathArray.length-1; i++) {
-		newPathname += "/";
-		newPathname += pathArray[i];
-	}
-    */
     xhr.open("POST", "/GenerateCode");
     xhr.setRequestHeader("Content-type", "application/json");
     xhr.setRequestHeader("Access-Control-Allow-Origin","*")
+     var data = JSON.stringify(restObj);
+    console.log(data);
+    xhr.send(data);
     xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
-            console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText);
-            //TODO extract output from response and add to newPathname.
-            console.log(location);
-            location.replace("/GenerateCode/");
-            console.log("changed location path ",location);
+            console.log("xhr2");
+        
+	         xhr2.open("GET", "/GenerateCode/");
+		    xhr2.setRequestHeader("Content-type", "application/json");
+		    xhr2.setRequestHeader("Access-Control-Allow-Origin","*")
+		      xhr2.send();
+		    xhr2.onreadystatechange = function () {
+			    if (xhr.readyState == 4 && xhr.status == 200) {
+			    	document.write(xhr2.responseText)
+			    }else{
+			    	console.log("ERROR")
+			    }
+		    }
+		  
+		    
         }else{
             console.log("readyState= "+xhr.readyState + " statusText= "+xhr.statusText + "status code "+xhr.status);
             }
     }
-    var data = JSON.stringify(restObj);
-    console.log(data);
-    xhr.send(data);
+   
     
  
 	}

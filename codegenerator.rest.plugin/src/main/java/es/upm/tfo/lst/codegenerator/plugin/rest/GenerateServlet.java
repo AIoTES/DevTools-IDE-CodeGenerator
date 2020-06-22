@@ -141,7 +141,7 @@ public class GenerateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		this.token= req.getParameter("token");
-		
+		System.out.println("GET req"+req.getRequestURI());
 		String line, req_data;
 		URL urlToFile;
 		addCorsHeaderPOST(resp);
