@@ -103,6 +103,7 @@ function addOnt(){
 function post() {
 
 xhr = new XMLHttpRequest();
+    xhr2 = new XMLHttpRequest();
 
 var pathArray = window.location.pathname.split('/');
 var newPathname = "";
@@ -110,16 +111,25 @@ var newPathname = "";
 xhr.open("POST", "${post_url}");
 xhr.setRequestHeader("Content-type", "application/json");
 xhr.setRequestHeader("Access-Control-Allow-Origin","*");
+var data = JSON.stringify(restObj);
+xhr.send(data);
 xhr.onreadystatechange = function () { 
     if (xhr.readyState == 4 && xhr.status == 200) {
-        location.replace("${generaed_code_path}");
-        
+        xhr2.open("GET", "${post_url}");
+        xhr2.setRequestHeader("Content-type", "application/json");
+        xhr2.setRequestHeader("Access-Control-Allow-Origin","*")
+        xhr2.setRequestHeader("Authorization","Bearer "+localStorage.getItem("token"))
+        xhr2.send();
+        xhr2.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.write(xhr2.responseText)
+            }else{
+                console.log("ERROR")
+            }
+        }
     }
-};
+}
 
-var data = JSON.stringify(restObj);
-console.log(data);
-xhr.send(data);
 
 
 }
