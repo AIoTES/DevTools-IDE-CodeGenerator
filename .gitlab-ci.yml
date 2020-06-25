@@ -49,7 +49,7 @@ deploy:
     - docker push $DOCKER_SERVER/code.generator:$CI_COMMIT_REF_SLUG
     - docker push $DOCKER_SERVER/code.generator:latest
   only:
-    - master
+    - aiotes
 
 mirror-git:
   stage: deploy
