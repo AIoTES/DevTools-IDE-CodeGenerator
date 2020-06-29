@@ -169,7 +169,7 @@ public class GenerateServlet extends HttpServlet {
 			try {
 				File t = new File(urlToFile.getFile());
 				File[] k = t.listFiles();
-				
+				/*
 				if(t.isFile()) {
 					// request a file
 					BufferedReader br = new BufferedReader(new FileReader(t));
@@ -194,8 +194,8 @@ public class GenerateServlet extends HttpServlet {
 					resp.getWriter().write(jso.toString());
 				}
 				
-
-				/*
+*/
+				
 				if (t.isFile()) {
 					// request a file
 					BufferedReader br = new BufferedReader(new FileReader(t));
@@ -239,7 +239,7 @@ public class GenerateServlet extends HttpServlet {
 					stringWriter.close();
 
 				}
-				*/
+				
 			} catch (Exception e) {
 						System.out.println(e.getMessage());
 				}
