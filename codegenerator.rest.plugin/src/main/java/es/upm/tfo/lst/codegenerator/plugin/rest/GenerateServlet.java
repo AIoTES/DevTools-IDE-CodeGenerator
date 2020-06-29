@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -40,6 +41,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.RuntimeSingleton;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -124,10 +126,9 @@ public class GenerateServlet extends HttpServlet {
 					gp.process();
 					JsonObject outO = new JsonObject();
 					outO.addProperty("output", outputAlias+"/");
-					resp.addHeader(CONTENT_TYPE, "application/json");
-					System.out.println("response JSON "+outO);
 					resp.getWriter().write(outO.toString());
-					//resp.sendRedirect(this.SERVER+"GenerateCode");
+					
+					
 				}else
 					resp.sendError(400,"invalid json root element");
 			}catch (Exception e) {
@@ -140,7 +141,9 @@ public class GenerateServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
 		this.token= req.getParameter("token");
+		System.out.println("auth token"+req.getHeader("Authorization"));
 		System.out.println("GET req"+req.getRequestURI());
 		String line, req_data;
 		URL urlToFile;
@@ -165,6 +168,34 @@ public class GenerateServlet extends HttpServlet {
 			urlToFile = this.getServletContext().getResource("/"+this.out+req_data);
 			try {
 				File t = new File(urlToFile.getFile());
+				File[] k = t.listFiles();
+				
+				if(t.isFile()) {
+					// request a file
+					BufferedReader br = new BufferedReader(new FileReader(t));
+					StringBuilder sb = new StringBuilder();
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+					br.close();
+					resp.setContentType("application/json");
+					JsonObject jso = new JsonObject();
+					jso.addProperty("file_content", sb.toString());
+					resp.getWriter().write(jso.toString());
+				}else if(t.isDirectory() && !t.equals(tempFolder) ) {
+					JsonArray arr = new JsonArray();
+					JsonObject jso = new JsonObject();
+					jso.addProperty("root", t.getName());
+					for (File file : k) {
+						arr.add(file.getPath());
+					}
+					jso.add("content", arr);
+					resp.setContentType("application/json");
+					resp.getWriter().write(jso.toString());
+				}
+				
+
+				/*
 				if (t.isFile()) {
 					// request a file
 					BufferedReader br = new BufferedReader(new FileReader(t));
@@ -208,6 +239,7 @@ public class GenerateServlet extends HttpServlet {
 					stringWriter.close();
 
 				}
+				*/
 			} catch (Exception e) {
 						System.out.println(e.getMessage());
 				}
