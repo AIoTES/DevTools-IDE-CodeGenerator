@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -104,7 +105,9 @@ public class CodegenerationMojo
     public void execute()
         throws MojoExecutionException
     {
-
+        org.apache.maven.plugin.logging.Log mavenLogger = getLog();
+        BasicConfigurator.configure(new MavenLoggerLog4jBridge(mavenLogger));
+    	
 
     	if (xmlTemplate == null) {
     		throw new MojoExecutionException("Invalid XML Template referece (null).");
