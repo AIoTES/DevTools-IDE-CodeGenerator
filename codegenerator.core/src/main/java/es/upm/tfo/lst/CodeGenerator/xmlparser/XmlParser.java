@@ -164,12 +164,18 @@ public class XmlParser {
 	 */
 	public TemplateDataModel generateXMLCoordinator(URL xmlPath) throws Exception {
 		log.debug("generating XML coordinator  from url= " + this.xmlSource);
+		this.xmlSource = xmlPath;
 		try {
-			this.xmlSource = xmlPath;
-			log.debug("setting up the father directory from given url");
+			log.debug("setting up the parent directory from given url");
 			this.templateBasePath = this.xmlSource.toURI().resolve(".").toURL();
-		} catch (MalformedURLException | URISyntaxException | NullPointerException e) {
-			log.fatal("problems reading URL", e);
+		} catch (Exception e) {
+			log.warn("Normal parent directory resolution did not work, attempting low level resolution", e);
+			try {
+				String url = this.xmlSource.toString();
+				this.templateBasePath = new URL(url.substring(0,url.lastIndexOf("/")+1));
+			} catch (MalformedURLException e1) {
+				log.fatal("could not resolve parent directory for given URL", e);
+			}
 		}
 		return generateModel();
 	}
