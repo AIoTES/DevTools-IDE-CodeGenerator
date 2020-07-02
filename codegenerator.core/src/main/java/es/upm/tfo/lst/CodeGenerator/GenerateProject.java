@@ -559,7 +559,9 @@ public class GenerateProject {
 		if (recursive) {
 			ontologies2BProcesed.addAll(ont.getImports());
 		}
-		ontologies2BProcesed.add(ont);
+		if (!ontologies2BProcesed.contains(ont)) {
+			ontologies2BProcesed.add(ont);
+		}
 
 		Collections.sort(ontologies2BProcesed, new Comparator<OWLOntology>() {
 

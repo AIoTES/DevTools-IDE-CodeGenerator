@@ -58,15 +58,12 @@ public class OntologyLoader {
 	 */
 	public OWLOntology loadOntology(String url) {
 		try {
-			boolean state;
 			OWLOntology ont = null;
 			// allow to laod recursivesly OWLOntologyCreationIOException
 
 			this.ontologyManager = OWLManager.createOWLOntologyManager();
 
-			state = this.isLocalFile(url);
-
-			if (state) {
+			if (this.isLocalFile(url)) {
 				log.debug("web ontology");
 				// if the method gets a inexistent url throws OWLOntologyCreationIOException
 				try {
