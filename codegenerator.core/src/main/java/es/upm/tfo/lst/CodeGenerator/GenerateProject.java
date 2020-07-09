@@ -15,6 +15,7 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -153,6 +154,8 @@ public class GenerateProject {
 
 	}
 
+
+ 
 	/**
 	 * Initialize the process to generate code before use this method, check if main
 	 * ontology is loaded correctly, otherwise the program will not continue and
@@ -167,8 +170,6 @@ public class GenerateProject {
 		
 		if (this.control()) {
 			try {
-//				URLClassLoader t = createURLClassLoader();
-//				 System.out.println("RESOURCE "+t.getResource("common.vm"));
 				this.initVelocity();
 				this.baseContext.put("date", new Date());
 				this.baseContext.put("project",this);
@@ -367,11 +368,6 @@ public class GenerateProject {
 
 	}
 
-	private static Properties defaultVelocityProperties() {
-		Properties props = new Properties();
-		props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
-		return props;
-	}
 
 	/**
 	 * Initialize VelocityEngine and base context who hold base data to use in all
@@ -400,6 +396,7 @@ public class GenerateProject {
 				props.setProperty(RuntimeConstants.RESOURCE_LOADER, "url");
 				props.setProperty("url.resource.loader.class", URLResourceLoader.class.getName());
 				props.setProperty("url.resource.loader.root", source.toString());
+				
 			} catch (Exception a) {
 				log.warn(a);
 				this.props = new Properties();
@@ -509,6 +506,7 @@ public class GenerateProject {
 			stringWriter.close();			
 		} catch (Exception a) {
 			log.fatal("cant proces="+toProcess, a);
+			a.printStackTrace();
 		}
 		return t.replace("\n", "");
 	}
@@ -589,7 +587,7 @@ public class GenerateProject {
 		return props;
 	}
 	/**
-	 *
+	 * This method override all default properties of velocity context
 	 * @param props {@link Properties} to add to velocity context
 	 */
 	public void setProperties(Properties props) {
