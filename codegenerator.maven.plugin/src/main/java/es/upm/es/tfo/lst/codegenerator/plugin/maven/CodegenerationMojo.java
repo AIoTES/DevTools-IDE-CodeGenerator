@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 
@@ -33,6 +34,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.URLResourceLoader;
 
 import es.upm.tfo.lst.CodeGenerator.GenerateProject;
 import es.upm.tfo.lst.CodeGenerator.model.TemplateDataModel;
@@ -105,6 +108,7 @@ public class CodegenerationMojo
     public void execute()
         throws MojoExecutionException
     {
+    	Properties props = null;
         org.apache.maven.plugin.logging.Log mavenLogger = getLog();
         BasicConfigurator.configure(new MavenLoggerLog4jBridge(mavenLogger));
     	
@@ -120,6 +124,23 @@ public class CodegenerationMojo
 		XmlParser parser = new XmlParser();
 		TemplateDataModel model=null;
 		try {
+			 
+			//http://velocity.apache.org/engine/1.7/developer-guide.html#configuring-resource-loaders
+		    //https://velocity.apache.org/engine/2.0/apidocs/org/apache/velocity/runtime/resource/loader/JarResourceLoader.html
+			if(xmlTemplate.startsWith("jar")) {
+				props  = new Properties();
+				props.setProperty("url.resource.loader.description", "Velocity JAR Resource Loader");
+				props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+				props.setProperty(RuntimeConstants.RESOURCE_LOADER, "jar");
+				props.setProperty("jar.resource.loader.class", "org.apache.velocity.runtime.resource.loader.JarResourceLoader");
+				props.setProperty("jar.resource.loader.path", xmlTemplate.substring(0, xmlTemplate.lastIndexOf("!")));
+			}
+			if(xmlTemplate.startsWith("url")) {
+				//TODO implement
+			}
+			if(xmlTemplate.startsWith("file")) {
+				//TODO implement
+			}
 			model = parser.generateXMLCoordinator(xmlTemplate);
 		} catch (Exception e1) {
         	throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate, e1);
@@ -128,11 +149,11 @@ public class CodegenerationMojo
 		if (model == null) {
 			throw new MojoExecutionException("Invalid XML coordinator template: " + xmlTemplate);
 		}
-
+		
 		GenerateProject gp = new GenerateProject();
 		gp.setMainModel(model);
-
-		//gp.setLocalBaseLoaderPath(parser.getTemplateBasePath());
+		if(props != null) 
+			gp.setProperties(props);
 		OntologyLoader ontologyLoader = new OntologyLoader();
 
 		if (localOntologies.exists() && localOntologies.isDirectory()) {
