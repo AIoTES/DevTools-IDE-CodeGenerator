@@ -15,10 +15,6 @@
  ******************************************************************************/
 package es.upm.tfo.lst.CodeGenerator.model;
 
-import javax.sound.sampled.Line;
-
-import com.google.common.reflect.Parameter;
-
 /**
  * Class to represent a variable item in given XML file.
  *
