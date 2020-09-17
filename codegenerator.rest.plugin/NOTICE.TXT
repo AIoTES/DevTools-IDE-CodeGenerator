@@ -7,9 +7,9 @@ Universidad Politecnica de Madrid (UPM)
 
 This product depends on the following components
  es.upm.tfo.lst:codegenerator.rest.plugin:bundle:0.0.1-SNAPSHOT
- +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
- +- org.osgi:org.osgi.core:jar:4.3.1:provided
- +- org.osgi:org.osgi.compendium:jar:4.3.1:provided
+ +- javax.servlet:javax.servlet-api:jar:3.0.1
+ +- org.osgi:org.osgi.core:jar:4.3.1
+ +- org.osgi:org.osgi.compendium:jar:4.3.1
  +- es.upm.tfo.lst:codegenerator.core:jar:0.0.1-SNAPSHOT
  |  +- org.jsoup:jsoup:jar:1.11.3
  |  +- log4j:log4j:jar:1.2.17

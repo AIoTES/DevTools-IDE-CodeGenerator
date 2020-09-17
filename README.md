@@ -10,6 +10,7 @@ The user just need to provide a XML file to set basic configuration, and set the
 The code generator tool has a?[Protege Plugin](./codegenerator.protege.plugin/README.md)?to be used in Protege Ontology editor, a [Maven plugin](./codegenerator.maven.plugin/README.md), and a [REST service](./codegenerator.rest.plugin/README.md) to use as a set of web services.
 Checkout any of those flavours for specific instuctions about how to use them.
 
+For usage, read wiki.
 
 ## Installing
 
@@ -19,15 +20,11 @@ You'll need maven.
 mvn clean install
 ```
 
-for installation of protege plugin read the wiki.
-
-for docker image of REST service, go to codegenerator.rest.karaf/target and:
+for docker image of REST service, once installed through maven, go to codegenerator.rest.karaf/target and:
 
 ```
 docker build -t code.generator .
 ```
-
-for usage, read wiki.
 
 ## Testing
 
@@ -54,5 +51,18 @@ This software is manteined by:
 * Eduardo Bhuhid <ebuhid@lst.tfo.upm.es> 
 
 ## Licence
+```
+   Copyright 2018 Universidad Politécnica de Madrid
 
-Code generator and all of its modules are released under [Apache Software Licence](http://www.apache.org/licenses/) version 2.0.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```

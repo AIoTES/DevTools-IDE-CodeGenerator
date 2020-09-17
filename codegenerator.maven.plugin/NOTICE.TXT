@@ -1,4 +1,4 @@
-Code Generator
+Code Generator Maven Plugin
 Copyright 2020 Universidad Politecnica de Madrid (UPM)
 http://www.upm.es
 
@@ -7,73 +7,74 @@ Universidad Politecnica de Madrid (UPM)
 
 This product depends on the following components
 
- es.upm.tfo.lst:codegenerator.core:jar:0.0.1-SNAPSHOT
- +- org.apache.velocity:velocity:jar:1.7
- |  +- commons-collections:commons-collections:jar:3.2.1
- |  \- commons-lang:commons-lang:jar:2.4
- +- org.jsoup:jsoup:jar:1.11.3
- +- log4j:log4j:jar:1.2.17
- +- net.sourceforge.owlapi:owlapi-distribution:jar:4.5.6
- |  +- net.sourceforge.owlapi:owlapi-compatibility:jar:4.5.6
- |  |  \- net.sourceforge.owlapi:owlapi-apibinding:jar:4.5.6
- |  |     +- net.sourceforge.owlapi:owlapi-api:jar:4.5.6
- |  |     |  +- com.github.ben-manes.caffeine:caffeine:jar:2.5.6
- |  |     |  \- javax.inject:javax.inject:jar:1
- |  |     +- net.sourceforge.owlapi:owlapi-impl:jar:4.5.6
- |  |     +- net.sourceforge.owlapi:owlapi-parsers:jar:4.5.6
- |  |     +- net.sourceforge.owlapi:owlapi-oboformat:jar:4.5.6
- |  |     +- net.sourceforge.owlapi:owlapi-tools:jar:4.5.6
- |  |     +- net.sourceforge.owlapi:owlapi-fixers:jar:4.5.6
- |  |     \- net.sourceforge.owlapi:owlapi-rio:jar:4.5.6
- |  +- com.fasterxml.jackson.core:jackson-core:jar:2.8.5
- |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.5
- |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.5
- |  +- org.tukaani:xz:jar:1.6
- |  +- org.slf4j:slf4j-api:jar:1.7.22
- |  +- org.slf4j:jcl-over-slf4j:jar:1.7.22
- |  +- org.openrdf.sesame:sesame-model:jar:2.7.16
- |  |  \- org.openrdf.sesame:sesame-util:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-api:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-languages:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-datatypes:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-binary:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-n3:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-nquads:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-ntriples:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-rdfjson:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-rdfxml:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-trix:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-turtle:jar:2.7.16
- |  +- org.openrdf.sesame:sesame-rio-trig:jar:2.7.16
- |  +- com.github.jsonld-java:jsonld-java-sesame:jar:0.5.1
- |  |  \- com.github.jsonld-java:jsonld-java:jar:0.5.1
- |  |     +- org.apache.httpcomponents:httpclient-cache:jar:4.2.5
- |  |     \- org.apache.httpcomponents:httpclient:jar:4.2.5
- |  |        +- org.apache.httpcomponents:httpcore:jar:4.2.4
- |  |        \- commons-codec:commons-codec:jar:1.6
- |  +- org.semarglproject:semargl-sesame:jar:0.7
- |  |  +- org.semarglproject:semargl-core:jar:0.7
- |  |  \- org.semarglproject:semargl-rdfa:jar:0.7
- |  |     \- org.semarglproject:semargl-rdf:jar:0.7
- |  +- com.github.vsonnier:hppcrt:jar:0.7.5
- |  +- com.google.guava:guava:jar:18.0
- |  +- com.google.code.findbugs:jsr305:jar:3.0.1
- |  \- commons-io:commons-io:jar:2.5
- +- net.sourceforge.owlapi:jfact:jar:4.0.4
- |  +- net.sf.trove4j:trove4j:jar:3.0.3
- |  +- joda-time:joda-time:jar:2.3
- |  \- org.roaringbitmap:RoaringBitmap:jar:0.4.9
- \- org.apache.velocity:velocity-tools:jar:2.0
-    +- commons-beanutils:commons-beanutils:jar:1.7.0
-    +- commons-digester:commons-digester:jar:1.8
-    +- commons-chain:commons-chain:jar:1.1
-    +- commons-logging:commons-logging:jar:1.1
-    |  \- javax.servlet:servlet-api:jar:2.3
-    +- commons-validator:commons-validator:jar:1.3.1
-    +- dom4j:dom4j:jar:1.1
-    +- oro:oro:jar:2.0.8
-    +- sslext:sslext:jar:1.2-0
-    +- org.apache.struts:struts-core:jar:1.3.8
-    |  \- antlr:antlr:jar:2.7.2
-    +- org.apache.struts:struts-taglib:jar:1.3.8
-    \- org.apache.struts:struts-tiles:jar:1.3.8
++- org.apache.maven:maven-plugin-api:jar:3.6.3
++- org.apache.maven:maven-core:jar:3.6.3
++- org.apache.maven:maven-artifact:jar:3.6.3
++- org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.6.0
+\- es.upm.tfo.lst:codegenerator.core:jar:0.0.1-SNAPSHOT
+   +- org.apache.velocity:velocity:jar:1.7
+   |  +- commons-collections:commons-collections:jar:3.2.1
+   |  \- commons-lang:commons-lang:jar:2.4
+   +- org.jsoup:jsoup:jar:1.5.2
+   +- log4j:log4j:jar:1.2.17
+   +- net.sourceforge.owlapi:owlapi-distribution:jar:4.5.6
+   |  +- net.sourceforge.owlapi:owlapi-compatibility:jar:4.5.6
+   |  |  \- net.sourceforge.owlapi:owlapi-apibinding:jar:4.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-api:jar:4.5.6
+   |  |     |  \- com.github.ben-manes.caffeine:caffeine:jar:2.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-impl:jar:4.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-parsers:jar:4.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-oboformat:jar:4.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-tools:jar:4.5.6
+   |  |     +- net.sourceforge.owlapi:owlapi-fixers:jar:4.5.6
+   |  |     \- net.sourceforge.owlapi:owlapi-rio:jar:4.5.6
+   |  +- com.fasterxml.jackson.core:jackson-core:jar:2.8.5
+   |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.5
+   |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.5
+   |  +- org.tukaani:xz:jar:1.6
+   |  +- org.slf4j:jcl-over-slf4j:jar:1.7.22
+   |  +- org.openrdf.sesame:sesame-model:jar:2.7.16
+   |  |  \- org.openrdf.sesame:sesame-util:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-api:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-languages:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-datatypes:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-binary:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-n3:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-nquads:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-ntriples:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-rdfjson:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-rdfxml:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-trix:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-turtle:jar:2.7.16
+   |  +- org.openrdf.sesame:sesame-rio-trig:jar:2.7.16
+   |  +- com.github.jsonld-java:jsonld-java-sesame:jar:0.5.1
+   |  |  \- com.github.jsonld-java:jsonld-java:jar:0.5.1
+   |  |     +- org.apache.httpcomponents:httpclient-cache:jar:4.2.5
+   |  |     \- org.apache.httpcomponents:httpclient:jar:4.2.5
+   |  |        +- org.apache.httpcomponents:httpcore:jar:4.2.4
+   |  |        \- commons-codec:commons-codec:jar:1.6
+   |  +- org.semarglproject:semargl-sesame:jar:0.7
+   |  |  +- org.semarglproject:semargl-core:jar:0.7
+   |  |  \- org.semarglproject:semargl-rdfa:jar:0.7
+   |  |     \- org.semarglproject:semargl-rdf:jar:0.7
+   |  +- com.github.vsonnier:hppcrt:jar:0.7.5
+   |  \- com.google.code.findbugs:jsr305:jar:3.0.1
+   +- net.sourceforge.owlapi:jfact:jar:4.0.4
+   |  +- net.sf.trove4j:trove4j:jar:3.0.3
+   |  +- joda-time:joda-time:jar:2.3
+   |  \- org.roaringbitmap:RoaringBitmap:jar:0.4.9
+   \- org.apache.velocity:velocity-tools:jar:2.0
+      +- commons-beanutils:commons-beanutils:jar:1.7.0
+      +- commons-digester:commons-digester:jar:1.8
+      +- commons-chain:commons-chain:jar:1.1
+      +- commons-logging:commons-logging:jar:1.1
+      |  \- javax.servlet:servlet-api:jar:2.3
+      +- commons-validator:commons-validator:jar:1.3.1
+      +- dom4j:dom4j:jar:1.1
+      +- oro:oro:jar:2.0.8
+      +- sslext:sslext:jar:1.2-0
+      +- org.apache.struts:struts-core:jar:1.3.8
+      |  \- antlr:antlr:jar:2.7.2
+      +- org.apache.struts:struts-taglib:jar:1.3.8
+      \- org.apache.struts:struts-tiles:jar:1.3.8
+
